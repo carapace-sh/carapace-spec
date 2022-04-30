@@ -1,0 +1,38 @@
+name: example
+description:
+persistentflags:
+  -p, --persistent: persistent flag
+commands:
+- name: sub1
+  description: subcommand1
+  flags:
+    -s, --styled=: styled values
+    -r, --repeatable*: repeatable flag
+    --dynamic=: dynamic value
+    --novalue: no value
+    -n: no value
+  completion:
+    flag:
+      styled:
+      - "blue\tblue\tblue"
+      - "cyan\tcyan\tcyan"
+      - "green\tgreen\tgreen"
+      - "magenta\tmagenta\tmagenta"
+      - "red\tred\tred"
+      - "yellow\tyellow\tyellow"
+      - "undescribed"
+      - "unstyled\tunstyled with description"
+      dynamic: ["$(git branch --all | cut -c 3- | sed 's/$/\t\tblue/')", "static value"]
+    positional:
+    -  ["pos1", "pos2"]
+    -  ["$_files"]
+    -  ["$_directories"]
+    positionalany: ["posAny1", "posAny2"]
+    dash:
+    - ["dash1", "dash2"]
+    dashany: ["dAny1", "dAny2"]
+  commands:
+    - name: subsub1
+      description: sub sub command
+- name: sub2
+  description: subcommand2
