@@ -20,9 +20,9 @@ flags:
   -x, --exact: match exactly with the command name
   -F, --pidfile=: read PIDs from file
   -L, --logpidfile: fail if PID file is not locked
-  -r, --runstates=: match runstates [D,S,Z,...]
+  -r, --runstates=,: match runstates [D,S,Z,...]
   --ns=: match the processes that belong to the same namespace as <pid>
-  --nslist=: list which namespaces will be considered for the --ns option.
+  --nslist=,: list which namespaces will be considered for the --ns option.
   -h, --help: display this help and exit
   -V, --version: output version information and exit
 completion:
@@ -60,4 +60,14 @@ completion:
       - "XCPU\tCPU time limit exceeded\tmagenta"
       - "XFSZ\tFile size limit exceeded\tmagenta"
     nslist: ["ipc", "mnt", "net", "pid", "user", "uts"]
+    runstates:
+      - "D\tuninterruptible sleep (usually IO)"
+      - "I\tIdle kernel thread"
+      - "R\trunning or runnable (on run queue)"
+      - "S\tinterruptible sleep (waiting for an event to complete)"
+      - "T\tstopped by job control signal"
+      - "W\tpaging (not valid since the 2.6.xx kernel)"
+      - "X\tdead (should never be seen)"
+      - "Z\tdefunct (zombie) process terminated but not reaped by its parent"
+      - "t\tstopped by debugger during the tracing"
   positionalany: ["$(ps h -A -o pid,comm | awk '{print $1\"\t\"$2}')"]
