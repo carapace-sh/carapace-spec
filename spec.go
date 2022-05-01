@@ -72,13 +72,14 @@ func (c *Command) ToCobra() *cobra.Command {
 }
 
 func parseFlag(flagSet *pflag.FlagSet, id, description string) error {
-	r := regexp.MustCompile(`^(?P<shorthand>-[^-])?(, *)?(?P<longhand>--[^ =*]*)?(?P<modifier>[=*]*)$`)
+	r := regexp.MustCompile(`^(?P<shorthand>-[^-])?(, *)?(?P<longhand>--[^ =*]*)?(?P<modifier>[=*?]*)$`)
 	matches := findNamedMatches(r, id)
 
 	longhand := strings.TrimPrefix(matches["longhand"], "--")
 	shorthand := strings.TrimPrefix(matches["shorthand"], "-")
 	slice := strings.Contains(matches["modifier"], "*")
 	value := strings.Contains(matches["modifier"], "=")
+	optarg := strings.Contains(matches["modifier"], "?")
 
 	if longhand != "" && shorthand != "" {
 		if value {
@@ -125,6 +126,15 @@ func parseFlag(flagSet *pflag.FlagSet, id, description string) error {
 	} else {
 		return fmt.Errorf("malformed flag: %v", id)
 	}
+
+	if optarg {
+		if longhand != "" {
+			flagSet.Lookup(longhand).NoOptDefVal = " "
+		} else {
+			flagSet.Lookup(shorthand).NoOptDefVal = " "
+		}
+	}
+
 	return nil
 }
 
