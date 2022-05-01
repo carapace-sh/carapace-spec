@@ -70,7 +70,7 @@ func init() {
 			if len(c.Args) > 2 {
 				c.Args = c.Args[3:]
 			} else {
-			  c.Args[0] = "_carapace"
+				c.Args[0] = "_carapace"
 			}
 			return carapace.ActionExecute(specCmd.ToCobra()).Invoke(c).ToA()
 		}),
