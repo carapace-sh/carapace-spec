@@ -15,26 +15,29 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "carapace-spec",
-	Short: "",
-	Args:  cobra.MinimumNArgs(1),
-    DisableFlagParsing: true,
+	Use:                "carapace-spec",
+	Short:              "",
+	Args:               cobra.MinimumNArgs(1),
+	DisableFlagParsing: true,
+	CompletionOptions: cobra.CompletionOptions{
+		DisableDefaultCmd: true,
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		abs, err := filepath.Abs(args[0])
 		if err != nil {
 			return err
 		}
 
-		content, err := os.ReadFile(args[0])
+		content, err := os.ReadFile(abs)
 		if err != nil {
 			return err
 		}
 
-		var c spec.Command
-		if err := yaml.Unmarshal(content, &c); err != nil {
+		var specCmd spec.Command
+		if err := yaml.Unmarshal(content, &specCmd); err != nil {
 			return err
 		}
-		bridgeCompletion(c.ToCobra(), abs, args[1:]...)
+		bridgeCompletion(specCmd.ToCobra(), abs, args[1:]...)
 		return nil
 	},
 }
@@ -44,7 +47,33 @@ func Execute() error {
 }
 func init() {
 	carapace.Gen(rootCmd).PositionalCompletion(
-		carapace.ActionFiles("*.yaml"),
+		carapace.ActionFiles(".yaml"),
+	)
+
+	carapace.Gen(rootCmd).PositionalAnyCompletion(
+		carapace.ActionCallback(func(c carapace.Context) carapace.Action {
+			abs, err := filepath.Abs(c.Args[0])
+			if err != nil {
+				return carapace.ActionMessage(err.Error())
+			}
+
+			content, err := os.ReadFile(abs)
+			if err != nil {
+				return carapace.ActionMessage(err.Error())
+			}
+
+			var specCmd spec.Command
+			if err := yaml.Unmarshal(content, &specCmd); err != nil {
+				return carapace.ActionMessage(err.Error())
+			}
+
+			if len(c.Args) > 2 {
+				c.Args = c.Args[3:]
+			} else {
+			  c.Args[0] = "_carapace"
+			}
+			return carapace.ActionExecute(specCmd.ToCobra()).Invoke(c).ToA()
+		}),
 	)
 }
 
