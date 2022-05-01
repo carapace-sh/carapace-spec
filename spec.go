@@ -44,25 +44,25 @@ func (c *Command) ToCobra() *cobra.Command {
 
 	flagCompletions := make(carapace.ActionMap)
 	for key, value := range c.Completion.Flag {
-		flagCompletions[key] = parseAction(value)
+		flagCompletions[key] = parseAction(cmd, value)
 	}
 	carapace.Gen(cmd).FlagCompletion(flagCompletions)
 
 	positionalCompletions := make([]carapace.Action, 0)
 	for _, pos := range c.Completion.Positional {
-		positionalCompletions = append(positionalCompletions, parseAction(pos))
+		positionalCompletions = append(positionalCompletions, parseAction(cmd, pos))
 	}
 	carapace.Gen(cmd).PositionalCompletion(positionalCompletions...)
 
-	carapace.Gen(cmd).PositionalAnyCompletion(parseAction(c.Completion.PositionalAny))
+	carapace.Gen(cmd).PositionalAnyCompletion(parseAction(cmd, c.Completion.PositionalAny))
 
 	dashCompletions := make([]carapace.Action, 0)
 	for _, pos := range c.Completion.Dash {
-		dashCompletions = append(dashCompletions, parseAction(pos))
+		dashCompletions = append(dashCompletions, parseAction(cmd, pos))
 	}
 	carapace.Gen(cmd).DashCompletion(dashCompletions...)
 
-	carapace.Gen(cmd).DashAnyCompletion(parseAction(c.Completion.DashAny))
+	carapace.Gen(cmd).DashAnyCompletion(parseAction(cmd, c.Completion.DashAny))
 
 	for _, subcmd := range c.Commands {
 		cmd.AddCommand(subcmd.ToCobra())
@@ -128,7 +128,7 @@ func parseFlag(flagSet *pflag.FlagSet, id, description string) error {
 	return nil
 }
 
-func parseAction(arr []string) carapace.Action {
+func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
 	r := regexp.MustCompile(`^\$\((?P<cmd>.*)\)$`)
 
 	batch := carapace.Batch()
@@ -140,16 +140,27 @@ func parseAction(arr []string) carapace.Action {
 		} else if strings.HasPrefix(elem, "$_directories") {
 			return carapace.ActionDirectories()
 		} else if r.MatchString(elem) {
-			batch = append(batch, carapace.ActionExecCommand("sh", "-c", r.FindStringSubmatch(elem)[1])(func(output []byte) carapace.Action {
-				// TODO parse like below
-				lines := strings.Split(string(output), "\n")
-				vals := make([]string, 0)
-				for _, line := range lines {
-					if line != "" {
-						vals = append(vals, parseValue(line)...)
-					}
+			batch = append(batch, carapace.ActionCallback(func(c carapace.Context) carapace.Action {
+				for index, arg := range c.Args {
+					c.Setenv(fmt.Sprintf("CARAPACE_ARG%v", index), arg)
 				}
-				return carapace.ActionStyledValuesDescribed(vals...)
+				c.Setenv("CARAPACE_CALLBACK", c.CallbackValue)
+
+				cmd.Flags().Visit(func(f *pflag.Flag) {
+					c.Setenv(fmt.Sprintf("CARAPACE_FLAG_%v", strings.ToUpper(f.Name)), f.Value.String())
+				})
+
+				return carapace.ActionExecCommand("sh", "-c", r.FindStringSubmatch(elem)[1])(func(output []byte) carapace.Action {
+					// TODO parse like below
+					lines := strings.Split(string(output), "\n")
+					vals := make([]string, 0)
+					for _, line := range lines {
+						if line != "" {
+							vals = append(vals, parseValue(line)...)
+						}
+					}
+					return carapace.ActionStyledValuesDescribed(vals...)
+				}).Invoke(c).ToA()
 			}))
 		} else {
 			vals = append(vals, parseValue(elem)...)
