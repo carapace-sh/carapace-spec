@@ -8,7 +8,7 @@ commands:
   flags:
     -s, --styled=: styled values
     -r, --repeatable*: repeatable flag
-    -o, --optarg=?: optarg flag
+    -o, --optarg?: optarg flag
     --dynamic=: dynamic value
     --env=: env
     --novalue: no value
