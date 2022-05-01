@@ -1,0 +1,63 @@
+name: pkill
+description:
+flags:
+  --signal=: signal to send (either number or name)
+  -q, --queue=: integer value to be sent with the signal
+  -e, --echo: display what is killed
+  -c, --count: count of matching processes
+  -f, --full: use full process name to match
+  -g, --pgroup=: match listed process group IDs
+  -G, --group=: match real group IDs
+  -i, --ignore-case: match case insensitively
+  -n, --newest: select most recently started
+  -o, --oldest: select least recently started
+  -O, --older=: select where older than seconds
+  -P, --parent=: match only child processes of the given parent
+  -s, --session=: match session IDs
+  -t, --terminal=: match by controlling terminal
+  -u, --euid=: match by effective IDs
+  -U, --uid=: match by real IDs
+  -x, --exact: match exactly with the command name
+  -F, --pidfile=: read PIDs from file
+  -L, --logpidfile: fail if PID file is not locked
+  -r, --runstates=: match runstates [D,S,Z,...]
+  --ns=: match the processes that belong to the same namespace as <pid>
+  --nslist=: list which namespaces will be considered for the --ns option.
+  -h, --help: display this help and exit
+  -V, --version: output version information and exit
+completion:
+  flag:
+    signal:
+      - "ABRT\tAbnormal termination\tmagenta"
+      - "ALRM\tVirtual alarm clock\tred"
+      - "BUS\tBUS error\tmagenta"
+      - "CHLD\tChild status has changed\tblue"
+      - "CONT\tContinue stopped process\tgreen"
+      - "FPE\tFloating-point exception\tmagenta"
+      - "HUP\tHangup detected on controlling terminal\tred"
+      - "ILL\tIllegal instruction\tmagenta"
+      - "INT\tInterrupt from keyboard\tred"
+      - "KILL\tKill, unblockable\tred"
+      - "PIPE\tBroken pipe\tred"
+      - "POLL\tPollable event occurred\tred"
+      - "PROF\tProfiling alarm clock timer expired\tred"
+      - "PWR\tPower failure restart\tred"
+      - "QUIT\tQuit from keyboard\tmagenta"
+      - "SEGV\tSegmentation violation\tmagenta"
+      - "STKFLT\tStack fault on coprocessor\tred"
+      - "STOP\tStop process, unblockable\tyellow"
+      - "SYS\tBad system call\tmagenta"
+      - "TERM\tTermination request\tred"
+      - "TRAP\tTrace/breakpoint trap\tmagenta"
+      - "TSTP\tStop typed at keyboard\tyellow"
+      - "TTIN\tBackground read from tty\tyellow"
+      - "TTOU\tBackground write to tty\tyellow"
+      - "URG\tUrgent condition on socket\tblue"
+      - "USR1\tUser-defined signal 1\tred"
+      - "USR2\tUser-defined signal 2\tred"
+      - "VTALRM\tVirtual alarm clock\tred"
+      - "WINCH\tWindow size change\tblue"
+      - "XCPU\tCPU time limit exceeded\tmagenta"
+      - "XFSZ\tFile size limit exceeded\tmagenta"
+    nslist: ["ipc", "mnt", "net", "pid", "user", "uts"]
+  positionalany: ["$(ps h -A -o pid,comm | awk '{print $1\"\t\"$2}')"]
