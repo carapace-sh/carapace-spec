@@ -215,10 +215,13 @@ func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
 		} else if strings.HasPrefix(elem, "$_directories") {
 			return carapace.ActionDirectories()
 		} else if r.MatchString(elem) {
-            elemCopy := elem
+			elemCopy := elem
 			batch = append(batch, carapace.ActionCallback(func(c carapace.Context) carapace.Action {
 				for index, arg := range c.Args {
 					c.Setenv(fmt.Sprintf("CARAPACE_ARG%v", index), arg)
+				}
+				for index, arg := range c.Parts {
+					c.Setenv(fmt.Sprintf("CARAPACE_PART%v", index), arg)
 				}
 				c.Setenv("CARAPACE_CALLBACK", c.CallbackValue)
 
