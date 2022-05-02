@@ -9,7 +9,7 @@ commands:
     -s, --styled=: styled values
     -r, --repeatable*: repeatable flag
     -o, --optarg?: optarg flag
-    -l=,: list flag
+    -l, --list=,: list flag
     --dynamic=: dynamic value
     --env=: env
     --novalue: no value
