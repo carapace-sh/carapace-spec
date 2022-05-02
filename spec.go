@@ -34,50 +34,17 @@ func (c *Command) ToCobra() *cobra.Command {
 	}
 	carapace.Gen(cmd).Standalone()
 
-	flagCompletions := make(carapace.ActionMap)
-
 	for id, description := range c.PersistentFlags {
-		fs := parseFlagSpec(id, description)
-		fs.addTo(cmd.PersistentFlags())
-		if a, ok := c.Completion.Flag[fs.name()]; ok {
-			var action carapace.Action
-			if fs.delimiter != 0 {
-				action = carapace.ActionMultiParts(string(fs.delimiter), func(c carapace.Context) carapace.Action {
-					return parseAction(cmd, a).Invoke(c).Filter(c.Parts).ToA()
-				})
-			} else {
-				action = carapace.ActionCallback(func(c carapace.Context) carapace.Action {
-					return parseAction(cmd, a)
-				})
-			}
-
-			if fs.nospace {
-				action = action.NoSpace()
-			}
-			flagCompletions[fs.name()] = action
-		}
+		parseFlag(cmd.PersistentFlags(), id, description)
 	}
 
 	for id, description := range c.Flags {
-		fs := parseFlagSpec(id, description)
-		fs.addTo(cmd.Flags())
-		if a, ok := c.Completion.Flag[fs.name()]; ok {
-			var action carapace.Action
-			if fs.delimiter != 0 {
-				action = carapace.ActionMultiParts(string(fs.delimiter), func(c carapace.Context) carapace.Action {
-					return parseAction(cmd, a).Invoke(c).Filter(c.Parts).ToA()
-				})
-			} else {
-				action = carapace.ActionCallback(func(c carapace.Context) carapace.Action {
-					return parseAction(cmd, a)
-				})
-			}
+		parseFlag(cmd.Flags(), id, description)
+	}
 
-			if fs.nospace {
-				action = action.NoSpace()
-			}
-			flagCompletions[fs.name()] = action
-		}
+	flagCompletions := make(carapace.ActionMap)
+	for key, value := range c.Completion.Flag {
+		flagCompletions[key] = parseAction(cmd, value)
 	}
 	carapace.Gen(cmd).FlagCompletion(flagCompletions)
 
@@ -104,99 +71,67 @@ func (c *Command) ToCobra() *cobra.Command {
 	return cmd
 }
 
-type flagSpec struct {
-	longhand    string
-	shorthand   string
-	description string
-	slice       bool
-	optarg      bool
-	value       bool
-	nospace     bool
-	delimiter   rune
-}
+func parseFlag(flagSet *pflag.FlagSet, id, description string) error {
+	r := regexp.MustCompile(`^(?P<shorthand>-[^-])?(, )?(?P<longhand>--[^ =*?]*)?(?P<modifier>[=*?]*)$`)
+	matches := findNamedMatches(r, id)
 
-func (fs flagSpec) name() string {
-	if fs.longhand != "" {
-		return fs.longhand
-	}
-	return fs.shorthand
-}
+	longhand := strings.TrimPrefix(matches["longhand"], "--")
+	shorthand := strings.TrimPrefix(matches["shorthand"], "-")
+	slice := strings.Contains(matches["modifier"], "*")
+	optarg := strings.Contains(matches["modifier"], "?")
+	value := optarg || strings.Contains(matches["modifier"], "=")
 
-func parseFlagSpec(spec, description string) flagSpec {
-	r := regexp.MustCompile(`^(?P<shorthand>-[^-])?(, *)?(?P<longhand>--[^ =*?!\/:.,]*)?(?P<modifier>[=*?!\/:.,]*)(?P<delimiter>.*)$`)
-	matches := findNamedMatches(r, spec)
-
-	fs := flagSpec{
-		longhand:    strings.TrimPrefix(matches["longhand"], "--"),
-		shorthand:   strings.TrimPrefix(matches["shorthand"], "-"),
-		description: description,
-		slice:       strings.Contains(matches["modifier"], "*"),
-		optarg:      strings.Contains(matches["modifier"], "?"),
-		nospace:     strings.Contains(matches["modifier"], "!"),
-	}
-	fs.value = fs.optarg || strings.Contains(matches["modifier"], "=")
-
-	for _, d := range "/:.," {
-		if strings.ContainsRune(matches["modifier"], d) {
-			fs.delimiter = d
-			break
-		}
-	}
-	return fs
-}
-
-func (fs flagSpec) addTo(flagSet *pflag.FlagSet) error {
-	if fs.longhand != "" && fs.shorthand != "" {
-		if fs.value {
-			if fs.slice {
-				flagSet.StringSliceP(fs.longhand, fs.shorthand, []string{}, fs.description)
+	if longhand != "" && shorthand != "" {
+		if value {
+			if slice {
+				flagSet.StringSliceP(longhand, shorthand, []string{}, description)
 			} else {
-				flagSet.StringP(fs.longhand, fs.shorthand, "", fs.description)
+				flagSet.StringP(longhand, shorthand, "", description)
 			}
 		} else {
-			if fs.slice {
-				flagSet.CountP(fs.longhand, fs.shorthand, fs.description)
+			if slice {
+				flagSet.CountP(longhand, shorthand, description)
 			} else {
-				flagSet.BoolP(fs.longhand, fs.shorthand, false, fs.description)
+				flagSet.BoolP(longhand, shorthand, false, description)
 			}
 		}
-	} else if fs.longhand != "" {
-		if fs.value {
-			if fs.slice {
-				flagSet.StringSlice(fs.longhand, []string{}, fs.description)
+	} else if longhand != "" {
+		if value {
+			if slice {
+				flagSet.StringSlice(longhand, []string{}, description)
 			} else {
-				flagSet.String(fs.longhand, "", fs.description)
+				flagSet.String(longhand, "", description)
 			}
 		} else {
-			if fs.slice {
-				flagSet.Count(fs.longhand, fs.description)
+			if slice {
+				flagSet.Count(longhand, description)
 			} else {
-				flagSet.Bool(fs.longhand, false, fs.description)
+				flagSet.Bool(longhand, false, description)
 			}
 		}
-	} else if fs.shorthand != "" {
-		if fs.value {
-			if fs.slice {
-				flagSet.StringSliceS(fs.shorthand, fs.shorthand, []string{}, fs.description)
+	} else if shorthand != "" {
+		if value {
+			if slice {
+				flagSet.StringSliceS(shorthand, shorthand, []string{}, description)
 			} else {
-				flagSet.StringS(fs.shorthand, fs.shorthand, "", fs.description)
+				flagSet.StringS(shorthand, shorthand, "", description)
 			}
 		} else {
-			if fs.slice {
-				flagSet.CountS(fs.shorthand, fs.shorthand, fs.description)
+			if slice {
+				flagSet.CountS(shorthand, shorthand, description)
 			} else {
-				flagSet.BoolS(fs.shorthand, fs.shorthand, false, fs.description)
+				flagSet.BoolS(shorthand, shorthand, false, description)
 			}
 		}
 	} else {
-		return fmt.Errorf("malformed flag") // TODO context info
+		return fmt.Errorf("malformed flag: %v", id)
 	}
 
-	if fs.optarg {
-		if fs.longhand != "" {
-			flagSet.Lookup(fs.longhand).NoOptDefVal = " "
+	if optarg {
+		if longhand != "" {
+			flagSet.Lookup(longhand).NoOptDefVal = " "
 		} else {
-			flagSet.Lookup(fs.shorthand).NoOptDefVal = " "
+			flagSet.Lookup(shorthand).NoOptDefVal = " "
 		}
 	}
 
@@ -205,15 +140,22 @@ func (fs flagSpec) addTo(flagSet *pflag.FlagSet) error {
 
 func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
 	r := regexp.MustCompile(`^\$\((?P<cmd>.*)\)$`)
+	rList := regexp.MustCompile(`^\$_list\((?P<delimiter>.*)\)$`)
+	listDelimiter := ""
+	nospace := false
 
 	batch := carapace.Batch()
 
 	vals := make([]string, 0)
 	for _, elem := range arr {
-		if strings.HasPrefix(elem, "$_files") {
+		if elem == "$_nospace" {
+			nospace = true
+		} else if strings.HasPrefix(elem, "$_files") {
 			return carapace.ActionFiles() // TODO params
 		} else if strings.HasPrefix(elem, "$_directories") {
 			return carapace.ActionDirectories()
+		} else if rList.MatchString(elem) {
+			listDelimiter = rList.FindStringSubmatch(elem)[1]
 		} else if r.MatchString(elem) {
 			elemCopy := elem
 			batch = append(batch, carapace.ActionCallback(func(c carapace.Context) carapace.Action {
@@ -247,6 +189,14 @@ func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
 	}
 	// TODO $(execute) actions
 	batch = append(batch, carapace.ActionStyledValuesDescribed(vals...))
+
+	if listDelimiter != "" {
+		return carapace.ActionMultiParts(listDelimiter, func(c carapace.Context) carapace.Action {
+			return batch.ToA()
+		})
+	} else if nospace {
+		return batch.ToA().NoSpace()
+	}
 	return batch.ToA()
 }
 

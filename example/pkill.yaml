@@ -20,9 +20,9 @@ flags:
   -x, --exact: match exactly with the command name
   -F, --pidfile=: read PIDs from file
   -L, --logpidfile: fail if PID file is not locked
-  -r, --runstates=,: match runstates [D,S,Z,...]
+  -r, --runstates=: match runstates [D,S,Z,...]
   --ns=: match the processes that belong to the same namespace as <pid>
-  --nslist=,: list which namespaces will be considered for the --ns option.
+  --nslist=: list which namespaces will be considered for the --ns option.
   -h, --help: display this help and exit
   -V, --version: output version information and exit
 completion:
@@ -59,8 +59,9 @@ completion:
       - "WINCH\tWindow size change\tblue"
       - "XCPU\tCPU time limit exceeded\tmagenta"
       - "XFSZ\tFile size limit exceeded\tmagenta"
-    nslist: ["ipc", "mnt", "net", "pid", "user", "uts"]
+    nslist: ["$_list(,)", "ipc", "mnt", "net", "pid", "user", "uts"]
     runstates:
+      - "$_list(,)"
       - "D\tuninterruptible sleep (usually IO)"
       - "I\tIdle kernel thread"
       - "R\trunning or runnable (on run queue)"
