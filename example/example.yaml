@@ -9,10 +9,11 @@ commands:
     -s, --styled=: styled values
     -r, --repeatable*: repeatable flag
     -o, --optarg?: optarg flag
+    -l=,: list flag
     --dynamic=: dynamic value
     --env=: env
     --novalue: no value
-    -n: no value
+    -n, --nospace=!: nospace
   completion:
     flag:
       styled:
@@ -26,6 +27,8 @@ commands:
       - "unstyled\tunstyled with description"
       dynamic: ["$(git branch --all | cut -c 3- | sed 's/$/\t\tblue/')", "static value"]
       env: ["$(env)"]
+      list: ["a", "b", "c", "d"]
+      nospace: ["1", "2", "3"]
       optarg: ["first", "second", "third"]
     positional:
     -  ["pos1", "pos2"]
