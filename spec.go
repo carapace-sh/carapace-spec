@@ -154,7 +154,7 @@ func (f flag) addTo(flagSet *pflag.FlagSet) {
 
 func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
 	return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
-		rMacro := regexp.MustCompile(`^(?P<macro>\$[^(]*)(\((?P<arg>.*)\))?$`)
+		rMacro := regexp.MustCompile(`^\$(?P<macro>[^(]*)(\((?P<arg>.*)\))?$`)
 		listDelimiter := ""
 		nospace := false
 
@@ -166,19 +166,26 @@ func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
 				macro := match["macro"]
 				arg := match["arg"]
 
+				if strings.HasPrefix(macro, "_") { // custom macro
+					if f := macros[strings.TrimPrefix(macro, "_")]; f != nil {
+						return f(arg)
+					}
+					return carapace.ActionMessage(fmt.Sprintf("unknown custom macro: '%v'", elem))
+				}
+
 				switch macro {
-				case "$nospace":
+				case "nospace":
 					nospace = true
-				case "$list":
+				case "list":
 					listDelimiter = arg
-				case "$directories":
+				case "directories":
 					return carapace.ActionDirectories()
-				case "$files":
+				case "files":
 					if arg != "" {
 						batch = append(batch, carapace.ActionFiles(strings.Fields(arg)...))
 					}
 					batch = append(batch, carapace.ActionFiles())
-				case "$":
+				case "":
 					batch = append(batch, carapace.ActionCallback(func(c carapace.Context) carapace.Action {
 						for index, arg := range c.Args {
 							c.Setenv(fmt.Sprintf("CARAPACE_ARG%v", index), arg)
