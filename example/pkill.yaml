@@ -59,9 +59,10 @@ completion:
       - "WINCH\tWindow size change\tblue"
       - "XCPU\tCPU time limit exceeded\tmagenta"
       - "XFSZ\tFile size limit exceeded\tmagenta"
-    nslist: ["$_list(,)", "ipc", "mnt", "net", "pid", "user", "uts"]
+    nslist: ["$list(,)", "ipc", "mnt", "net", "pid", "user", "uts"]
+    pidfile: ["$files"]
     runstates:
-      - "$_list(,)"
+      - "$list(,)"
       - "D\tuninterruptible sleep (usually IO)"
       - "I\tIdle kernel thread"
       - "R\trunning or runnable (on run queue)"
@@ -71,4 +72,6 @@ completion:
       - "X\tdead (should never be seen)"
       - "Z\tdefunct (zombie) process terminated but not reaped by its parent"
       - "t\tstopped by debugger during the tracing"
-  positionalany: ["$(ps h -A -o pid,comm | awk '{print $1\"\t\"$2}')"]
+  positionalany: [
+      "$(ps h -A -o pid,comm | awk '{print $1\"\t\"$2}')"
+  ]

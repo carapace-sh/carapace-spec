@@ -35,11 +35,11 @@ func (c *Command) ToCobra() *cobra.Command {
 	carapace.Gen(cmd).Standalone()
 
 	for id, description := range c.PersistentFlags {
-		parseFlag(cmd.PersistentFlags(), id, description)
+		parseFlag(id, description).addTo(cmd.PersistentFlags())
 	}
 
 	for id, description := range c.Flags {
-		parseFlag(cmd.Flags(), id, description)
+		parseFlag(id, description).addTo(cmd.Flags())
 	}
 
 	flagCompletions := make(carapace.ActionMap)
@@ -71,133 +71,156 @@ func (c *Command) ToCobra() *cobra.Command {
 	return cmd
 }
 
-func parseFlag(flagSet *pflag.FlagSet, id, description string) error {
+type flag struct {
+	longhand  string
+	shorthand string
+	usage     string
+	slice     bool
+	optarg    bool
+	value     bool
+}
+
+func parseFlag(s, usage string) (f flag) {
 	r := regexp.MustCompile(`^(?P<shorthand>-[^-])?(, )?(?P<longhand>--[^ =*?]*)?(?P<modifier>[=*?]*)$`)
-	matches := findNamedMatches(r, id)
+	matches := findNamedMatches(r, s)
 
-	longhand := strings.TrimPrefix(matches["longhand"], "--")
-	shorthand := strings.TrimPrefix(matches["shorthand"], "-")
-	slice := strings.Contains(matches["modifier"], "*")
-	optarg := strings.Contains(matches["modifier"], "?")
-	value := optarg || strings.Contains(matches["modifier"], "=")
+	f.longhand = strings.TrimPrefix(matches["longhand"], "--")
+	f.shorthand = strings.TrimPrefix(matches["shorthand"], "-")
+	f.usage = usage
+	f.slice = strings.Contains(matches["modifier"], "*")
+	f.optarg = strings.Contains(matches["modifier"], "?")
+	f.value = f.optarg || strings.Contains(matches["modifier"], "=")
 
-	if longhand != "" && shorthand != "" {
-		if value {
-			if slice {
-				flagSet.StringSliceP(longhand, shorthand, []string{}, description)
+	// TODO enable error check
+	//if f.longhand == "" && f.shorthand == "" {
+	//	err = fmt.Errorf("malformed flag: '%v'", s)
+	//}
+	return
+}
+
+func (f flag) addTo(flagSet *pflag.FlagSet) {
+	if f.longhand != "" && f.shorthand != "" {
+		if f.value {
+			if f.slice {
+				flagSet.StringSliceP(f.longhand, f.shorthand, []string{}, f.usage)
 			} else {
-				flagSet.StringP(longhand, shorthand, "", description)
+				flagSet.StringP(f.longhand, f.shorthand, "", f.usage)
 			}
 		} else {
-			if slice {
-				flagSet.CountP(longhand, shorthand, description)
+			if f.slice {
+				flagSet.CountP(f.longhand, f.shorthand, f.usage)
 			} else {
-				flagSet.BoolP(longhand, shorthand, false, description)
+				flagSet.BoolP(f.longhand, f.shorthand, false, f.usage)
 			}
 		}
-	} else if longhand != "" {
-		if value {
-			if slice {
-				flagSet.StringSlice(longhand, []string{}, description)
+	} else if f.longhand != "" {
+		if f.value {
+			if f.slice {
+				flagSet.StringSlice(f.longhand, []string{}, f.usage)
 			} else {
-				flagSet.String(longhand, "", description)
+				flagSet.String(f.longhand, "", f.usage)
 			}
 		} else {
-			if slice {
-				flagSet.Count(longhand, description)
+			if f.slice {
+				flagSet.Count(f.longhand, f.usage)
 			} else {
-				flagSet.Bool(longhand, false, description)
+				flagSet.Bool(f.longhand, false, f.usage)
 			}
 		}
-	} else if shorthand != "" {
-		if value {
-			if slice {
-				flagSet.StringSliceS(shorthand, shorthand, []string{}, description)
+	} else if f.shorthand != "" {
+		if f.value {
+			if f.slice {
+				flagSet.StringSliceS(f.shorthand, f.shorthand, []string{}, f.usage)
 			} else {
-				flagSet.StringS(shorthand, shorthand, "", description)
+				flagSet.StringS(f.shorthand, f.shorthand, "", f.usage)
 			}
 		} else {
-			if slice {
-				flagSet.CountS(shorthand, shorthand, description)
+			if f.slice {
+				flagSet.CountS(f.shorthand, f.shorthand, f.usage)
 			} else {
-				flagSet.BoolS(shorthand, shorthand, false, description)
+				flagSet.BoolS(f.shorthand, f.shorthand, false, f.usage)
 			}
 		}
-	} else {
-		return fmt.Errorf("malformed flag: %v", id)
 	}
 
-	if optarg {
-		if longhand != "" {
-			flagSet.Lookup(longhand).NoOptDefVal = " "
+	if f.optarg {
+		if f.longhand != "" {
+			flagSet.Lookup(f.longhand).NoOptDefVal = " "
 		} else {
-			flagSet.Lookup(shorthand).NoOptDefVal = " "
+			flagSet.Lookup(f.shorthand).NoOptDefVal = " "
 		}
 	}
-
-	return nil
 }
 
 func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
-	r := regexp.MustCompile(`^\$\((?P<cmd>.*)\)$`)
-	rList := regexp.MustCompile(`^\$_list\((?P<delimiter>.*)\)$`)
-	listDelimiter := ""
-	nospace := false
+	return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
+		rMacro := regexp.MustCompile(`^(?P<macro>\$[^(]*)(\((?P<arg>.*)\))?$`)
+		listDelimiter := ""
+		nospace := false
 
-	batch := carapace.Batch()
+		batch := carapace.Batch()
+		vals := make([]string, 0)
+		for _, elem := range arr {
+			if strings.HasPrefix(elem, "$") { // macro
+				match := findNamedMatches(rMacro, elem) // TODO check if matches
+				macro := match["macro"]
+				arg := match["arg"]
 
-	vals := make([]string, 0)
-	for _, elem := range arr {
-		if elem == "$_nospace" {
-			nospace = true
-		} else if strings.HasPrefix(elem, "$_files") {
-			return carapace.ActionFiles() // TODO params
-		} else if strings.HasPrefix(elem, "$_directories") {
-			return carapace.ActionDirectories()
-		} else if rList.MatchString(elem) {
-			listDelimiter = rList.FindStringSubmatch(elem)[1]
-		} else if r.MatchString(elem) {
-			elemCopy := elem
-			batch = append(batch, carapace.ActionCallback(func(c carapace.Context) carapace.Action {
-				for index, arg := range c.Args {
-					c.Setenv(fmt.Sprintf("CARAPACE_ARG%v", index), arg)
-				}
-				for index, arg := range c.Parts {
-					c.Setenv(fmt.Sprintf("CARAPACE_PART%v", index), arg)
-				}
-				c.Setenv("CARAPACE_CALLBACK", c.CallbackValue)
-
-				cmd.Flags().Visit(func(f *pflag.Flag) {
-					c.Setenv(fmt.Sprintf("CARAPACE_FLAG_%v", strings.ToUpper(f.Name)), f.Value.String())
-				})
-
-				return carapace.ActionExecCommand("sh", "-c", r.FindStringSubmatch(elemCopy)[1])(func(output []byte) carapace.Action {
-					// TODO parse like below
-					lines := strings.Split(string(output), "\n")
-					vals := make([]string, 0)
-					for _, line := range lines {
-						if line != "" {
-							vals = append(vals, parseValue(line)...)
-						}
+				switch macro {
+				case "$nospace":
+					nospace = true
+				case "$list":
+					listDelimiter = arg
+				case "$directories":
+					return carapace.ActionDirectories()
+				case "$files":
+					if arg != "" {
+						batch = append(batch, carapace.ActionFiles(strings.Fields(arg)...))
 					}
-					return carapace.ActionStyledValuesDescribed(vals...)
-				}).Invoke(c).ToA()
-			}))
-		} else {
-			vals = append(vals, parseValue(elem)...)
-		}
-	}
-	// TODO $(execute) actions
-	batch = append(batch, carapace.ActionStyledValuesDescribed(vals...))
+					batch = append(batch, carapace.ActionFiles())
+				case "$":
+					batch = append(batch, carapace.ActionCallback(func(c carapace.Context) carapace.Action {
+						for index, arg := range c.Args {
+							c.Setenv(fmt.Sprintf("CARAPACE_ARG%v", index), arg)
+						}
+						for index, arg := range c.Parts {
+							c.Setenv(fmt.Sprintf("CARAPACE_PART%v", index), arg)
+						}
+						c.Setenv("CARAPACE_CALLBACK", c.CallbackValue)
 
-	if listDelimiter != "" {
-		return carapace.ActionMultiParts(listDelimiter, func(c carapace.Context) carapace.Action {
-			return batch.ToA()
-		})
-	} else if nospace {
-		return batch.ToA().NoSpace()
-	}
-	return batch.ToA()
+						cmd.Flags().Visit(func(f *pflag.Flag) {
+							c.Setenv(fmt.Sprintf("CARAPACE_FLAG_%v", strings.ToUpper(f.Name)), f.Value.String())
+						})
+
+						return carapace.ActionExecCommand("sh", "-c", arg)(func(output []byte) carapace.Action {
+							lines := strings.Split(string(output), "\n")
+							vals := make([]string, 0)
+							for _, line := range lines {
+								if line != "" {
+									vals = append(vals, parseValue(line)...)
+								}
+							}
+							return carapace.ActionStyledValuesDescribed(vals...)
+						}).Invoke(c).ToA()
+					}))
+				default:
+					batch = append(batch, carapace.ActionMessage(fmt.Sprintf("malformed macro: '%v'", elem)))
+				}
+			} else {
+				vals = append(vals, parseValue(elem)...)
+			}
+		}
+		batch = append(batch, carapace.ActionStyledValuesDescribed(vals...))
+
+		if listDelimiter != "" {
+			return carapace.ActionMultiParts(listDelimiter, func(c carapace.Context) carapace.Action {
+				return batch.ToA().Invoke(c).Filter(c.Parts).ToA()
+			})
+		} else if nospace {
+			return batch.ToA().NoSpace()
+		}
+		return batch.ToA()
+	})
 }
 
 func parseValue(s string) []string {
