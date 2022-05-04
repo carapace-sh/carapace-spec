@@ -34,7 +34,7 @@ commands:
       nospace: ["$nospace", "1", "2", "3"]
       optarg: ["first", "second", "third"]
     positional:
-    - ["pos1", "pos2"]
+    - ["pos1A", "pos1B"]
     - ["$files"]
     - ["$directories"]
     - ["$(echo \"pos: $CARAPACE_ARG0 flag: $CARAPACE_FLAG_STYLED\")"]
