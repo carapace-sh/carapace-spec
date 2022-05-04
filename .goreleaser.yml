@@ -30,3 +30,14 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
+
+nfpms:
+  -
+    description: "define simple carapace completions using a spec file"
+    homepage: "https://github.com/rsteube/carapace-spec"
+    license: "MIT"
+    maintainer: rsteube <rsteube@users.noreply.github.com>
+    formats:
+      - apk
+      - deb
+      - rpm
