@@ -1,6 +1,6 @@
 module github.com/rsteube/carapace-spec
 
-go 1.17
+go 1.18
 
 replace github.com/spf13/pflag => github.com/cornfeedhobo/pflag v1.1.0
 
