@@ -73,66 +73,52 @@ func (c *Command) ToCobra() *cobra.Command {
 
 func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
 	return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
-		rMacro := regexp.MustCompile(`^\$(?P<macro>[^(]*)(\((?P<arg>.*)\))?$`)
 		listDelimiter := ""
 		nospace := false
+
+		// TODO don't alter the map each time, solve this differently
+		addCoreMacro("list", func(s string) carapace.Action {
+			listDelimiter = s
+			return carapace.ActionValues()
+		})
+		addCoreMacro("nospace", func(s string) carapace.Action {
+			nospace = true
+			return carapace.ActionValues()
+		})
+		addCoreMacro("files", MacroVarI(carapace.ActionFiles))
+		addCoreMacro("directories", MacroN(carapace.ActionDirectories))
+		addCoreMacro("", func(s string) carapace.Action {
+			return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
+				for index, arg := range c.Args {
+					c.Setenv(fmt.Sprintf("CARAPACE_ARG%v", index), arg)
+				}
+				for index, arg := range c.Parts {
+					c.Setenv(fmt.Sprintf("CARAPACE_PART%v", index), arg)
+				}
+				c.Setenv("CARAPACE_CALLBACK", c.CallbackValue)
+
+				cmd.Flags().Visit(func(f *pflag.Flag) {
+					c.Setenv(fmt.Sprintf("CARAPACE_FLAG_%v", strings.ToUpper(f.Name)), f.Value.String())
+				})
+
+				return carapace.ActionExecCommand("sh", "-c", s)(func(output []byte) carapace.Action {
+					lines := strings.Split(string(output), "\n")
+					vals := make([]string, 0)
+					for _, line := range lines {
+						if line != "" {
+							vals = append(vals, parseValue(line)...)
+						}
+					}
+					return carapace.ActionStyledValuesDescribed(vals...)
+				}).Invoke(c).ToA()
+			})
+		})
 
 		batch := carapace.Batch()
 		vals := make([]string, 0)
 		for _, elem := range arr {
 			if strings.HasPrefix(elem, "$") { // macro
-				match := findNamedMatches(rMacro, elem) // TODO check if matches
-				macro := match["macro"]
-				arg := match["arg"]
-
-				if strings.HasPrefix(macro, "_") { // custom macro
-					if f := macros[strings.TrimPrefix(macro, "_")]; f != nil {
-						batch = append(batch, carapace.ActionCallback(func(c carapace.Context) carapace.Action { return f(arg) }))
-						continue
-					}
-					return carapace.ActionMessage(fmt.Sprintf("unknown custom macro: '%v'", elem))
-				}
-
-				switch macro {
-				case "nospace":
-					nospace = true
-				case "list":
-					listDelimiter = arg
-				case "directories":
-					return carapace.ActionDirectories()
-				case "files":
-					if arg != "" {
-						batch = append(batch, carapace.ActionFiles(strings.Fields(arg)...))
-					}
-					batch = append(batch, carapace.ActionFiles())
-				case "":
-					batch = append(batch, carapace.ActionCallback(func(c carapace.Context) carapace.Action {
-						for index, arg := range c.Args {
-							c.Setenv(fmt.Sprintf("CARAPACE_ARG%v", index), arg)
-						}
-						for index, arg := range c.Parts {
-							c.Setenv(fmt.Sprintf("CARAPACE_PART%v", index), arg)
-						}
-						c.Setenv("CARAPACE_CALLBACK", c.CallbackValue)
-
-						cmd.Flags().Visit(func(f *pflag.Flag) {
-							c.Setenv(fmt.Sprintf("CARAPACE_FLAG_%v", strings.ToUpper(f.Name)), f.Value.String())
-						})
-
-						return carapace.ActionExecCommand("sh", "-c", arg)(func(output []byte) carapace.Action {
-							lines := strings.Split(string(output), "\n")
-							vals := make([]string, 0)
-							for _, line := range lines {
-								if line != "" {
-									vals = append(vals, parseValue(line)...)
-								}
-							}
-							return carapace.ActionStyledValuesDescribed(vals...)
-						}).Invoke(c).ToA()
-					}))
-				default:
-					batch = append(batch, carapace.ActionMessage(fmt.Sprintf("malformed macro: '%v'", elem)))
-				}
+				batch = append(batch, parseMacro(elem))
 			} else {
 				vals = append(vals, parseValue(elem)...)
 			}

@@ -22,7 +22,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
-        go-version: 1.17
+        go-version: 1.18
 
     - name: Build
       run: go build -v ./...
@@ -34,7 +34,7 @@ jobs:
       run: '[ "$(gofmt -d -s . | tee -a /dev/stderr)" = "" ]'
 
     - name: "staticcheck"
-      run: go install honnef.co/go/tools/cmd/staticcheck@2021.1.1 && staticcheck ./...
+      run: go install honnef.co/go/tools/cmd/staticcheck@latest && staticcheck ./...
 
     - name: Run GoReleaser
       uses: goreleaser/goreleaser-action@v2
