@@ -97,6 +97,7 @@ func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
 		}))
 		addCoreMacro("files", MacroVarI(carapace.ActionFiles))
 		addCoreMacro("directories", MacroN(carapace.ActionDirectories))
+		addCoreMacro("message", MacroI(carapace.ActionMessage))
 		addCoreMacro("", MacroI(func(s string) carapace.Action {
 			return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
 				return carapace.ActionExecCommand("sh", "-c", s)(func(output []byte) carapace.Action {
