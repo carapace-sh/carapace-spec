@@ -73,34 +73,32 @@ func (c *Command) ToCobra() *cobra.Command {
 
 func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
 	return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
+		// TODO yuck - where to set thes best?
+		for index, arg := range c.Args {
+			c.Setenv(fmt.Sprintf("C_ARG%v", index), arg)
+		}
+		c.Setenv("C_CALLBACK", c.CallbackValue)
+
+		cmd.Flags().Visit(func(f *pflag.Flag) {
+			c.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), f.Value.String())
+		})
+
 		listDelimiter := ""
 		nospace := false
 
 		// TODO don't alter the map each time, solve this differently
-		addCoreMacro("list", func(s string) carapace.Action {
+		addCoreMacro("list", MacroI(func(s string) carapace.Action {
 			listDelimiter = s
 			return carapace.ActionValues()
-		})
-		addCoreMacro("nospace", func(s string) carapace.Action {
+		}))
+		addCoreMacro("nospace", MacroI(func(s string) carapace.Action {
 			nospace = true
 			return carapace.ActionValues()
-		})
+		}))
 		addCoreMacro("files", MacroVarI(carapace.ActionFiles))
 		addCoreMacro("directories", MacroN(carapace.ActionDirectories))
-		addCoreMacro("", func(s string) carapace.Action {
+		addCoreMacro("", MacroI(func(s string) carapace.Action {
 			return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
-				for index, arg := range c.Args {
-					c.Setenv(fmt.Sprintf("CARAPACE_ARG%v", index), arg)
-				}
-				for index, arg := range c.Parts {
-					c.Setenv(fmt.Sprintf("CARAPACE_PART%v", index), arg)
-				}
-				c.Setenv("CARAPACE_CALLBACK", c.CallbackValue)
-
-				cmd.Flags().Visit(func(f *pflag.Flag) {
-					c.Setenv(fmt.Sprintf("CARAPACE_FLAG_%v", strings.ToUpper(f.Name)), f.Value.String())
-				})
-
 				return carapace.ActionExecCommand("sh", "-c", s)(func(output []byte) carapace.Action {
 					lines := strings.Split(string(output), "\n")
 					vals := make([]string, 0)
@@ -112,11 +110,26 @@ func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
 					return carapace.ActionStyledValuesDescribed(vals...)
 				}).Invoke(c).ToA()
 			})
-		})
+		}))
+
+		rEnv := regexp.MustCompile(`\${(?P<name>[^}]+)}`)
 
 		batch := carapace.Batch()
 		vals := make([]string, 0)
 		for _, elem := range arr {
+			// TODO yuck
+			if matches := rEnv.FindAllStringSubmatch(elem, -1); matches != nil {
+				for _, submatches := range matches {
+					name := submatches[1]
+					for _, env := range c.Env { // TODO add Context.Getenv
+						splitted := strings.SplitN(env, "=", 2)
+						if splitted[0] == name { // TODO must be the last matching (solved with Getenv)
+							elem = strings.Replace(elem, submatches[0], splitted[1], 1)
+						}
+					}
+				}
+			}
+
 			if strings.HasPrefix(elem, "$") { // macro
 				batch = append(batch, parseMacro(elem))
 			} else {
@@ -127,6 +140,11 @@ func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
 
 		if listDelimiter != "" {
 			return carapace.ActionMultiParts(listDelimiter, func(c carapace.Context) carapace.Action {
+				for index, arg := range c.Parts {
+					c.Setenv(fmt.Sprintf("C_PART%v", index), arg)
+				}
+				c.Setenv("C_CALLBACK", c.CallbackValue)
+
 				return batch.ToA().Invoke(c).Filter(c.Parts).ToA()
 			})
 		} else if nospace {
