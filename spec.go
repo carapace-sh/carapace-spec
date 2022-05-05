@@ -151,7 +151,7 @@ func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
 		} else if nospace {
 			return batch.ToA().NoSpace()
 		}
-		return batch.ToA()
+		return batch.ToA().Invoke(c).ToA()
 	})
 }
 

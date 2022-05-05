@@ -37,7 +37,7 @@ commands:
     - ["pos1A", "pos1B"]
     - ["$files"]
     - ["$directories"]
-    - ["$(echo \"pos: $CARAPACE_ARG0 flag: $CARAPACE_FLAG_STYLED\")"]
+    - ["$(echo \"pos: $C_ARG0 flag: $C_FLAG_STYLED\")"]
     positionalany: ["posAny1", "posAny2"]
     dash:
     - ["dash1", "dash2"]

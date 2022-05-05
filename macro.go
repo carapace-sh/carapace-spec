@@ -52,8 +52,12 @@ func MacroI[T any](f func(t T) carapace.Action) Macro {
 	return Macro{
 		Func: func(s string) carapace.Action {
 			var t T
-			if err := yaml.Unmarshal([]byte(s), &t); err != nil {
-				return carapace.ActionMessage(err.Error())
+			if reflect.TypeOf(t).Kind() == reflect.String {
+				reflect.ValueOf(&t).Elem().SetString(s)
+			} else {
+				if err := yaml.Unmarshal([]byte(s), &t); err != nil {
+					return carapace.ActionMessage(err.Error())
+				}
 			}
 			return f(t)
 		},
