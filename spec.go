@@ -168,7 +168,8 @@ func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
 
 				if strings.HasPrefix(macro, "_") { // custom macro
 					if f := macros[strings.TrimPrefix(macro, "_")]; f != nil {
-						return f(arg)
+						batch = append(batch, carapace.ActionCallback(func(c carapace.Context) carapace.Action { return f(arg) }))
+						continue
 					}
 					return carapace.ActionMessage(fmt.Sprintf("unknown custom macro: '%v'", elem))
 				}
