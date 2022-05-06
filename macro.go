@@ -65,7 +65,7 @@ func MacroI[T any](f func(t T) carapace.Action) Macro {
 	}
 }
 
-func MacroVarI[T any](f func(s ...T) carapace.Action) Macro {
+func MacroV[T any](f func(s ...T) carapace.Action) Macro {
 	return Macro{
 		Func: func(s string) carapace.Action {
 			if s == "" {

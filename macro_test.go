@@ -27,12 +27,12 @@ func TestSignature(t *testing.T) {
 		t.Errorf("should be: %v", expected)
 	}
 
-	signature = MacroVarI(func(a ...Arg) carapace.Action { return carapace.ActionValues() }).Signature()
+	signature = MacroV(func(a ...Arg) carapace.Action { return carapace.ActionValues() }).Signature()
 	if expected := `[{name: "", option: false}]`; signature != expected {
 		t.Errorf("should be: %v", expected)
 	}
 
-	signature = MacroVarI(func(b ...bool) carapace.Action { return carapace.ActionValues() }).Signature()
+	signature = MacroV(func(b ...bool) carapace.Action { return carapace.ActionValues() }).Signature()
 	if expected := `[false]`; signature != expected {
 		t.Errorf("should be: %v", expected)
 	}
