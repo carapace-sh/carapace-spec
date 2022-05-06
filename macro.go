@@ -61,26 +61,7 @@ func MacroI[T any](f func(t T) carapace.Action) Macro {
 			}
 			return f(t)
 		},
-		Signature: func() string {
-			var t interface{} = new(T)
-			//if elem := reflect.TypeOf(t).Elem(); elem.Kind() == reflect.Slice {
-			// TODO slice member
-			//println(reflect.TypeOf(elem.Elem()).Kind().String())
-			//t = reflect.New(reflect.TypeOf(elem.Elem()))
-			//}
-
-			out, err := yaml.Marshal(t)
-			if err != nil {
-				return err.Error()
-			}
-			lines := strings.Split(string(out), "\n")
-
-			if reflect.ValueOf(t).Elem().Kind() == reflect.Struct {
-				return fmt.Sprintf("{%v}", strings.Join(lines[:len(lines)-1], ", "))
-			} else {
-				return fmt.Sprintf("%v", strings.Join(lines[:len(lines)-1], ", "))
-			}
-		},
+		Signature: func() string { return signature(new(T)) },
 	}
 }
 
@@ -97,6 +78,29 @@ func MacroVarI[T any](f func(s ...T) carapace.Action) Macro {
 			}
 			return f(t...)
 		},
-		Signature: func() string { return "TODO" },
+		Signature: func() string { return fmt.Sprintf("[%v]", signature(new(T))) },
+	}
+}
+
+func signature(i interface{}) string {
+	elem := reflect.ValueOf(i).Elem()
+	switch elem.Kind() {
+	case reflect.Struct:
+		out, err := yaml.Marshal(i)
+		if err != nil {
+			return err.Error()
+		}
+		lines := strings.Split(string(out), "\n")
+		return fmt.Sprintf("{%v}", strings.Join(lines[:len(lines)-1], ", "))
+
+	case reflect.Slice:
+		ptr := reflect.New(elem.Type().Elem()).Interface()
+		return fmt.Sprintf("[%v]", signature(ptr))
+
+	case reflect.String:
+		return `""`
+
+	default:
+		return fmt.Sprintf("%v", reflect.ValueOf(i).Elem())
 	}
 }
