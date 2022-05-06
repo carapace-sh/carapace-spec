@@ -12,13 +12,33 @@ type Arg struct {
 }
 
 func TestSignature(t *testing.T) {
-	// TODO verify
 	signature := MacroI(func(a Arg) carapace.Action { return carapace.ActionValues() }).Signature()
-	println(signature)
+	if expected := `{name: "", option: false}`; signature != expected {
+		t.Errorf("should be: %v", expected)
+	}
 
 	signature = MacroI(func(a []Arg) carapace.Action { return carapace.ActionValues() }).Signature()
-	println(signature)
+	if expected := `[{name: "", option: false}]`; signature != expected {
+		t.Errorf("should be: %v", expected)
+	}
 
 	signature = MacroI(func(b bool) carapace.Action { return carapace.ActionValues() }).Signature()
-	println(signature)
+	if expected := `false`; signature != expected {
+		t.Errorf("should be: %v", expected)
+	}
+
+	signature = MacroVarI(func(a ...Arg) carapace.Action { return carapace.ActionValues() }).Signature()
+	if expected := `[{name: "", option: false}]`; signature != expected {
+		t.Errorf("should be: %v", expected)
+	}
+
+	signature = MacroVarI(func(b ...bool) carapace.Action { return carapace.ActionValues() }).Signature()
+	if expected := `[false]`; signature != expected {
+		t.Errorf("should be: %v", expected)
+	}
+
+	signature = MacroI(func(s string) carapace.Action { return carapace.ActionValues() }).Signature()
+	if expected := `""`; signature != expected {
+		t.Errorf("should be: %v", expected)
+	}
 }
