@@ -113,28 +113,15 @@ func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
 			})
 		}))
 
-		rEnv := regexp.MustCompile(`\${(?P<name>[^}]+)}`)
-
 		batch := carapace.Batch()
 		vals := make([]string, 0)
 		for _, elem := range arr {
-			// TODO yuck
-			if matches := rEnv.FindAllStringSubmatch(elem, -1); matches != nil {
-				for _, submatches := range matches {
-					name := submatches[1]
-					for _, env := range c.Env { // TODO add Context.Getenv
-						splitted := strings.SplitN(env, "=", 2)
-						if splitted[0] == name { // TODO must be the last matching (solved with Getenv)
-							elem = strings.Replace(elem, submatches[0], splitted[1], 1)
-						}
-					}
-				}
-			}
-
-			if strings.HasPrefix(elem, "$") { // macro
-				batch = append(batch, parseMacro(elem))
+			if elemSubst, err := c.Envsubst(elem); err != nil {
+				batch = append(batch, carapace.ActionMessage(fmt.Sprintf("%v: %v", err.Error(), elem)))
+			} else if strings.HasPrefix(elemSubst, "$") { // macro
+				batch = append(batch, parseMacro(elemSubst))
 			} else {
-				vals = append(vals, parseValue(elem)...)
+				vals = append(vals, parseValue(elemSubst)...)
 			}
 		}
 		batch = append(batch, carapace.ActionStyledValuesDescribed(vals...))
