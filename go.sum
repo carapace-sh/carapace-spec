@@ -3,8 +3,8 @@ github.com/cornfeedhobo/pflag v1.1.0/go.mod h1:ROo/cqBpAh84jplPcXiI5HTjyLmtp04Wa
 github.com/cpuguy83/go-md2man/v2 v2.0.1/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
 github.com/inconshreveable/mousetrap v1.0.0 h1:Z8tu5sraLXCXIcARxBp/8cbvlwVa7Z1NHg9XEKhtSvM=
 github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANytuPF1OarO4DADm73n8=
-github.com/rsteube/carapace v0.20.1 h1:ZnPtEZQGi4vSoco7yLexTvmx9X82jUaOcDScpl3v14M=
-github.com/rsteube/carapace v0.20.1/go.mod h1:GgiwpPVhucHNOv0AmtIkxhiEFkCMP5BBRauyQLP0mFY=
+github.com/rsteube/carapace v0.20.2 h1:i6QSQZ5vZKmXcwupsYch8XdJ/GBbZU+H8XtfXEs8Z4E=
+github.com/rsteube/carapace v0.20.2/go.mod h1:GgiwpPVhucHNOv0AmtIkxhiEFkCMP5BBRauyQLP0mFY=
 github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
 github.com/spf13/cobra v1.4.0 h1:y+wJpx64xcgO1V+RcnwW0LEHxTKRi2ZDPSBjWnrg88Q=
 github.com/spf13/cobra v1.4.0/go.mod h1:Wo4iy3BUC+X2Fybo0PDqwJIv3dNRiZLHQymsfxlB84g=
