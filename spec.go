@@ -95,7 +95,7 @@ func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
 			nospace = true
 			return carapace.ActionValues()
 		}))
-		addCoreMacro("files", MacroVarI(carapace.ActionFiles))
+		addCoreMacro("files", MacroV(carapace.ActionFiles))
 		addCoreMacro("directories", MacroN(carapace.ActionDirectories))
 		addCoreMacro("message", MacroI(carapace.ActionMessage))
 		addCoreMacro("", MacroI(func(s string) carapace.Action {
