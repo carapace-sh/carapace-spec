@@ -25,7 +25,8 @@ func AddMacro(s string, m Macro) {
 	macros["_"+s] = m
 }
 
-func parseMacro(s string) carapace.Action {
+// ActionMacro completes given macro
+func ActionMacro(s string) carapace.Action {
 	r := regexp.MustCompile(`^\$(?P<macro>[^(]*)(\((?P<arg>.*)\))?$`)
 	if !r.MatchString(s) {
 		return carapace.ActionMessage(fmt.Sprintf("malformed macro: '%v'", s))
