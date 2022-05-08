@@ -20,7 +20,7 @@ persistentflags:
   --help: bool flag
 completion:
   flag:
-    optarg: ["one", "two", "three"]
+    optarg: ["one", "two\nwith description", "three\twith style\tblue"]
     v: ["$files"]
 commands:
 - name: sub
