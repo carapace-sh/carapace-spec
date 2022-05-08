@@ -13,9 +13,13 @@ commands:
     --dynamic=: dynamic value
     --env=: env
     --novalue: no value
+    --chdir=: chdir modifier
+    --multiparts=: multiparts modifier
     -n, --nospace=: nospace
   completion:
     flag:
+      chdir: ["$chdir(/tmp)", "$files"]
+      multiparts: ["$multiparts(/)", "one/a/1", "one/a/2", "one/b/1", "one/b/2", "two/a/1"]
       styled:
       - "blue\tblue\tblue"
       - "cyan\tcyan\tcyan"
