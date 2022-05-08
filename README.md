@@ -8,3 +8,25 @@
 Define simple [carapace](https://github.com/rsteube/carapace) completions using a spec file.
 
 The `carapace-spec` binary can be used to complete spec files, but [carapace-bin](https://github.com/rsteube/carapace-bin) is recommended as it supports a range of [custom macros](https://rsteube.github.io/carapace-bin/specs/macros.html).
+
+```yaml
+name: mycmd
+description: my command
+flags:
+  --optarg?: optarg flag
+  -r, --repeatable*: repeatable flag
+  -v=: flag with value
+persistentflags:
+  --help: bool flag
+completion:
+  flag:
+    optarg: ["one", "two", "three"]
+    v: ["$files"]
+commands:
+- name: sub
+  description: subcommand
+  completion:
+    positional:
+      - ["$list(,)", "1", "2", "3"]
+      - ["$directories"]
+```
