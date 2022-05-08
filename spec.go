@@ -85,6 +85,8 @@ func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
 
 		listDelimiter := ""
 		nospace := false
+		chdir := ""
+		multiparts := ""
 
 		// TODO don't alter the map each time, solve this differently
 		addCoreMacro("list", MacroI(func(s string) carapace.Action {
@@ -95,6 +97,15 @@ func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
 			nospace = true
 			return carapace.ActionValues()
 		}))
+		addCoreMacro("chdir", MacroI(func(s string) carapace.Action {
+			chdir = s
+			return carapace.ActionValues()
+		}))
+		addCoreMacro("multiparts", MacroI(func(s string) carapace.Action {
+			multiparts = s
+			return carapace.ActionValues()
+		}))
+
 		addCoreMacro("files", MacroV(carapace.ActionFiles))
 		addCoreMacro("directories", MacroN(carapace.ActionDirectories))
 		addCoreMacro("message", MacroI(carapace.ActionMessage))
@@ -126,6 +137,17 @@ func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
 		}
 		batch = append(batch, carapace.ActionStyledValuesDescribed(vals...))
 
+		action := batch.ToA()
+		if chdir != "" {
+			action = action.Chdir(chdir)
+		}
+		if multiparts != "" {
+			actionCopy := action
+			action = carapace.ActionCallback(func(c carapace.Context) carapace.Action {
+				return actionCopy.Invoke(c).ToMultiPartsA(multiparts)
+			})
+		}
+
 		if listDelimiter != "" {
 			return carapace.ActionMultiParts(listDelimiter, func(c carapace.Context) carapace.Action {
 				for index, arg := range c.Parts {
@@ -133,12 +155,12 @@ func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
 				}
 				c.Setenv("C_CALLBACK", c.CallbackValue)
 
-				return batch.ToA().Invoke(c).Filter(c.Parts).ToA()
+				return action.Invoke(c).Filter(c.Parts).ToA()
 			})
 		} else if nospace {
-			return batch.ToA().NoSpace()
+			return action.NoSpace()
 		}
-		return batch.ToA().Invoke(c).ToA()
+		return action.Invoke(c).ToA()
 	})
 }
 
