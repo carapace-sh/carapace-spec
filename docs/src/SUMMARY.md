@@ -5,3 +5,5 @@
     - [Flags](./carapace-spec/command/flags.md)
     - [Completion](./carapace-spec/command/completion.md)
   - [Macros](./carapace-spec/macros.md)
+    - [Core](./carapace-spec/macros/core.md)
+    - [Modifier](./carapace-spec/macros/modifier.md)
