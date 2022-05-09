@@ -23,6 +23,11 @@ var rootCmd = &cobra.Command{
 		DisableDefaultCmd: true,
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) > 0 && args[0] == "-h" || args[0] == "--help" {
+			cmd.Help()
+			return nil
+		}
+
 		abs, err := filepath.Abs(args[0])
 		if err != nil {
 			return err
