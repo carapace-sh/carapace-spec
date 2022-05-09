@@ -11,9 +11,11 @@ import (
 )
 
 type Macro struct {
-	Func      func(string) carapace.Action
-	Signature func() string
+	f func(string) carapace.Action
+	s func() string
 }
+
+func (m Macro) Signature() string { return m.s() }
 
 var macros = make(map[string]Macro)
 
@@ -36,22 +38,22 @@ func ActionMacro(s string) carapace.Action {
 	if m, ok := macros[matches["macro"]]; !ok {
 		return carapace.ActionMessage(fmt.Sprintf("unknown macro: '%v'", s))
 	} else {
-		return m.Func(matches["arg"])
+		return m.f(matches["arg"])
 	}
 }
 
 func MacroN(f func() carapace.Action) Macro {
 	return Macro{
-		Func: func(s string) carapace.Action {
+		f: func(s string) carapace.Action {
 			return f()
 		},
-		Signature: func() string { return "" },
+		s: func() string { return "" },
 	}
 }
 
 func MacroI[T any](f func(t T) carapace.Action) Macro {
 	return Macro{
-		Func: func(s string) carapace.Action {
+		f: func(s string) carapace.Action {
 			var t T
 			if reflect.TypeOf(t).Kind() == reflect.String {
 				reflect.ValueOf(&t).Elem().SetString(s)
@@ -62,13 +64,13 @@ func MacroI[T any](f func(t T) carapace.Action) Macro {
 			}
 			return f(t)
 		},
-		Signature: func() string { return signature(new(T)) },
+		s: func() string { return signature(new(T)) },
 	}
 }
 
 func MacroV[T any](f func(s ...T) carapace.Action) Macro {
 	return Macro{
-		Func: func(s string) carapace.Action {
+		f: func(s string) carapace.Action {
 			if s == "" {
 				return f()
 			}
@@ -79,7 +81,7 @@ func MacroV[T any](f func(s ...T) carapace.Action) Macro {
 			}
 			return f(t...)
 		},
-		Signature: func() string { return fmt.Sprintf("[%v]", signature(new(T))) },
+		s: func() string { return fmt.Sprintf("[%v]", signature(new(T))) },
 	}
 }
 
