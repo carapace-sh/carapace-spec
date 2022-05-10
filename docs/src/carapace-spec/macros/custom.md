@@ -1,6 +1,6 @@
 # Custom
 
-Custom macros can be added with [`spec.AddMacro`](https://pkg.go.dev/github.com/rsteube/carapace-spec#AddMacro) (names are prefixed with `$_`).
+Custom macros can be added with [`AddMacro`](https://pkg.go.dev/github.com/rsteube/carapace-spec#AddMacro) (names are prefixed with `$_`).
 
 ```go
 // `$_noarg` without argument
@@ -14,3 +14,22 @@ AddMacro("vararg", MacroV(func(s ...string) carapace.Action { return carapace.Ac
 ```
 
 Arguments are parsed as `yaml` so only struct keys deviating from the default need to be set.
+
+## Default (experimental)
+
+A `Default()` function can be added to a struct passed to [`MacroI`](https://pkg.go.dev/github.com/rsteube/carapace-spec#MacroI).
+
+It will be called when the macro is used without argumeng (`$_arg` instead of `$_arg({user: example})`).
+
+```go
+type User struct {
+	Name   string
+	Include bool
+}
+
+func (u User) Default() User {
+    u.Name = "example"
+	u.Include = true
+	return u
+}
+```
