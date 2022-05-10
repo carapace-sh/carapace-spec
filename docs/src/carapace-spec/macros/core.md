@@ -19,7 +19,7 @@ Core macros provided by [carapace-spec](https://github.com/rsteube/carapace-spec
 
 ## files
 
-`$files([<extensions>])` completes files with an optional list of suffixes to filter on.
+`$files([<suffixes>])` completes files with an optional list of suffixes to filter on.
 
 ```yaml
 ["$files([.go, go.mod, go.sum])"]

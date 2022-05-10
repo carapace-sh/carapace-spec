@@ -8,4 +8,5 @@
   - [Macros](./carapace-spec/macros.md)
     - [Core](./carapace-spec/macros/core.md)
     - [Modifier](./carapace-spec/macros/modifier.md)
+    - [Custom](./carapace-spec/macros/custom.md)
   - [Variables](./carapace-spec/variables.md)
