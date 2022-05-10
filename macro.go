@@ -61,6 +61,16 @@ func MacroI[T any](f func(t T) carapace.Action) Macro {
 				if err := yaml.Unmarshal([]byte(s), &t); err != nil {
 					return carapace.ActionMessage(err.Error())
 				}
+
+				if s == "" {
+					if m := reflect.ValueOf(&t).MethodByName("Default"); m.IsValid() && m.Type().NumIn() == 0 {
+						values := m.Call([]reflect.Value{}) // TODO check if needs args
+						if len(values) > 0 && values[0].Type().AssignableTo(reflect.TypeOf(t)) {
+							reflect.ValueOf(&t).Elem().Set(values[0])
+						}
+					}
+
+				}
 			}
 			return f(t)
 		},
