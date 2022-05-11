@@ -32,3 +32,11 @@ Core macros provided by [carapace-spec](https://github.com/rsteube/carapace-spec
 ```yaml
 ["$message(some error)"]
 ```
+
+## spec (experimental)
+
+`$spec(<file>)` completes given spec.
+
+```yaml
+["$spec(example.yaml)"]
+```
