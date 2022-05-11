@@ -33,9 +33,10 @@ Core macros provided by [carapace-spec](https://github.com/rsteube/carapace-spec
 ["$message(some error)"]
 ```
 
-## spec (experimental)
+## spec
 
-`$spec(<file>)` completes given spec.
+`$spec(<file>)` completes arguments using the given spec file.
+This implicitly [disables flag parsing](https://pkg.go.dev/github.com/spf13/cobra#Command) for the corresponding (sub)command.
 
 ```yaml
 ["$spec(example.yaml)"]
