@@ -11,11 +11,13 @@ import (
 )
 
 type Macro struct {
-	f func(string) carapace.Action
-	s func() string
+	f                  func(string) carapace.Action
+	s                  func() string
+	disableFlagParsing bool
 }
 
-func (m Macro) Signature() string { return m.s() }
+func (m Macro) Signature() string         { return m.s() }
+func (m Macro) DisableFlagParsing() Macro { m.disableFlagParsing = true; return m }
 
 var macros = make(map[string]Macro)
 
