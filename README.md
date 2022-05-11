@@ -5,7 +5,7 @@
 [![documentation](https://img.shields.io/badge/&zwnj;-documentation-blue?logo=gitbook)](https://rsteube.github.io/carapace-spec/)
 [![Coverage Status](https://coveralls.io/repos/github/rsteube/carapace-spec/badge.svg?branch=master)](https://coveralls.io/github/rsteube/carapace-spec?branch=master)
 
-Define simple [carapace](https://github.com/rsteube/carapace) completions using a spec file.
+Define simple completions using a spec file (based on [carapace](https://github.com/rsteube/carapace)).
 
 The `carapace-spec` binary can be used to complete spec files, but [carapace-bin](https://github.com/rsteube/carapace-bin) is recommended as it supports a range of [custom macros](https://rsteube.github.io/carapace-bin/specs/macros.html).
 
