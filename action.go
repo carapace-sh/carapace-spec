@@ -44,6 +44,15 @@ func ActionSpec(path string) carapace.Action {
 }
 
 func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
+	if !cmd.DisableFlagParsing {
+		for _, entry := range arr {
+			if strings.HasPrefix(entry, "$spec(") {
+				cmd.DisableFlagParsing = true // implicitly disable flag parsing
+				break
+			}
+		}
+	}
+
 	return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
 		// TODO yuck - where to set thes best?
 		for index, arg := range c.Args {
