@@ -15,8 +15,19 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:                "carapace-spec",
-	Short:              "",
+	Use:  "carapace-spec",
+	Long: "define simple completions using a spec file",
+	Example: `  Spec completion:
+    bash:       source <(carapace-spec example.yaml)
+    elvish:     eval (carapace-spec example.yaml|slurp)
+    fish:       carapace-spec example.yaml | source
+    oil:        source <(carapace-spec example.yaml)
+    nushell:    carapace-spec example.yaml | save example.nu ; nu -c 'source example.nu'
+    powershell: carapace-spec example.yaml | Out-String | Invoke-Expression
+    tcsh:       eval ` + "`" + `carapace-spec example.yaml` + "`" + `
+    xonsh:      exec($(carapace-spec example.yaml))
+    zsh:        source <(carapace-spec example.yaml)
+    `,
 	Args:               cobra.MinimumNArgs(1),
 	DisableFlagParsing: true,
 	CompletionOptions: cobra.CompletionOptions{
@@ -110,7 +121,7 @@ func bridgeCompletion(cmd *cobra.Command, spec string, args ...string) {
 	}
 
 	executableName := filepath.Base(executable)
-	patched := strings.Replace(string(out), fmt.Sprintf("%v _carapace", executableName), fmt.Sprintf("%v %v", executableName, spec), -1)      // general callback
+	patched := strings.Replace(string(out), fmt.Sprintf("%v _carapace", executableName), fmt.Sprintf("%v '%v'", executableName, spec), -1)    // general callback
 	patched = strings.Replace(patched, fmt.Sprintf("'%v', '_carapace'", executableName), fmt.Sprintf("'%v', '%v'", executableName, spec), -1) // xonsh callback
 	fmt.Print(patched)
 }
