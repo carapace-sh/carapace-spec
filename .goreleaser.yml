@@ -32,7 +32,7 @@ changelog:
       - '^test:'
 brews:
   -
-    description: "define simple carapace completions using a spec file"
+    description: "define simple completions using a spec file"
     homepage: "https://github.com/rsteube/carapace-spec"
     license: "MIT"
     tap:
@@ -41,7 +41,7 @@ brews:
       token: "{{ .Env.GORELEASER_GITHUB_TOKEN }}"
     commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
 scoop:
-  description: "define simple carapace completions using a spec file"
+  description: "define simple completions using a spec file"
   homepage: "https://github.com/rsteube/carapace-spec"
   license: "MIT"
   bucket:
@@ -52,7 +52,7 @@ scoop:
 
 aurs:
   -
-    description: "define simple carapace completions using a spec file"
+    description: "define simple completions using a spec file"
     homepage: "https://github.com/rsteube/carapace-spec"
     license: "MIT"
     maintainers:
@@ -62,7 +62,7 @@ aurs:
 
 nfpms:
   -
-    description: "define simple carapace completions using a spec file"
+    description: "define simple completions using a spec file"
     homepage: "https://github.com/rsteube/carapace-spec"
     license: "MIT"
     maintainer: rsteube <rsteube@users.noreply.github.com>
