@@ -1,6 +1,6 @@
 # carapace-spec
 
-Define simple [carapace](https://github.com/rsteube/carapace) completions using a spec file.
+Define simple completions using a spec file (based on [carapace](https://github.com/rsteube/carapace)).
 
 ```yaml
 name: mycmd

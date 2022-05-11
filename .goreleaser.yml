@@ -30,6 +30,35 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
+brews:
+  -
+    description: "define simple carapace completions using a spec file"
+    homepage: "https://github.com/rsteube/carapace-spec"
+    license: "MIT"
+    tap:
+      owner: rsteube
+      name: homebrew-tap
+      token: "{{ .Env.GORELEASER_GITHUB_TOKEN }}"
+    commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
+scoop:
+  description: "define simple carapace completions using a spec file"
+  homepage: "https://github.com/rsteube/carapace-spec"
+  license: "MIT"
+  bucket:
+    owner: rsteube
+    name: scoop-bucket
+    token: "{{ .Env.GORELEASER_GITHUB_TOKEN }}"
+  commit_msg_template: "Scoop update for {{ .ProjectName }} version {{ .Tag }}"
+
+aurs:
+  -
+    description: "define simple carapace completions using a spec file"
+    homepage: "https://github.com/rsteube/carapace-spec"
+    license: "MIT"
+    maintainers:
+      - rsteube <rsteube@users.noreply.github.com>
+    private_key: '{{ .Env.AUR_KEY }}'
+    git_url: 'ssh://aur@aur.archlinux.org/carapace-spec-bin.git'
 
 nfpms:
   -

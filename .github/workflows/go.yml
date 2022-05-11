@@ -69,3 +69,5 @@ jobs:
             git push --force https://rsteube:${GITHUB_TOKEN}@github.com/rsteube/carapace-spec.git master:gh-pages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AUR_KEY: ${{ secrets.AUR_KEY }}
+          GORELEASER_GITHUB_TOKEN: ${{ secrets.GORELEASER_GITHUB_TOKEN }}
