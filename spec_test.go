@@ -37,6 +37,14 @@ func TestSpec(t *testing.T) {
 		t.Error(out)
 	}
 
+	if out := execute(t, example, "example", "sub1", "--env", "C_"); !strings.Contains(out, "C_CALLBACK=C_") {
+		t.Error(out)
+	}
+
+	if out := execute(t, example, "example", "sub1", "", ""); !strings.Contains(out, "action.go") {
+		t.Error(out)
+	}
+
 	if out := execute(t, example, "example", ""); !strings.Contains(out, "sub1") {
 		t.Error(out)
 	}
