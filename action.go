@@ -14,8 +14,17 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func ActionSpec(path string) {
-	carapace.ActionCallback(func(c carapace.Context) carapace.Action {
+// ActionSpec completes a spec
+func ActionSpec(path string) carapace.Action {
+	return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
+		if strings.HasPrefix(path, "~/") {
+			home, err := os.UserHomeDir()
+			if err != nil {
+				return carapace.ActionMessage(err.Error())
+			}
+			path = strings.Replace(path, "~", home, 1)
+		}
+
 		abs, err := filepath.Abs(path)
 		if err != nil {
 			return carapace.ActionMessage(err.Error())
@@ -52,26 +61,27 @@ func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
 		multiparts := ""
 
 		// TODO don't alter the map each time, solve this differently
-		addCoreMacro("list", MacroI(func(s string) carapace.Action {
-			listDelimiter = s
-			return carapace.ActionValues()
-		}))
-		addCoreMacro("nospace", MacroI(func(s string) carapace.Action {
-			nospace = true
-			return carapace.ActionValues()
-		}))
 		addCoreMacro("chdir", MacroI(func(s string) carapace.Action {
 			chdir = s
+			return carapace.ActionValues()
+		}))
+		addCoreMacro("list", MacroI(func(s string) carapace.Action {
+			listDelimiter = s
 			return carapace.ActionValues()
 		}))
 		addCoreMacro("multiparts", MacroI(func(s string) carapace.Action {
 			multiparts = s
 			return carapace.ActionValues()
 		}))
+		addCoreMacro("nospace", MacroI(func(s string) carapace.Action {
+			nospace = true
+			return carapace.ActionValues()
+		}))
 
-		addCoreMacro("files", MacroV(carapace.ActionFiles))
 		addCoreMacro("directories", MacroN(carapace.ActionDirectories))
+		addCoreMacro("files", MacroV(carapace.ActionFiles))
 		addCoreMacro("message", MacroI(carapace.ActionMessage))
+		addCoreMacro("spec", MacroI(ActionSpec))
 		addCoreMacro("", MacroI(func(s string) carapace.Action {
 			return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
 				return carapace.ActionExecCommand("sh", "-c", s)(func(output []byte) carapace.Action {
