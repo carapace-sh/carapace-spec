@@ -39,7 +39,7 @@ commands:
       optarg: ["first", "second", "third"]
     positional:
     - ["pos1A", "pos1B"]
-    - ["$files"]
+    - ["$files([.go, go.mod])"]
     - ["$directories"]
     - ["$(echo \"pos: $C_ARG0 flag: $C_FLAG_STYLED\")"]
     positionalany: ["posAny1", "posAny2"]
