@@ -4,14 +4,14 @@ Core macros provided by [carapace-spec](https://github.com/rsteube/carapace-spec
 
 ## directories
 
-`$directories` completes directories.
+[`$directories`](https://rsteube.github.io/carapace/carapace/action/actionDirectories.html) completes directories.
 ```yaml
 ["$directories"]
 ```
 
-## command
+## execcommand
 
-`$(<command>)` executes given command in a `sh` shell.
+[`$(<command>)`](https://rsteube.github.io/carapace/carapace/action/actionExecCommand.html) executes given command in a `sh` shell.
 
 ```yaml
 ["$(echo -e 'a\nb\nc')"]
@@ -19,7 +19,7 @@ Core macros provided by [carapace-spec](https://github.com/rsteube/carapace-spec
 
 ## files
 
-`$files([<suffixes>])` completes files with an optional list of suffixes to filter on.
+[`$files([<suffixes>])`](https://rsteube.github.io/carapace/carapace/action/actionFiles.html) completes files with an optional list of suffixes to filter on.
 
 ```yaml
 ["$files([.go, go.mod, go.sum])"]
@@ -27,7 +27,7 @@ Core macros provided by [carapace-spec](https://github.com/rsteube/carapace-spec
 
 ## message
 
-`$message(<message>)` adds given error message to completion.
+[`$message(<message>)`](https://rsteube.github.io/carapace/carapace/action/actionMessage.html) adds given error message to completion.
 
 ```yaml
 ["$message(some error)"]

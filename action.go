@@ -3,7 +3,6 @@ package spec
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"regexp"
 	"strings"
 
@@ -17,15 +16,7 @@ import (
 // ActionSpec completes a spec
 func ActionSpec(path string) carapace.Action {
 	return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
-		if strings.HasPrefix(path, "~/") {
-			home, err := os.UserHomeDir()
-			if err != nil {
-				return carapace.ActionMessage(err.Error())
-			}
-			path = strings.Replace(path, "~", home, 1)
-		}
-
-		abs, err := filepath.Abs(path)
+		abs, err := c.Abs(path)
 		if err != nil {
 			return carapace.ActionMessage(err.Error())
 		}
