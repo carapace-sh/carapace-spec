@@ -37,9 +37,12 @@ func ActionSpec(path string) carapace.Action {
 func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
 	if !cmd.DisableFlagParsing {
 		for _, entry := range arr {
-			if strings.HasPrefix(entry, "$spec(") {
-				cmd.DisableFlagParsing = true // implicitly disable flag parsing
-				break
+			if strings.HasPrefix(entry, "$") {
+				macro := strings.SplitN(strings.TrimPrefix(entry, "$"), "(", 2)[0]
+				if m, ok := macros[macro]; ok && m.disableFlagParsing {
+					cmd.DisableFlagParsing = true // implicitly disable flag parsing
+					break
+				}
 			}
 		}
 	}
@@ -76,25 +79,6 @@ func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
 		addCoreMacro("nospace", MacroI(func(s string) carapace.Action {
 			nospace = true
 			return carapace.ActionValues()
-		}))
-
-		addCoreMacro("directories", MacroN(carapace.ActionDirectories))
-		addCoreMacro("files", MacroV(carapace.ActionFiles))
-		addCoreMacro("message", MacroI(carapace.ActionMessage))
-		addCoreMacro("spec", MacroI(ActionSpec))
-		addCoreMacro("", MacroI(func(s string) carapace.Action {
-			return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
-				return carapace.ActionExecCommand("sh", "-c", s)(func(output []byte) carapace.Action {
-					lines := strings.Split(string(output), "\n")
-					vals := make([]string, 0)
-					for _, line := range lines {
-						if line != "" {
-							vals = append(vals, parseValue(line)...)
-						}
-					}
-					return carapace.ActionStyledValuesDescribed(vals...)
-				}).Invoke(c).ToA()
-			})
 		}))
 
 		batch := carapace.Batch()
