@@ -1,5 +1,8 @@
 # Flags
 
+Flags are defined as a map of name and description.
+The name can contain shorthand, longhand and modifiers matching this [regex](https://regex101.com/r/to7O2W/1).
+
 ```yaml
 flags:
   -b: bool flag

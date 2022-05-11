@@ -6,7 +6,7 @@ Custom macros can be added with [`AddMacro`](https://pkg.go.dev/github.com/rsteu
 // `$_noarg` without argument
 AddMacro("noarg", MacroN(func() carapace.Action { return carapace.ActionValues()}))
 
-// `$_arg({user: example, enabled: true})` with argument (primitive or struct)
+// `$_arg({name: example, enabled: true})` with argument (primitive or struct)
 AddMacro("arg", MacroI(func(u User) carapace.Action { return carapace.ActionValues()}))
 
 // `$_vararg([another, example])` with variable arguments (primitive or struct)
@@ -17,19 +17,19 @@ Arguments are parsed as `yaml` so only struct keys deviating from the default ne
 
 ## Default (experimental)
 
-A `Default()` function can be added to a struct passed to [`MacroI`](https://pkg.go.dev/github.com/rsteube/carapace-spec#MacroI).
+A `Default()` method can be added to a struct passed to [`MacroI`](https://pkg.go.dev/github.com/rsteube/carapace-spec#MacroI).
 
 It will be called when the macro is used without argumeng (`$_arg` instead of `$_arg({user: example})`).
 
 ```go
 type User struct {
 	Name   string
-	Include bool
+	Enabled bool
 }
 
 func (u User) Default() User {
-    u.Name = "example"
-	u.Include = true
+	u.Name = "example"
+	u.Enabled = true
 	return u
 }
 ```
