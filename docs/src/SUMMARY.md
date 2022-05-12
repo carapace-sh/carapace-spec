@@ -1,6 +1,7 @@
 # Summary
 
 - [carapace-spec](./carapace-spec.md)
+  - [Usage](./carapace-spec/usage.md)
   - [Command](./carapace-spec/command.md)
     - [Flags](./carapace-spec/command/flags.md)
     - [PersistentFlags](./carapace-spec/command/persistentFlags.md)
