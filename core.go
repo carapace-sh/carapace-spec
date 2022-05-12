@@ -8,10 +8,10 @@ import (
 
 func init() {
 	addCoreMacro("directories", MacroN(carapace.ActionDirectories))
-	addCoreMacro("disableflagparsing", MacroN(func() carapace.Action { return carapace.ActionValues() }).DisableFlagParsing())
+	addCoreMacro("noflag", MacroN(func() carapace.Action { return carapace.ActionValues() }).NoFlag())
 	addCoreMacro("files", MacroV(carapace.ActionFiles))
 	addCoreMacro("message", MacroI(carapace.ActionMessage))
-	addCoreMacro("spec", MacroI(ActionSpec).DisableFlagParsing())
+	addCoreMacro("spec", MacroI(ActionSpec).NoFlag())
 	addCoreMacro("", MacroI(func(s string) carapace.Action {
 		return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
 			return carapace.ActionExecCommand("sh", "-c", s)(func(output []byte) carapace.Action {
