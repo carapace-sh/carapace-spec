@@ -3,6 +3,8 @@ package spec
 import (
 	"reflect"
 	"testing"
+
+	"github.com/spf13/pflag"
 )
 
 func TestParseFlag(t *testing.T) {
@@ -12,9 +14,13 @@ func TestParseFlag(t *testing.T) {
 		expected flag,
 	) {
 		expected.usage = usage // skip usage test
-		if !reflect.DeepEqual(parseFlag(id, usage), expected) {
+		f := parseFlag(id, usage)
+		if !reflect.DeepEqual(f, expected) {
 			t.Error(usage)
 		}
+
+		flagSet := pflag.NewFlagSet("test", pflag.PanicOnError)
+		f.addTo(flagSet)
 	}
 
 	test("shorthand-only", "-s", flag{
