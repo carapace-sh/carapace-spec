@@ -33,3 +33,11 @@ Modifiers change the completion for a position in general.
 ```yml
 ["$nospace", "one", "two"]
 ```
+
+## noflag
+
+`$noflag` disables flag parsing for the current command.
+
+```yml
+["$noflag"]
+```

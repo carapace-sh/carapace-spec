@@ -16,8 +16,8 @@ type Macro struct {
 	disableFlagParsing bool
 }
 
-func (m Macro) Signature() string         { return m.s() }
-func (m Macro) DisableFlagParsing() Macro { m.disableFlagParsing = true; return m }
+func (m Macro) Signature() string { return m.s() }
+func (m Macro) NoFlag() Macro     { m.disableFlagParsing = true; return m }
 
 var macros = make(map[string]Macro)
 
