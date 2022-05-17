@@ -7,7 +7,7 @@
 
 Define simple completions using a spec file (based on [carapace](https://github.com/rsteube/carapace)).
 
-The `carapace-spec` binary can be used to complete spec files, but [carapace-bin](https://github.com/rsteube/carapace-bin) is recommended as it supports a range of [custom macros](https://rsteube.github.io/carapace-bin/specs/macros.html).
+The `carapace-spec` binary can be used to complete spec files, but [carapace-bin](https://github.com/rsteube/carapace-bin) is recommended as it supports a range of [custom macros](https://rsteube.github.io/carapace-bin/spec/macros.html).
 
 ```yaml
 name: mycmd
