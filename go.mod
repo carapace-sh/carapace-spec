@@ -2,8 +2,6 @@ module github.com/rsteube/carapace-spec
 
 go 1.18
 
-replace github.com/spf13/pflag => github.com/cornfeedhobo/pflag v1.1.0
-
 require (
 	github.com/rsteube/carapace v0.24.0
 	github.com/spf13/cobra v1.5.0
@@ -12,3 +10,5 @@ require (
 )
 
 require github.com/inconshreveable/mousetrap v1.0.0 // indirect
+
+replace github.com/spf13/pflag => github.com/rsteube/carapace-pflag v0.0.4

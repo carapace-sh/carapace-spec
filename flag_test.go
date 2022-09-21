@@ -17,6 +17,8 @@ func TestParseFlag(t *testing.T) {
 		f := parseFlag(id, usage)
 		if !reflect.DeepEqual(f, expected) {
 			t.Error(usage)
+			t.Logf("expected: %#v", expected)
+			t.Logf("actual:   %#v", f)
 		}
 
 		flagSet := pflag.NewFlagSet("test", pflag.PanicOnError)
@@ -91,4 +93,26 @@ func TestParseFlag(t *testing.T) {
 		optarg:    true,
 	})
 
+	test("nonposix shorthand", "-short", flag{
+		shorthand: "short",
+	})
+
+	test("nonposix shorthand optarg", "-short?", flag{
+		shorthand: "short",
+		value:     true,
+		optarg:    true,
+	})
+
+	test("nonposix both", "-short, -long*", flag{
+		shorthand: "short",
+		longhand:  "long",
+		slice:     true,
+		nonposix:  true,
+	})
+
+	test("nonposix mixed", "-short, --long", flag{
+		shorthand: "short",
+		longhand:  "long",
+		nonposix:  false,
+	})
 }
