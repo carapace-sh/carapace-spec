@@ -12,6 +12,9 @@ import (
 //go:embed example/example.yaml
 var example string
 
+//go:embed example/nonposix.yaml
+var nonposix string
+
 func TestSpec(t *testing.T) {
 	if out := execute(t, example, "example", "sub1", "--styled", ""); !strings.Contains(out, "cyan") {
 		t.Error(out)
@@ -46,6 +49,24 @@ func TestSpec(t *testing.T) {
 	}
 
 	if out := execute(t, example, "example", ""); !strings.Contains(out, "sub1") {
+		t.Error(out)
+	}
+}
+
+func TestSpecNonposix(t *testing.T) {
+	if out := execute(t, nonposix, "nonposix", ""); !strings.Contains(out, "a") {
+		t.Error(out)
+	}
+
+	if out := execute(t, nonposix, "nonposix", "-"); !strings.Contains(out, "-styled") {
+		t.Error(out)
+	}
+
+	if out := execute(t, nonposix, "nonposix", "-mx", "--"); !strings.Contains(out, "--mixed") {
+		t.Error(out)
+	}
+
+	if out := execute(t, nonposix, "nonposix", "-opt="); !strings.Contains(out, "1") {
 		t.Error(out)
 	}
 }

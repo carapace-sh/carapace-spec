@@ -1,0 +1,15 @@
+name: nonposix
+description:
+flags:
+  -opt, -optarg?: both nonposix
+  -styled=: nonpoxis shorthand
+  -mx, --mixed*: mixed repeatable
+completion:
+  flag:
+    optarg: [1, 2, 3]
+    styled:
+      - "green\t\tgreen"
+      - "red\t\tred"
+      - "yellow\t\tyellow"
+  positional:
+    - [a, b, c]
