@@ -3,6 +3,7 @@ package spec
 import (
 	"bytes"
 	_ "embed"
+	"os"
 	"strings"
 	"testing"
 
@@ -53,7 +54,15 @@ func TestSpec(t *testing.T) {
 	}
 }
 
+func skipSpf13Pflag(t *testing.T) {
+	if os.Getenv("SKIP_NONPOSIX") != "" {
+		t.Skip("Skipping non-posix tests")
+	}
+}
+
 func TestSpecNonposix(t *testing.T) {
+	skipSpf13Pflag(t)
+
 	if out := execute(t, nonposix, "nonposix", ""); !strings.Contains(out, "a") {
 		t.Error(out)
 	}
