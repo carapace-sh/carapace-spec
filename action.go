@@ -85,7 +85,7 @@ func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
 		vals := make([]string, 0)
 		for _, elem := range arr {
 			if elemSubst, err := c.Envsubst(elem); err != nil {
-				batch = append(batch, carapace.ActionMessage(fmt.Sprintf("%v: %v", err.Error(), elem)))
+				batch = append(batch, carapace.ActionMessage("%v: %v", err.Error(), elem))
 			} else if strings.HasPrefix(elemSubst, "$") { // macro
 				batch = append(batch, ActionMacro(elemSubst))
 			} else {

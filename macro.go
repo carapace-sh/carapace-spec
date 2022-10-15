@@ -33,12 +33,12 @@ func AddMacro(s string, m Macro) {
 func ActionMacro(s string) carapace.Action {
 	r := regexp.MustCompile(`^\$(?P<macro>[^(]*)(\((?P<arg>.*)\))?$`)
 	if !r.MatchString(s) {
-		return carapace.ActionMessage(fmt.Sprintf("malformed macro: '%v'", s))
+		return carapace.ActionMessage("malformed macro: '%v'", s)
 	}
 
 	matches := findNamedMatches(r, s)
 	if m, ok := macros[matches["macro"]]; !ok {
-		return carapace.ActionMessage(fmt.Sprintf("unknown macro: '%v'", s))
+		return carapace.ActionMessage("unknown macro: '%v'", s)
 	} else {
 		return m.f(matches["arg"])
 	}
@@ -89,7 +89,7 @@ func MacroV[T any](f func(s ...T) carapace.Action) Macro {
 
 			var t []T
 			if err := yaml.Unmarshal([]byte(s), &t); err != nil {
-				return carapace.ActionMessage(fmt.Sprintf("malformed macro arg: '%v', expected '%v'", s, reflect.TypeOf(t)))
+				return carapace.ActionMessage("malformed macro arg: '%v', expected '%v'", s, reflect.TypeOf(t))
 			}
 			return f(t...)
 		},

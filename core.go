@@ -1,7 +1,6 @@
 package spec
 
 import (
-	"fmt"
 	"runtime"
 	"strings"
 
@@ -11,7 +10,7 @@ import (
 func init() {
 	addCoreMacro("directories", MacroN(carapace.ActionDirectories))
 	addCoreMacro("files", MacroV(carapace.ActionFiles))
-	addCoreMacro("message", MacroI(carapace.ActionMessage))
+	addCoreMacro("message", MacroI(func(s string) carapace.Action { return carapace.ActionMessage(s) }))
 	addCoreMacro("noflag", MacroN(func() carapace.Action { return carapace.ActionValues() }).NoFlag())
 	addCoreMacro("spec", MacroI(ActionSpec).NoFlag())
 
@@ -40,7 +39,7 @@ func shell(shell, command string) carapace.Action {
 			shell != "nu" &&
 			shell != "pwsh" &&
 			shell != "xonsh" {
-			return carapace.ActionMessage(fmt.Sprintf("unsupported shell [%v]: %v", runtime.GOOS, shell))
+			return carapace.ActionMessage("unsupported shell [%v]: %v", runtime.GOOS, shell)
 		}
 
 		return carapace.ActionExecCommand(shell, "-c", command)(func(output []byte) carapace.Action {
