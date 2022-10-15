@@ -3,6 +3,7 @@
 ```go
 type Command struct {
 	Name            string
+	Aliases         []string
 	Description     string
 	Flags           map[string]string
 	PersistentFlags map[string]string

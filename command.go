@@ -7,6 +7,7 @@ import (
 
 type Command struct {
 	Name            string
+	Aliases         []string
 	Description     string
 	Flags           map[string]string
 	PersistentFlags map[string]string
@@ -22,9 +23,10 @@ type Command struct {
 
 func (c *Command) ToCobra() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   c.Name,
-		Short: c.Description,
-		Run:   func(cmd *cobra.Command, args []string) {},
+		Use:     c.Name,
+		Aliases: c.Aliases,
+		Short:   c.Description,
+		Run:     func(cmd *cobra.Command, args []string) {},
 	}
 	carapace.Gen(cmd).Standalone()
 

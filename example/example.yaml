@@ -4,6 +4,7 @@ persistentflags:
   -p, --persistent: persistent flag
 commands:
 - name: sub1
+  aliases: [alias1, alias2]
   description: subcommand1
   flags:
     -s, --styled=: styled values
