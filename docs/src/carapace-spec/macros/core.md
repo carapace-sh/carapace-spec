@@ -11,7 +11,7 @@ Core macros provided by [carapace-spec](https://github.com/rsteube/carapace-spec
 
 ## execcommand
 
-[`$(<command>)`](https://rsteube.github.io/carapace/carapace/action/actionExecCommand.html) executes given command in a `sh` shell.
+[`$(<command>)`](https://rsteube.github.io/carapace/carapace/action/actionExecCommand.html) executes given command in a `sh` / `pwsh` shell.
 
 ```yaml
 ["$(echo -e 'a\nb\nc')"]
