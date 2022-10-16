@@ -1,24 +1,53 @@
 package spec
 
 import (
+	"github.com/invopop/jsonschema"
 	"github.com/rsteube/carapace"
 	"github.com/spf13/cobra"
 )
 
-type Command struct {
-	Name            string
-	Aliases         []string
-	Description     string
-	Flags           map[string]string
-	PersistentFlags map[string]string
-	Completion      struct {
-		Flag          map[string][]string
-		Positional    [][]string
-		PositionalAny []string
-		Dash          [][]string
-		DashAny       []string
+// static value or macro
+type action string
+
+func (action) JSONSchema() *jsonschema.Schema {
+	enum := make([]interface{}, 0, len(macros))
+	for macro := range macros {
+		enum = append(enum, "$"+macro) // TODO full signature as in `carapace --macros XX`
 	}
-	Commands []Command
+	return &jsonschema.Schema{
+		Type:        "string",
+		Title:       "Action",
+		Description: "A static value or a macro",
+		Enum:        enum,
+	}
+}
+
+type Command struct {
+	// Name of the command
+	Name string `json:"name"`
+	// Aliases of the command
+	Aliases []string `json:"aliases,omitempty"`
+	// Description of the command
+	Description string `json:"description,omitempty"`
+	// Flags of the command with their description
+	Flags map[string]string `json:"flags,omitempty"`
+	// Persistent flags of the command with their description
+	PersistentFlags map[string]string `json:"persistentflags,omitempty"`
+	// Completion definition
+	Completion struct {
+		// Flag completion
+		Flag map[string][]action `json:"flag,omitempty"`
+		// Positional completion
+		Positional [][]action `json:"positional,omitempty"`
+		// Positional completion for every other position
+		PositionalAny []action `json:"positionalany,omitempty"`
+		// Dash completion
+		Dash [][]action `json:"dash,omitempty"`
+		// Dash completion for every other position
+		DashAny []action `json:"dashany,omitempty"`
+	} `json:"completion,omitempty"`
+	// Subcommands of the command
+	Commands []Command `json:"commands,omitempty"`
 }
 
 func (c *Command) ToCobra() *cobra.Command {
