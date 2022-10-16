@@ -51,11 +51,11 @@ func ActionSpec(path string) carapace.Action {
 	})
 }
 
-func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
+func parseAction(cmd *cobra.Command, arr []action) carapace.Action {
 	if !cmd.DisableFlagParsing {
 		for _, entry := range arr {
-			if strings.HasPrefix(entry, "$") {
-				macro := strings.SplitN(strings.TrimPrefix(entry, "$"), "(", 2)[0]
+			if strings.HasPrefix(string(entry), "$") {
+				macro := strings.SplitN(strings.TrimPrefix(string(entry), "$"), "(", 2)[0]
 				if m, ok := macros[macro]; ok && m.disableFlagParsing {
 					cmd.DisableFlagParsing = true // implicitly disable flag parsing
 					break
@@ -101,7 +101,7 @@ func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
 		batch := carapace.Batch()
 		vals := make([]string, 0)
 		for _, elem := range arr {
-			if elemSubst, err := c.Envsubst(elem); err != nil {
+			if elemSubst, err := c.Envsubst(string(elem)); err != nil {
 				batch = append(batch, carapace.ActionMessage("%v: %v", err.Error(), elem))
 			} else if strings.HasPrefix(elemSubst, "$") { // macro
 				batch = append(batch, ActionMacro(elemSubst))
