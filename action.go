@@ -4,14 +4,38 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"sort"
 	"strings"
 
+	"github.com/invopop/jsonschema"
 	"github.com/rsteube/carapace"
 	"github.com/rsteube/carapace/pkg/style"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"gopkg.in/yaml.v3"
 )
+
+// static value or macro
+type action string
+
+func (action) JSONSchema() *jsonschema.Schema {
+	sortedNames := make([]string, 0, len(macros))
+	for name := range macros {
+		sortedNames = append(sortedNames, name)
+	}
+	sort.Strings(sortedNames)
+
+	examples := make([]interface{}, 0, len(macros))
+	for _, name := range sortedNames {
+		examples = append(examples, fmt.Sprintf("$%v(%v)", name, macros[name].Signature()))
+	}
+	return &jsonschema.Schema{
+		Type:        "string",
+		Title:       "Action",
+		Description: "A static value or a macro",
+		Examples:    examples,
+	}
+}
 
 // ActionMacro completes given macro
 func ActionMacro(s string) carapace.Action {

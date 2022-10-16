@@ -1,26 +1,9 @@
 package spec
 
 import (
-	"github.com/invopop/jsonschema"
 	"github.com/rsteube/carapace"
 	"github.com/spf13/cobra"
 )
-
-// static value or macro
-type action string
-
-func (action) JSONSchema() *jsonschema.Schema {
-	enum := make([]interface{}, 0, len(macros))
-	for macro := range macros {
-		enum = append(enum, "$"+macro) // TODO full signature as in `carapace --macros XX`
-	}
-	return &jsonschema.Schema{
-		Type:        "string",
-		Title:       "Action",
-		Description: "A static value or a macro",
-		Enum:        enum,
-	}
-}
 
 type Command struct {
 	Name            string            `json:"name" jsonschema_description:"Name of the command"`
