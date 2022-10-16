@@ -18,3 +18,5 @@ completion:
     - ["$files([${C_FLAG_SUFFIX//,/, }])"] # replace `,` with `, ` for valid array syntax
     - ["${C_FLAG_SUFFIX:-default}", "${C_ARG0}"] # use default if flag is not set
 ```
+
+![](./variables.cast)
