@@ -23,31 +23,19 @@ func (action) JSONSchema() *jsonschema.Schema {
 }
 
 type Command struct {
-	// Name of the command
-	Name string `json:"name"`
-	// Aliases of the command
-	Aliases []string `json:"aliases,omitempty"`
-	// Description of the command
-	Description string `json:"description,omitempty"`
-	// Flags of the command with their description
-	Flags map[string]string `json:"flags,omitempty"`
-	// Persistent flags of the command with their description
-	PersistentFlags map[string]string `json:"persistentflags,omitempty"`
-	// Completion definition
-	Completion struct {
-		// Flag completion
-		Flag map[string][]action `json:"flag,omitempty"`
-		// Positional completion
-		Positional [][]action `json:"positional,omitempty"`
-		// Positional completion for every other position
-		PositionalAny []action `json:"positionalany,omitempty"`
-		// Dash completion
-		Dash [][]action `json:"dash,omitempty"`
-		// Dash completion for every other position
-		DashAny []action `json:"dashany,omitempty"`
-	} `json:"completion,omitempty"`
-	// Subcommands of the command
-	Commands []Command `json:"commands,omitempty"`
+	Name            string            `json:"name" jsonschema_description:"Name of the command"`
+	Aliases         []string          `json:"aliases,omitempty" jsonschema_description:"Aliases of the command"`
+	Description     string            `json:"description,omitempty" jsonschema_description:"Description of the command"`
+	Flags           map[string]string `json:"flags,omitempty" jsonschema_description:"Flags of the command with their description"`
+	PersistentFlags map[string]string `json:"persistentflags,omitempty" jsonschema_description:"Persistent flags of the command with their description"`
+	Completion      struct {
+		Flag          map[string][]action `json:"flag,omitempty" jsonschema_description:"Flag completion"`
+		Positional    [][]action          `json:"positional,omitempty" jsonschema_description:"Positional completion"`
+		PositionalAny []action            `json:"positionalany,omitempty" jsonschema_description:"Positional completion for every other position"`
+		Dash          [][]action          `json:"dash,omitempty" jsonschema_description:"Dash completion"`
+		DashAny       []action            `json:"dashany,omitempty" jsonschema_description:"Dash completion of every other position"`
+	} `json:"completion,omitempty" jsonschema_description:"Subcommands of the command"`
+	Commands []Command `json:"commands,omitempty" jsonschema_description:"Completion definition"`
 }
 
 func (c *Command) ToCobra() *cobra.Command {
