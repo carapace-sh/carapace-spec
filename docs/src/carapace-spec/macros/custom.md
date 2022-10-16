@@ -13,7 +13,7 @@ AddMacro("arg", MacroI(func(u User) carapace.Action { return carapace.ActionValu
 AddMacro("vararg", MacroV(func(s ...string) carapace.Action { return carapace.ActionValues()}))
 ```
 
-Arguments are parsed as `yaml` so only struct keys deviating from the default need to be set.
+> Arguments are parsed as `yaml` so only struct keys deviating from the default need to be set.
 
 ## Default (experimental)
 
