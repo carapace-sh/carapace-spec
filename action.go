@@ -13,6 +13,23 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// ActionMacro completes given macro
+func ActionMacro(s string) carapace.Action {
+	return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
+		r := regexp.MustCompile(`^\$(?P<macro>[^(]*)(\((?P<arg>.*)\))?$`)
+		if !r.MatchString(s) {
+			return carapace.ActionMessage("malformed macro: '%v'", s)
+		}
+
+		matches := findNamedMatches(r, s)
+		if m, ok := macros[matches["macro"]]; !ok {
+			return carapace.ActionMessage("unknown macro: '%v'", s)
+		} else {
+			return m.f(matches["arg"])
+		}
+	})
+}
+
 // ActionSpec completes a spec
 func ActionSpec(path string) carapace.Action {
 	return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
@@ -94,7 +111,7 @@ func parseAction(cmd *cobra.Command, arr []string) carapace.Action {
 		}
 		batch = append(batch, carapace.ActionStyledValuesDescribed(vals...))
 
-		action := batch.ToA()
+		action := batch.Invoke(c).Merge().ToA() // invoke eagerly so that the modifier macros are called
 		if chdir != "" {
 			action = action.Chdir(chdir)
 		}
