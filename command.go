@@ -66,3 +66,7 @@ func (c *Command) ToCobra() *cobra.Command {
 
 	return cmd
 }
+
+func (c *Command) Scrape() {
+	Scrape(c.ToCobra())
+}
