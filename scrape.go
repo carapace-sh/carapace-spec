@@ -11,17 +11,16 @@ import (
 	"github.com/spf13/pflag"
 )
 
-var tmpDir string = getTmpDir()
-
-func getTmpDir() string {
+func Scrape(cmd *cobra.Command) {
 	dir, err := os.MkdirTemp(os.TempDir(), "carascrape")
 	if err != nil {
 		panic(err.Error())
 	}
-	return dir
+
+	scrape(cmd, dir)
 }
 
-func Scrape(cmd *cobra.Command) {
+func scrape(cmd *cobra.Command, tmpDir string) {
 	out := &bytes.Buffer{}
 
 	if len(cmd.Aliases) > 0 {
@@ -110,7 +109,7 @@ var %vCmd = &cobra.Command{
 
 	for _, subcmd := range cmd.Commands() {
 		if !subcmd.Hidden && subcmd.Deprecated == "" {
-			Scrape(subcmd)
+			scrape(subcmd, tmpDir)
 		}
 	}
 }
