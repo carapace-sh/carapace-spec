@@ -100,7 +100,7 @@ func parseAction(cmd *cobra.Command, arr []action) carapace.Action {
 		})
 
 		listDelimiter := ""
-		nospace := false
+		nospace := ""
 		chdir := ""
 		multiparts := ""
 
@@ -118,7 +118,10 @@ func parseAction(cmd *cobra.Command, arr []action) carapace.Action {
 			return carapace.ActionValues()
 		}))
 		addCoreMacro("nospace", MacroI(func(s string) carapace.Action {
-			nospace = true
+			nospace = s
+			if s == "" {
+				nospace = "*"
+			}
 			return carapace.ActionValues()
 		}))
 
@@ -155,8 +158,8 @@ func parseAction(cmd *cobra.Command, arr []action) carapace.Action {
 
 				return action.Invoke(c).Filter(c.Parts).ToA()
 			})
-		} else if nospace {
-			return action.NoSpace()
+		} else if nospace != "" {
+			return action.NoSpace([]rune(nospace)...)
 		}
 		return action.Invoke(c).ToA()
 	})
