@@ -9,8 +9,8 @@ github.com/invopop/jsonschema v0.7.0 h1:2vgQcBz1n256N+FpX3Jq7Y17AjYt46Ig3zIWyy77
 github.com/invopop/jsonschema v0.7.0/go.mod h1:O9uiLokuu0+MGFlyiaqtWxwqJm41/+8Nj0lD7A36YH0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/rsteube/carapace v0.28.1 h1:fkuNMnyYBAcXBpkeOQH3cNIyFNUVzOpyLZBTpOLdSwk=
-github.com/rsteube/carapace v0.28.1/go.mod h1:/ALYHicIpak6TjQnKl7HupclqJydy2LQb6CkawYBxDo=
+github.com/rsteube/carapace v0.29.1 h1:KwBt50Q9XFNIbYURMNjIMxe3/LWKf2LCWeH4l0uxaRo=
+github.com/rsteube/carapace v0.29.1/go.mod h1:/ALYHicIpak6TjQnKl7HupclqJydy2LQb6CkawYBxDo=
 github.com/rsteube/carapace-pflag v0.0.4 h1:Onb0cLNLxg1xJr2EsMlBldAI5KkybrvZ89b5cRElZXI=
 github.com/rsteube/carapace-pflag v0.0.4/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
 github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
