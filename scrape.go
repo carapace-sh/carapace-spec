@@ -38,7 +38,7 @@ var %vCmd = &cobra.Command{
 	Run:     func(cmd *cobra.Command, args []string) {},
 }
 
-`, cmdVarName(cmd), cmd.Name(), cmd.Short, strings.Join(cmd.Aliases, `", "`))
+`, cmdVarName(cmd), cmd.Use, cmd.Short, strings.Join(cmd.Aliases, `", "`))
 	} else {
 
 		fmt.Fprintf(out, `package cmd
@@ -54,7 +54,7 @@ var %vCmd = &cobra.Command{
 	Run:   func(cmd *cobra.Command, args []string) {},
 }
 
-`, cmdVarName(cmd), cmd.Name(), cmd.Short)
+`, cmdVarName(cmd), cmd.Use, cmd.Short)
 	}
 	if !cmd.HasParent() {
 		fmt.Fprintf(out, `func Execute() error {
