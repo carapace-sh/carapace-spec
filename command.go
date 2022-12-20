@@ -9,6 +9,7 @@ type Command struct {
 	Name            string            `json:"name" jsonschema_description:"Name of the command"`
 	Aliases         []string          `json:"aliases,omitempty" jsonschema_description:"Aliases of the command"`
 	Description     string            `json:"description,omitempty" jsonschema_description:"Description of the command"`
+	Group           string            `json:"group,omitempty" jsonschema_description:"Group of the command"`
 	Flags           map[string]string `json:"flags,omitempty" jsonschema_description:"Flags of the command with their description"`
 	PersistentFlags map[string]string `json:"persistentflags,omitempty" jsonschema_description:"Persistent flags of the command with their description"`
 	Completion      struct {
@@ -26,6 +27,7 @@ func (c *Command) ToCobra() *cobra.Command {
 		Use:     c.Name,
 		Aliases: c.Aliases,
 		Short:   c.Description,
+		GroupID: c.Group,
 		Run:     func(cmd *cobra.Command, args []string) {},
 	}
 	carapace.Gen(cmd).Standalone()
@@ -60,7 +62,12 @@ func (c *Command) ToCobra() *cobra.Command {
 
 	carapace.Gen(cmd).DashAnyCompletion(parseAction(cmd, c.Completion.DashAny))
 
+	groups := make(map[string]bool)
 	for _, subcmd := range c.Commands {
+		if _, exists := groups[subcmd.Group]; !exists {
+			cmd.AddGroup(&cobra.Group{ID: subcmd.Group})
+			groups[subcmd.Group] = true
+		}
 		cmd.AddCommand(subcmd.ToCobra())
 	}
 
