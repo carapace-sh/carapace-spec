@@ -28,8 +28,8 @@ var rootCmd = &cobra.Command{
     xonsh:      exec($(carapace-spec example.yaml))
     zsh:        source <(carapace-spec example.yaml)
     `,
-	Args: cobra.MinimumNArgs(1),
-	//DisableFlagParsing: true,
+	Args:               cobra.MinimumNArgs(1),
+	DisableFlagParsing: true,
 	CompletionOptions: cobra.CompletionOptions{
 		DisableDefaultCmd: true,
 	},
@@ -54,7 +54,7 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 
-		if cmd.Flag("scrape").Changed {
+		if flag := cmd.Flag("scrape"); flag != nil && flag.Changed {
 			specCmd.Scrape()
 		} else {
 			bridgeCompletion(specCmd.ToCobra(), abs, args[1:]...)
@@ -69,12 +69,20 @@ func Execute() error {
 func init() {
 	rootCmd.Flags().Bool("scrape", false, "scrape to go code")
 
+	if len(os.Args) < 2 || os.Args[1] == "--scrape" {
+		rootCmd.DisableFlagParsing = false
+	}
+
 	carapace.Gen(rootCmd).PositionalCompletion(
 		carapace.ActionFiles(".yaml"),
 	)
 
 	carapace.Gen(rootCmd).PositionalAnyCompletion(
 		carapace.ActionCallback(func(c carapace.Context) carapace.Action {
+			if rootCmd.Flag("scrape").Changed {
+				return carapace.ActionValues()
+			}
+
 			abs, err := filepath.Abs(c.Args[0])
 			if err != nil {
 				return carapace.ActionMessage(err.Error())
@@ -100,8 +108,8 @@ func init() {
 	)
 
 	carapace.Gen(rootCmd).PreRun(func(cmd *cobra.Command, args []string) {
-		if len(args) > 1 && args[0] != "--scrape" {
-			cmd.DisableFlagParsing = true
+		if len(args) < 2 || args[0] == "--scrape" {
+			cmd.DisableFlagParsing = false
 		}
 	})
 }
