@@ -5,6 +5,7 @@ type Command struct {
 	Name            string
 	Aliases         []string
 	Description     string
+	Group           string
 	Flags           map[string]string
 	PersistentFlags map[string]string
 	Completion      struct {

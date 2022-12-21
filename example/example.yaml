@@ -6,6 +6,7 @@ commands:
 - name: sub1
   aliases: [alias1, alias2]
   description: subcommand1
+  group: group1
   flags:
     -s, --styled=: styled values
     -r, --repeatable*: repeatable flag
@@ -50,5 +51,7 @@ commands:
   commands:
     - name: subsub1
       description: sub sub command
+      group: group3
 - name: sub2
+  group: group2
   description: subcommand2
