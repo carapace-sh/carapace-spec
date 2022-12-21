@@ -12,7 +12,7 @@ import (
 )
 
 func Scrape(cmd *cobra.Command) {
-	dir, err := os.MkdirTemp(os.TempDir(), "carascrape")
+	dir, err := os.MkdirTemp(os.TempDir(), "carapace-scrape-")
 	if err != nil {
 		panic(err.Error())
 	}
