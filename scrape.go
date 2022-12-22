@@ -4,13 +4,75 @@ import (
 	"bytes"
 	"encoding/csv"
 	"fmt"
+	"go/format"
 	"os"
+	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
 
+type scrapeXXX struct {
+	cmd *cobra.Command
+}
+
+func (s scrapeXXX) formatHeader() string {
+	return `package cmd
+import (
+	"github.com/rsteube/carapace"
+	"github.com/spf13/cobra"
+)
+`
+}
+
+func (s scrapeXXX) formatGroups() string {
+	if len(s.cmd.Groups()) == 0 {
+		return ""
+	}
+
+	groups := make([]string, 0)
+	for _, group := range s.cmd.Groups() {
+		groups = append(groups, fmt.Sprintf(`&cobra.Group{ID: "%v", Title: "%v"},`, group.ID, group.Title))
+	}
+	return fmt.Sprintf("%vCmd.AddGroup(\n%v\n)\n", cmdVarName(s.cmd), strings.Join(groups, "\n"))
+}
+
+func (s scrapeXXX) formatCommand() string {
+	snippet := fmt.Sprintf(
+		`var %vCmd = &cobra.Command{
+	Use:     "%v",
+	Short:   "%v",
+	GroupID: "%v",
+	Aliases: []string{"%v"},
+	Run:     func(cmd *cobra.Command, args []string) {},
+}
+`, cmdVarName(s.cmd), s.cmd.Use, s.cmd.Short, s.cmd.GroupID, strings.Join(s.cmd.Aliases, `", "`))
+
+	if s.cmd.GroupID == "" {
+		re := regexp.MustCompile("(?m)\n\tGroupID:.*$")
+		snippet = re.ReplaceAllString(snippet, "")
+
+	}
+
+	if len(s.cmd.Aliases) == 0 {
+		re := regexp.MustCompile("(?m)\n\t+Aliases:.*$")
+		snippet = re.ReplaceAllString(snippet, "")
+	}
+
+	return snippet
+}
+
+func (s scrapeXXX) formatExecute() string {
+	if s.cmd.HasParent() {
+		return ""
+	}
+	return `func Execute() error {
+	return rootCmd.Execute()
+}
+`
+}
 func Scrape(cmd *cobra.Command) {
 	dir, err := os.MkdirTemp(os.TempDir(), "carapace-scrape-")
 	if err != nil {
@@ -22,51 +84,14 @@ func Scrape(cmd *cobra.Command) {
 
 func scrape(cmd *cobra.Command, tmpDir string) {
 	out := &bytes.Buffer{}
-
-	if len(cmd.Aliases) > 0 {
-		fmt.Fprintf(out, `package cmd
-
-import (
-	"github.com/rsteube/carapace"
-	"github.com/spf13/cobra"
-)
-
-var %vCmd = &cobra.Command{
-	Use:     "%v",
-	Short:   "%v",
-	Aliases: []string{"%v"},
-	Run:     func(cmd *cobra.Command, args []string) {},
-}
-
-`, cmdVarName(cmd), cmd.Use, cmd.Short, strings.Join(cmd.Aliases, `", "`))
-	} else {
-
-		fmt.Fprintf(out, `package cmd
-
-import (
-	"github.com/rsteube/carapace"
-	"github.com/spf13/cobra"
-)
-
-var %vCmd = &cobra.Command{
-	Use:   "%v",
-	Short: "%v",
-	Run:   func(cmd *cobra.Command, args []string) {},
-}
-
-`, cmdVarName(cmd), cmd.Use, cmd.Short)
-	}
-	if !cmd.HasParent() {
-		fmt.Fprintf(out, `func Execute() error {
-	return rootCmd.Execute()
-}
-
-`)
-	}
+	fmt.Fprintln(out, scrapeXXX{cmd}.formatHeader())
+	fmt.Fprintln(out, scrapeXXX{cmd}.formatCommand())
+	fmt.Fprintln(out, scrapeXXX{cmd}.formatExecute())
 
 	fmt.Fprintf(out, `func init() {
 	carapace.Gen(%vCmd).Standalone()
-`, cmdVarName(cmd))
+%v
+`, cmdVarName(cmd), scrapeXXX{cmd}.formatGroups())
 
 	cmd.LocalFlags().VisitAll(func(f *pflag.Flag) {
 		if f.Deprecated != "" {
@@ -104,8 +129,19 @@ var %vCmd = &cobra.Command{
 	fmt.Fprintln(out, "}")
 
 	filename := fmt.Sprintf(`%v/%v.go`, tmpDir, cmdVarName(cmd))
+
 	println(filename)
-	os.WriteFile(filename, out.Bytes(), 0644)
+	formatted, err := format.Source(out.Bytes())
+	if err != nil {
+		unformatted := strings.Split(out.String(), "\n")
+		if line, err := strconv.Atoi(strings.SplitN(err.Error(), ":", 2)[0]); err == nil {
+			unformatted[line-1] = "\033[31m" + unformatted[line-1] + "\033[2;37m"
+		}
+		println("\033[2;37m" + strings.Join(unformatted, "\n") + "\033[0m")
+		panic(err.Error())
+	}
+
+	os.WriteFile(filename, formatted, 0644)
 
 	for _, subcmd := range cmd.Commands() {
 		if !subcmd.Hidden && subcmd.Deprecated == "" {
@@ -152,7 +188,7 @@ func flagValue(f *pflag.Flag) string {
 		strings.HasSuffix(f.Value.Type(), "Array") {
 		if strings.HasPrefix(f.Value.Type(), "string") {
 			if len(f.Value.String()) == 0 {
-				return ""
+				return "[]string{}"
 			}
 
 			vals, _ := csv.NewReader(strings.NewReader(f.Value.String()[1 : len(f.Value.String())-1])).Read()
@@ -165,9 +201,12 @@ func flagValue(f *pflag.Flag) string {
 		return fmt.Sprintf(`[]%v{%v}`, strings.TrimSuffix(strings.TrimSuffix(f.Value.Type(), "Slice"), "Array"), f.Value.String()[1:len(f.Value.String())-1])
 	}
 
-	if f.Value.Type() == "string" {
+	switch f.Value.Type() {
+	case "string":
 		return fmt.Sprintf(`"%v"`, f.Value.String())
+	case "duration":
+		return "0"
+	default:
+		return f.Value.String()
 	}
-
-	return f.Value.String()
 }
