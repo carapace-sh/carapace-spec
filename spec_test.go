@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/spf13/pflag"
 	"gopkg.in/yaml.v3"
 )
 
@@ -54,6 +55,10 @@ func TestSpec(t *testing.T) {
 }
 
 func TestSpecNonposix(t *testing.T) {
+	if fs := (flagSet{pflag.NewFlagSet("test", pflag.PanicOnError)}); !fs.IsFork() {
+		t.Skip("skip nonposix tests with spf13/pflag")
+	}
+
 	if out := execute(t, nonposix, "nonposix", ""); !strings.Contains(out, "a") {
 		t.Error(out)
 	}

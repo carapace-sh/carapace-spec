@@ -41,34 +41,42 @@ func parseFlag(s, usage string) (*flag, error) {
 	return f, nil
 }
 
-func (f flag) addTo(flagSet *pflag.FlagSet) {
+func (f flag) addTo(fset *pflag.FlagSet) error {
+	fs := flagSet{fset}
+	if len(f.shorthand) > 1 && !fs.IsFork() {
+		return fmt.Errorf("long shorthand only supported with rsteube/carapace-pflag: %v", f.shorthand)
+	}
+	if f.longhand == "" && !fs.IsFork() {
+		return fmt.Errorf("shorthand-only only supported with rsteube/carapace-pflag: %v", f.shorthand)
+	}
+
 	if f.longhand != "" && f.shorthand != "" {
 		if f.value {
 			if f.slice {
 				if !f.nonposix {
-					flagSet.StringSliceP(f.longhand, f.shorthand, []string{}, f.usage)
+					fs.StringSliceP(f.longhand, f.shorthand, []string{}, f.usage)
 				} else {
-					flagSet.StringSliceN(f.longhand, f.shorthand, []string{}, f.usage)
+					fs.StringSliceN(f.longhand, f.shorthand, []string{}, f.usage)
 				}
 			} else {
 				if !f.nonposix {
-					flagSet.StringP(f.longhand, f.shorthand, "", f.usage)
+					fs.StringP(f.longhand, f.shorthand, "", f.usage)
 				} else {
-					flagSet.StringN(f.longhand, f.shorthand, "", f.usage)
+					fs.StringN(f.longhand, f.shorthand, "", f.usage)
 				}
 			}
 		} else {
 			if f.slice {
 				if !f.nonposix {
-					flagSet.CountP(f.longhand, f.shorthand, f.usage)
+					fs.CountP(f.longhand, f.shorthand, f.usage)
 				} else {
-					flagSet.CountN(f.longhand, f.shorthand, f.usage)
+					fs.CountN(f.longhand, f.shorthand, f.usage)
 				}
 			} else {
 				if !f.nonposix {
-					flagSet.BoolP(f.longhand, f.shorthand, false, f.usage)
+					fs.BoolP(f.longhand, f.shorthand, false, f.usage)
 				} else {
-					flagSet.BoolN(f.longhand, f.shorthand, false, f.usage)
+					fs.BoolN(f.longhand, f.shorthand, false, f.usage)
 				}
 			}
 		}
@@ -76,53 +84,55 @@ func (f flag) addTo(flagSet *pflag.FlagSet) {
 		if f.value {
 			if f.slice {
 				if !f.nonposix {
-					flagSet.StringSlice(f.longhand, []string{}, f.usage)
+					fs.StringSlice(f.longhand, []string{}, f.usage)
 				} else {
-					flagSet.StringSliceS(f.longhand, f.longhand, []string{}, f.usage)
+					fs.StringSliceS(f.longhand, f.longhand, []string{}, f.usage)
 				}
 			} else {
 				if !f.nonposix {
-					flagSet.String(f.longhand, "", f.usage)
+					fs.String(f.longhand, "", f.usage)
 				} else {
-					flagSet.StringS(f.longhand, f.longhand, "", f.usage)
+					fs.StringS(f.longhand, f.longhand, "", f.usage)
 				}
 			}
 		} else {
 			if f.slice {
 				if !f.nonposix {
-					flagSet.Count(f.longhand, f.usage)
+					fs.Count(f.longhand, f.usage)
 				} else {
-					flagSet.CountS(f.longhand, f.longhand, f.usage)
+					fs.CountS(f.longhand, f.longhand, f.usage)
 				}
 			} else {
 				if !f.nonposix {
-					flagSet.Bool(f.longhand, false, f.usage)
+					fs.Bool(f.longhand, false, f.usage)
 				} else {
-					flagSet.BoolS(f.longhand, f.longhand, false, f.usage)
+					fs.BoolS(f.longhand, f.longhand, false, f.usage)
 				}
 			}
 		}
 	} else if f.shorthand != "" {
 		if f.value {
 			if f.slice {
-				flagSet.StringSliceS(f.shorthand, f.shorthand, []string{}, f.usage)
+				fs.StringSliceS(f.shorthand, f.shorthand, []string{}, f.usage)
 			} else {
-				flagSet.StringS(f.shorthand, f.shorthand, "", f.usage)
+				fs.StringS(f.shorthand, f.shorthand, "", f.usage)
 			}
 		} else {
 			if f.slice {
-				flagSet.CountS(f.shorthand, f.shorthand, f.usage)
+				fs.CountS(f.shorthand, f.shorthand, f.usage)
 			} else {
-				flagSet.BoolS(f.shorthand, f.shorthand, false, f.usage)
+				fs.BoolS(f.shorthand, f.shorthand, false, f.usage)
 			}
 		}
 	}
 
 	if f.optarg {
 		if f.longhand != "" {
-			flagSet.Lookup(f.longhand).NoOptDefVal = " "
+			fs.Lookup(f.longhand).NoOptDefVal = " "
 		} else {
-			flagSet.Lookup(f.shorthand).NoOptDefVal = " "
+			fs.Lookup(f.shorthand).NoOptDefVal = " "
 		}
 	}
+
+	return nil
 }
