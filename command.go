@@ -22,7 +22,7 @@ type Command struct {
 	Commands []Command `json:"commands,omitempty" jsonschema_description:"Completion definition"`
 }
 
-func (c *Command) ToCobra() *cobra.Command {
+func (c *Command) ToCobra() (*cobra.Command, error) {
 	cmd := &cobra.Command{
 		Use:     c.Name,
 		Aliases: c.Aliases,
@@ -33,11 +33,19 @@ func (c *Command) ToCobra() *cobra.Command {
 	carapace.Gen(cmd).Standalone()
 
 	for id, description := range c.PersistentFlags {
-		parseFlag(id, description).addTo(cmd.PersistentFlags())
+		flag, err := parseFlag(id, description)
+		if err != nil {
+			return nil, err
+		}
+		flag.addTo(cmd.PersistentFlags())
 	}
 
 	for id, description := range c.Flags {
-		parseFlag(id, description).addTo(cmd.Flags())
+		flag, err := parseFlag(id, description)
+		if err != nil {
+			return nil, err
+		}
+		flag.addTo(cmd.Flags())
 	}
 
 	flagCompletions := make(carapace.ActionMap)
@@ -70,12 +78,20 @@ func (c *Command) ToCobra() *cobra.Command {
 				groups[subcmd.Group] = true
 			}
 		}
-		cmd.AddCommand(subcmd.ToCobra())
+		subcmdCobra, err := subcmd.ToCobra()
+		if err != nil {
+			return nil, err
+		}
+		cmd.AddCommand(subcmdCobra)
 	}
 
-	return cmd
+	return cmd, nil
 }
 
 func (c *Command) Scrape() {
-	Scrape(c.ToCobra())
+	cmd, err := c.ToCobra()
+	// TODO handle error
+	if err == nil {
+		Scrape(cmd)
+	}
 }

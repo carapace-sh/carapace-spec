@@ -77,7 +77,10 @@ func execute(t *testing.T, spec string, args ...string) string {
 	if err := yaml.Unmarshal([]byte(spec), &c); err != nil {
 		t.Error(err.Error())
 	}
-	cmd := c.ToCobra()
+	cmd, err := c.ToCobra()
+	if err != nil {
+		t.Error(err.Error())
+	}
 	cmd.SetOut(&stdout)
 	cmd.SetErr(&stderr)
 	cmd.SetArgs(append([]string{"_carapace", "export"}, args...))

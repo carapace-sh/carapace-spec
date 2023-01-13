@@ -71,7 +71,12 @@ func ActionSpec(path string) carapace.Action {
 		if err := yaml.Unmarshal(content, &cmd); err != nil {
 			return carapace.ActionMessage(err.Error())
 		}
-		return carapace.ActionExecute(cmd.ToCobra())
+
+		cmdCobra, err := cmd.ToCobra()
+		if err != nil {
+			return carapace.ActionMessage(err.Error())
+		}
+		return carapace.ActionExecute(cmdCobra)
 	})
 }
 

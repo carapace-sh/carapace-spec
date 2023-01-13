@@ -1,6 +1,7 @@
 package spec
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 
@@ -17,10 +18,15 @@ type flag struct {
 	nonposix  bool
 }
 
-func parseFlag(s, usage string) (f flag) {
+func parseFlag(s, usage string) (*flag, error) {
 	r := regexp.MustCompile(`^(?P<shorthand>-[^-][^ =*?]*)?(, )?(?P<longhand>-[-]?[^ =*?]*)?(?P<modifier>[=*?]*)$`)
+	if !r.MatchString(s) {
+		return nil, fmt.Errorf("flag syntax invalid: %v", s)
+	}
+
 	matches := findNamedMatches(r, s)
 
+	f := &flag{}
 	f.longhand = strings.TrimLeft(matches["longhand"], "-")
 	f.nonposix = matches["longhand"] != "" && !strings.HasPrefix(matches["longhand"], "--")
 	f.shorthand = strings.TrimPrefix(matches["shorthand"], "-")
@@ -29,11 +35,10 @@ func parseFlag(s, usage string) (f flag) {
 	f.optarg = strings.Contains(matches["modifier"], "?")
 	f.value = f.optarg || strings.Contains(matches["modifier"], "=")
 
-	// TODO enable error check
-	//if f.longhand == "" && f.shorthand == "" {
-	//	err = fmt.Errorf("malformed flag: '%v'", s)
-	//}
-	return
+	if f.longhand == "" && f.shorthand == "" {
+		return nil, fmt.Errorf("malformed flag: '%v'", s)
+	}
+	return f, nil
 }
 
 func (f flag) addTo(flagSet *pflag.FlagSet) {
