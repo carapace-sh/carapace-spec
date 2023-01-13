@@ -57,7 +57,11 @@ var rootCmd = &cobra.Command{
 		if flag := cmd.Flag("scrape"); flag != nil && flag.Changed {
 			specCmd.Scrape()
 		} else {
-			bridgeCompletion(specCmd.ToCobra(), abs, args[1:]...)
+			specCmdCobra, err := specCmd.ToCobra()
+			if err != nil {
+				return err
+			}
+			bridgeCompletion(specCmdCobra, abs, args[1:]...)
 		}
 		return nil
 	},
@@ -103,7 +107,12 @@ func init() {
 			} else {
 				c.Args[0] = "_carapace"
 			}
-			return carapace.ActionExecute(specCmd.ToCobra()).Invoke(c).ToA()
+
+			specCmdCobra, err := specCmd.ToCobra()
+			if err != nil {
+				return carapace.ActionMessage(err.Error())
+			}
+			return carapace.ActionExecute(specCmdCobra).Invoke(c).ToA()
 		}),
 	)
 
