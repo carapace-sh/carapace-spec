@@ -64,9 +64,11 @@ func (c *Command) ToCobra() *cobra.Command {
 
 	groups := make(map[string]bool)
 	for _, subcmd := range c.Commands {
-		if _, exists := groups[subcmd.Group]; !exists {
-			cmd.AddGroup(&cobra.Group{ID: subcmd.Group})
-			groups[subcmd.Group] = true
+		if subcmd.Group != "" {
+			if _, exists := groups[subcmd.Group]; !exists {
+				cmd.AddGroup(&cobra.Group{ID: subcmd.Group})
+				groups[subcmd.Group] = true
+			}
 		}
 		cmd.AddCommand(subcmd.ToCobra())
 	}
