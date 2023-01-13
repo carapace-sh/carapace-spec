@@ -5,6 +5,27 @@ on:
   push:
 
 jobs:
+  nonposix:
+    runs-on: ubuntu-latest
+    steps:
+    - name: shallow clone
+      uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.18
+
+    - name: Replace dependency
+      run: |
+          go mod edit -replace github.com/spf13/pflag=github.com/rsteube/carapace-pflag@v0.0.4
+          go mod tidy
+
+    - name: Build
+      run: go build -v ./...
+
+    - name: Test
+      run: go test -v -coverprofile=profile.cov ./...
 
   build:
     runs-on: ubuntu-latest
