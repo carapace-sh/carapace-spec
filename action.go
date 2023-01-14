@@ -72,7 +72,7 @@ func ActionSpec(path string) carapace.Action {
 			return carapace.ActionMessage(err.Error())
 		}
 
-		cmdCobra, err := cmd.ToCobra()
+		cmdCobra, err := cmd.ToCobraE()
 		if err != nil {
 			return carapace.ActionMessage(err.Error())
 		}

@@ -82,7 +82,7 @@ func execute(t *testing.T, spec string, args ...string) string {
 	if err := yaml.Unmarshal([]byte(spec), &c); err != nil {
 		t.Error(err.Error())
 	}
-	cmd, err := c.ToCobra()
+	cmd, err := c.ToCobraE()
 	if err != nil {
 		t.Error(err.Error())
 	}
