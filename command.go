@@ -22,7 +22,23 @@ type Command struct {
 	Commands []Command `json:"commands,omitempty" jsonschema_description:"Completion definition"`
 }
 
-func (c *Command) ToCobra() (*cobra.Command, error) {
+func (c *Command) ToCobra() *cobra.Command {
+	cmd, err := c.ToCobraE()
+	if err != nil {
+		cmd = &cobra.Command{
+			Use:                c.Name,
+			DisableFlagParsing: true,
+			Run:                func(cmd *cobra.Command, args []string) {},
+		}
+		carapace.Gen(cmd).Standalone()
+		carapace.Gen(cmd).PositionalAnyCompletion(
+			carapace.ActionMessage(err.Error()),
+		)
+	}
+	return cmd
+}
+
+func (c *Command) ToCobraE() (*cobra.Command, error) {
 	cmd := &cobra.Command{
 		Use:     c.Name,
 		Aliases: c.Aliases,
@@ -78,7 +94,7 @@ func (c *Command) ToCobra() (*cobra.Command, error) {
 				groups[subcmd.Group] = true
 			}
 		}
-		subcmdCobra, err := subcmd.ToCobra()
+		subcmdCobra, err := subcmd.ToCobraE()
 		if err != nil {
 			return nil, err
 		}
@@ -89,7 +105,7 @@ func (c *Command) ToCobra() (*cobra.Command, error) {
 }
 
 func (c *Command) Scrape() {
-	cmd, err := c.ToCobra()
+	cmd, err := c.ToCobraE()
 	// TODO handle error
 	if err == nil {
 		Scrape(cmd)
