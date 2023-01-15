@@ -61,6 +61,11 @@ jobs:
     - name: "staticcheck"
       run: go install honnef.co/go/tools/cmd/staticcheck@latest && staticcheck ./...
 
+    - name: Replace dependency
+      run: |
+          go mod edit -replace github.com/spf13/pflag=github.com/rsteube/carapace-pflag@v0.0.4
+          go mod tidy
+
     - name: Run GoReleaser
       uses: goreleaser/goreleaser-action@v2
       if: startsWith(github.ref, 'refs/tags/')
