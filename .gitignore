@@ -1,4 +1,6 @@
-profile.cov
 cmd/carapace-spec/carapace-spec
 dist
 docs/book
+go.work
+go.work.sum
+profile.cov
