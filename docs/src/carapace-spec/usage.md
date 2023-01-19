@@ -13,8 +13,8 @@ carapace-spec example.yaml | source
 # oil
 source <(carapace-spec example.yaml)
 
-# nushell
-carapace-spec example.yaml | save example.nu ; nu -c 'source example.nu'
+# nushell (update config.nu according to output)
+carapace-spec example.yaml
 
 # powershell
 carapace-spec example.yaml | Out-String | Invoke-Expression
