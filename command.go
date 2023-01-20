@@ -18,8 +18,8 @@ type Command struct {
 		PositionalAny []action            `json:"positionalany,omitempty" jsonschema_description:"Positional completion for every other position"`
 		Dash          [][]action          `json:"dash,omitempty" jsonschema_description:"Dash completion"`
 		DashAny       []action            `json:"dashany,omitempty" jsonschema_description:"Dash completion of every other position"`
-	} `json:"completion,omitempty" jsonschema_description:"Subcommands of the command"`
-	Commands []Command `json:"commands,omitempty" jsonschema_description:"Completion definition"`
+	} `json:"completion,omitempty" jsonschema_description:"Completion definition"`
+	Commands []Command `json:"commands,omitempty" jsonschema_description:"Subcommands of the command"`
 }
 
 func (c *Command) ToCobra() *cobra.Command {
