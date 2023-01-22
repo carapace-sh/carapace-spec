@@ -8,6 +8,13 @@ import (
 )
 
 func init() {
+	// modifiers added as dummy for completeness
+	addCoreMacro("chdir", MacroI(func(s string) carapace.Action { return carapace.ActionValues() }))
+	addCoreMacro("list", MacroI(func(s string) carapace.Action { return carapace.ActionValues() }))
+	addCoreMacro("multiparts", MacroI(func(s string) carapace.Action { return carapace.ActionValues() }))
+	addCoreMacro("nospace", MacroI(func(s string) carapace.Action { return carapace.ActionValues() }))
+	addCoreMacro("uniquelist", MacroI(func(s string) carapace.Action { return carapace.ActionValues() }))
+
 	addCoreMacro("directories", MacroN(carapace.ActionDirectories))
 	addCoreMacro("files", MacroV(carapace.ActionFiles))
 	addCoreMacro("message", MacroI(func(s string) carapace.Action { return carapace.ActionMessage(s) }))

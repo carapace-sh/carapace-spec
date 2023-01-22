@@ -3,6 +3,7 @@ package spec
 import (
 	"fmt"
 	"reflect"
+	"regexp"
 	"strings"
 
 	"github.com/rsteube/carapace"
@@ -15,6 +16,14 @@ type Macro struct {
 	disableFlagParsing bool
 }
 
+func (m Macro) parse(s string) carapace.Action {
+	r := regexp.MustCompile(`^\$(?P<macro>[^(]*)(\((?P<arg>.*)\))?$`)
+	matches := r.FindStringSubmatch(s)
+	if matches == nil {
+		return carapace.ActionMessage("malformed macro: '%v'", s)
+	}
+	return m.f(matches[3])
+}
 func (m Macro) Signature() string { return m.s() }
 func (m Macro) NoFlag() Macro     { m.disableFlagParsing = true; return m }
 
@@ -67,7 +76,7 @@ func MacroI[T any](f func(t T) carapace.Action) Macro {
 	}
 }
 
-// MacroV careates a macro with a variable argument
+// MacroV creates a macro with a variable argument
 func MacroV[T any](f func(s ...T) carapace.Action) Macro {
 	return Macro{
 		f: func(s string) carapace.Action {

@@ -42,12 +42,12 @@ func ActionMacro(s string) carapace.Action {
 	return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
 		r := regexp.MustCompile(`^\$(?P<macro>[^(]*)(\((?P<arg>.*)\))?$`)
 		if !r.MatchString(s) {
-			return carapace.ActionMessage("malformed macro: '%v'", s)
+			return carapace.ActionMessage("malformed macro: %#v", s)
 		}
 
 		matches := findNamedMatches(r, s)
 		if m, ok := macros[matches["macro"]]; !ok {
-			return carapace.ActionMessage("unknown macro: '%v'", s)
+			return carapace.ActionMessage("unknown macro: %#v", s)
 		} else {
 			return m.f(matches["arg"])
 		}
@@ -104,69 +104,49 @@ func parseAction(cmd *cobra.Command, arr []action) carapace.Action {
 			c.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), f.Value.String())
 		})
 
-		listDelimiter := ""
-		nospace := ""
-		chdir := ""
-		multiparts := ""
-
-		// TODO don't alter the map each time, solve this differently
-		addCoreMacro("chdir", MacroI(func(s string) carapace.Action {
-			chdir = s
-			return carapace.ActionValues()
-		}))
-		addCoreMacro("list", MacroI(func(s string) carapace.Action {
-			listDelimiter = s
-			return carapace.ActionValues()
-		}))
-		addCoreMacro("multiparts", MacroI(func(s string) carapace.Action {
-			multiparts = s
-			return carapace.ActionValues()
-		}))
-		addCoreMacro("nospace", MacroI(func(s string) carapace.Action {
-			nospace = s
-			if s == "" {
-				nospace = "*"
-			}
-			return carapace.ActionValues()
-		}))
-
 		batch := carapace.Batch()
+		action := carapace.ActionCallback(func(c carapace.Context) carapace.Action {
+			return batch.ToA()
+		})
+
 		vals := make([]string, 0)
 		for _, elem := range arr {
 			if elemSubst, err := c.Envsubst(string(elem)); err != nil {
-				batch = append(batch, carapace.ActionMessage("%v: %v", err.Error(), elem))
+				batch = append(batch, carapace.ActionMessage("%v: %#v", err.Error(), elem))
 			} else if strings.HasPrefix(elemSubst, "$") { // macro
-				batch = append(batch, ActionMacro(elemSubst))
+				switch strings.SplitN(elemSubst, "(", 2)[0] {
+				case "$chdir":
+					action = MacroI(action.Chdir).parse(elemSubst)
+				case "$list":
+					action = MacroI(updateEnv(action).List).parse(elemSubst)
+				case "$multiparts":
+					action = MacroV(action.MultiParts).parse(elemSubst)
+				case "$nospace":
+					localAction := action
+					action = MacroI(func(s string) carapace.Action {
+						return localAction.NoSpace([]rune(s)...)
+					}).parse(elemSubst)
+				case "$uniquelist":
+					action = MacroI(updateEnv(action).UniqueList).parse(elemSubst)
+				default:
+					batch = append(batch, ActionMacro(elemSubst))
+				}
 			} else {
 				vals = append(vals, parseValue(elemSubst)...)
 			}
 		}
 		batch = append(batch, carapace.ActionStyledValuesDescribed(vals...))
-
-		action := batch.Invoke(c).Merge().ToA() // invoke eagerly so that the modifier macros are called
-		if chdir != "" {
-			action = action.Chdir(chdir)
-		}
-		if multiparts != "" {
-			actionCopy := action
-			action = carapace.ActionCallback(func(c carapace.Context) carapace.Action {
-				return actionCopy.Invoke(c).ToMultiPartsA(multiparts)
-			})
-		}
-
-		if listDelimiter != "" {
-			return carapace.ActionMultiParts(listDelimiter, func(c carapace.Context) carapace.Action {
-				for index, arg := range c.Parts {
-					c.Setenv(fmt.Sprintf("C_PART%v", index), arg)
-				}
-				c.Setenv("C_CALLBACK", c.CallbackValue)
-
-				return action.Invoke(c).Filter(c.Parts).ToA()
-			})
-		} else if nospace != "" {
-			return action.NoSpace([]rune(nospace)...)
-		}
 		return action.Invoke(c).ToA()
+	})
+}
+
+func updateEnv(a carapace.Action) carapace.Action {
+	return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
+		for index, arg := range c.Parts {
+			c.Setenv(fmt.Sprintf("C_PART%v", index), arg)
+		}
+		c.Setenv("C_CALLBACK", c.CallbackValue)
+		return a.Invoke(c).ToA()
 	})
 }
 
