@@ -12,7 +12,7 @@ Modifiers change the completion for a position in general.
 
 ## list
 
-[`$list(<delimiter>)`](https://rsteube.github.io/carapace/carapace/action/actionMultiParts.html) completes values as unique list with given delimiter.
+[`$list(<delimiter>)`](https://rsteube.github.io/carapace/carapace/action/actionMultiParts.html) completes values as list with given delimiter.
 
 ```yml
 ["$list(,)", "a", "b", "c", "d"]
@@ -20,10 +20,10 @@ Modifiers change the completion for a position in general.
 
 ## multiparts
 
-[`$multiparts(<delimiter>)`](https://rsteube.github.io/carapace/carapace/invokedAction/toMultiPartsA.html) completes values splitted on given delimiter separately.
+[`$multiparts(<delimiter>)`](https://rsteube.github.io/carapace/carapace/invokedAction/toMultiPartsA.html) completes values splitted on given delimiters separately.
 
 ```yml
-["$multiparts(/)", "a", "a/b", "a/c", "b", "b/a"]
+["$multiparts([/])", "a", "a/b", "a/c", "b", "b/a"]
 ```
 
 ## nospace
@@ -40,4 +40,12 @@ Modifiers change the completion for a position in general.
 
 ```yml
 ["$noflag"]
+```
+
+## uniquelist
+
+[`$uniquelist(<delimiter>)`](https://rsteube.github.io/carapace/carapace/action/actionMultiParts.html) completes values as unique list with given delimiter.
+
+```yml
+["$uniquelist(,)", "a", "b", "c", "d"]
 ```

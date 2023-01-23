@@ -14,14 +14,16 @@ commands:
     -l, --list=: list flag
     --dynamic=: dynamic value
     --env=: env
+    --env-list=: env
     --novalue: no value
     --chdir=: chdir modifier
     --multiparts=: multiparts modifier
     -n, --nospace=: nospace
+    -u, --uniquelist=: uniqelist flag
   completion:
     flag:
       chdir: ["$chdir(/tmp)", "$files"]
-      multiparts: ["$multiparts(/)", "one/a/1", "one/a/2", "one/b/1", "one/b/2", "two/a/1"]
+      multiparts: ["$multiparts([/])", "one/a/1", "one/a/2", "one/b/1", "one/b/2", "two/a/1"]
       styled:
       - "blue\tblue\tblue"
       - "cyan\tcyan\tcyan"
@@ -35,10 +37,12 @@ commands:
       - "$(git branch --all | cut -c 3- | sed 's/$/\t\tblue/')"
       - "$(git tag | sed 's/$/\t\tyellow/')"
       - "static value"
-      env: ["$(env)"]
+      env: ["$(env | grep '^C_')"]
+      env-list: ["$list(,)", "$(env | grep '^C_')", "one\t\tblue", "two\t\tblue", "three\t\tblue"]
       list: ["$list(,)", "a", "b", "c", "d"]
       nospace: ["$nospace", "1", "2", "3"]
       optarg: ["first", "second", "third"]
+      uniquelist: ["$uniquelist(,)", "a", "b", "c", "d"]
     positional:
     - ["pos1A", "pos1B"]
     - ["$files([.go, go.mod])"]
