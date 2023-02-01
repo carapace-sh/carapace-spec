@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -34,33 +35,57 @@ var rootCmd = &cobra.Command{
 		DisableDefaultCmd: true,
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) > 0 && args[0] == "-h" || args[0] == "--help" {
+		switch args[0] {
+		case "-h", "--help":
 			cmd.Help()
-			return nil
-		}
-
-		abs, err := filepath.Abs(args[0])
-		if err != nil {
-			return err
-		}
-
-		content, err := os.ReadFile(abs)
-		if err != nil {
-			return err
-		}
-
-		var specCmd spec.Command
-		if err := yaml.Unmarshal(content, &specCmd); err != nil {
-			return err
-		}
-
-		if flag := cmd.Flag("scrape"); flag != nil && flag.Changed {
-			specCmd.Scrape()
-		} else {
+		case "--scrape":
+			if len(args) < 2 {
+				return errors.New("flag needs an argument: --scrape")
+			}
+			command, err := loadSpec(args[1])
+			if err != nil {
+				return err
+			}
+			command.Scrape()
+		case "--run":
+			command, err := loadSpec(args[1])
+			if err != nil {
+				return err
+			}
+			cobraCmd := command.ToCobra()
+			cobraCmd.SetArgs(args[2:])
+			cobraCmd.Execute()
+		default:
+			abs, err := filepath.Abs(args[0])
+			if err != nil {
+				return err
+			}
+			specCmd, err := loadSpec(abs)
+			if err != nil {
+				return err
+			}
 			bridgeCompletion(specCmd.ToCobra(), abs, args[1:]...)
 		}
 		return nil
 	},
+}
+
+func loadSpec(path string) (*spec.Command, error) {
+	abs, err := filepath.Abs(path)
+	if err != nil {
+		return nil, err
+	}
+
+	content, err := os.ReadFile(abs)
+	if err != nil {
+		return nil, err
+	}
+
+	var specCmd spec.Command
+	if err := yaml.Unmarshal(content, &specCmd); err != nil {
+		return nil, err
+	}
+	return &specCmd, nil
 }
 
 func Execute() error {
@@ -68,10 +93,7 @@ func Execute() error {
 }
 func init() {
 	rootCmd.Flags().Bool("scrape", false, "scrape to go code")
-
-	if len(os.Args) < 2 || os.Args[1] == "--scrape" {
-		rootCmd.DisableFlagParsing = false
-	}
+	rootCmd.Flags().Bool("run", false, "run with given args")
 
 	carapace.Gen(rootCmd).PositionalCompletion(
 		carapace.ActionFiles(".yaml"),
@@ -79,38 +101,40 @@ func init() {
 
 	carapace.Gen(rootCmd).PositionalAnyCompletion(
 		carapace.ActionCallback(func(c carapace.Context) carapace.Action {
-			if rootCmd.Flag("scrape").Changed {
+			switch {
+			case c.Args[0] == "--run":
+				if len(c.Args) > 1 {
+					path := c.Args[1]
+					c.Args = c.Args[2:]
+					return spec.ActionSpec(path).Invoke(c).ToA()
+				}
+				return carapace.ActionFiles(".yaml")
+
+			case c.Args[0] == "--scrape" && len(c.Args) == 1:
+				return carapace.ActionFiles(".yaml")
+
+			case !strings.HasPrefix(c.Args[0], "-"):
+				path := c.Args[0]
+				if len(c.Args) < 3 {
+					c.Args[0] = "_carapace"
+				} else {
+					c.Args = c.Args[3:]
+				}
+				return spec.ActionSpec(path).Invoke(c).ToA()
+
+			default:
 				return carapace.ActionValues()
 			}
-
-			abs, err := filepath.Abs(c.Args[0])
-			if err != nil {
-				return carapace.ActionMessage(err.Error())
-			}
-
-			content, err := os.ReadFile(abs)
-			if err != nil {
-				return carapace.ActionMessage(err.Error())
-			}
-
-			var specCmd spec.Command
-			if err := yaml.Unmarshal(content, &specCmd); err != nil {
-				return carapace.ActionMessage(err.Error())
-			}
-
-			if len(c.Args) > 2 {
-				c.Args = c.Args[3:]
-			} else {
-				c.Args[0] = "_carapace"
-			}
-
-			return carapace.ActionExecute(specCmd.ToCobra()).Invoke(c).ToA()
 		}),
 	)
 
 	carapace.Gen(rootCmd).PreRun(func(cmd *cobra.Command, args []string) {
-		if len(args) < 2 || args[0] == "--scrape" {
+		switch len(args) {
+		case 0, 1:
 			cmd.DisableFlagParsing = false
+
+		default:
+			cmd.Flags().Parse(args[:1]) // TODO unnecessary
 		}
 	})
 }

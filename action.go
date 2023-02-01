@@ -15,10 +15,13 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// static value or macro
-type action string
+type (
+	// static or dynamic value (macro)
+	value  string
+	action []value
+)
 
-func (action) JSONSchema() *jsonschema.Schema {
+func (value) JSONSchema() *jsonschema.Schema {
 	sortedNames := make([]string, 0, len(macros))
 	for name := range macros {
 		sortedNames = append(sortedNames, name)
@@ -80,19 +83,19 @@ func ActionSpec(path string) carapace.Action {
 	})
 }
 
-func parseAction(cmd *cobra.Command, arr []action) carapace.Action {
-	if !cmd.DisableFlagParsing {
-		for _, entry := range arr {
-			if strings.HasPrefix(string(entry), "$") {
-				macro := strings.SplitN(strings.TrimPrefix(string(entry), "$"), "(", 2)[0]
-				if m, ok := macros[macro]; ok && m.disableFlagParsing {
-					cmd.DisableFlagParsing = true // implicitly disable flag parsing
-					break
-				}
+func (a action) disableFlagParsing() bool {
+	for _, value := range a {
+		if strings.HasPrefix(string(value), "$") {
+			macro := strings.SplitN(strings.TrimPrefix(string(value), "$"), "(", 2)[0]
+			if m, ok := macros[macro]; ok && m.disableFlagParsing {
+				return true
 			}
 		}
 	}
+	return false
+}
 
+func (a action) parse(cmd *cobra.Command) carapace.Action {
 	return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
 		// TODO yuck - where to set thes best?
 		for index, arg := range c.Args {
@@ -110,7 +113,7 @@ func parseAction(cmd *cobra.Command, arr []action) carapace.Action {
 		})
 
 		vals := make([]string, 0)
-		for _, elem := range arr {
+		for _, elem := range a {
 			if elemSubst, err := c.Envsubst(string(elem)); err != nil {
 				batch = append(batch, carapace.ActionMessage("%v: %#v", err.Error(), elem))
 			} else if strings.HasPrefix(elemSubst, "$") { // macro
