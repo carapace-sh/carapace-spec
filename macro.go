@@ -38,7 +38,7 @@ func AddMacro(s string, m Macro) {
 	macros["_"+s] = m
 }
 
-// MacroN careates a macro without an argument
+// MacroN creates a macro without an argument
 func MacroN(f func() carapace.Action) Macro {
 	return Macro{
 		f: func(s string) carapace.Action {
@@ -48,7 +48,7 @@ func MacroN(f func() carapace.Action) Macro {
 	}
 }
 
-// MacroI careates a macro with an argument
+// MacroI creates a macro with an argument
 func MacroI[T any](f func(t T) carapace.Action) Macro {
 	return Macro{
 		f: func(s string) carapace.Action {

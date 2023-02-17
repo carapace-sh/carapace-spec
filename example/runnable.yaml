@@ -1,0 +1,14 @@
+name: runnable
+description: runnable spec
+commands:
+  -  name: sub1
+     description: alias
+     run: "[git, log]"
+
+  -  name: sub2
+     description: shell
+     run: "$(git show $1)"
+     completion:
+       positional:
+         - - "$(git branch --format '%(refname:short)\t%(subject)\tblue')"
+           - "$(git tag --format '%(refname:short)\t\tyellow')"
