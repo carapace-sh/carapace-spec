@@ -8,7 +8,9 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/rsteube/carapace"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 	"gopkg.in/yaml.v3"
 )
 
@@ -57,10 +59,23 @@ func (r run) parse() func(cmd *cobra.Command, args []string) error {
 			return fmt.Errorf("malformed macro: %#v", r)
 		}
 
+		context := carapace.NewContext(args...)
+		cmd.Flags().Visit(func(f *pflag.Flag) {
+			context.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), f.Value.String())
+		})
+		var err error
+		for index, mArg := range mArgs {
+			mArgs[index], err = context.Envsubst(mArg)
+			if err != nil {
+				return err
+			}
+		}
+
 		execCmd := exec.Command(mCmd, append(mArgs, args...)...)
 		execCmd.Stdin = cmd.InOrStdin()
 		execCmd.Stdout = cmd.OutOrStdout()
 		execCmd.Stderr = cmd.ErrOrStderr()
+		execCmd.Env = context.Env
 		if err := execCmd.Run(); err != nil {
 			if exitErr, ok := err.(*exec.ExitError); ok {
 				os.Exit(exitErr.ProcessState.ExitCode())
