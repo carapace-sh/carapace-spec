@@ -61,7 +61,11 @@ func (r run) parse() func(cmd *cobra.Command, args []string) error {
 
 		context := carapace.NewContext(args...)
 		cmd.Flags().Visit(func(f *pflag.Flag) {
-			context.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), f.Value.String())
+			if slice, ok := f.Value.(pflag.SliceValue); ok {
+				context.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), strings.Join(slice.GetSlice(), ","))
+			} else {
+				context.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), f.Value.String())
+			}
 		})
 		var err error
 		for index, mArg := range mArgs {
