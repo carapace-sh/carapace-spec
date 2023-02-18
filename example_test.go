@@ -21,7 +21,8 @@ func TestRunnable(t *testing.T) {
 		s.Run("runnable.yaml", "export", "runnable", "").
 			Expect(carapace.ActionValuesDescribed(
 				"sub1", "alias",
-				"sub2", "shell").
+				"sub2", "shell",
+				"sub3", "shell with flags").
 				Tag("commands"))
 	})
 }

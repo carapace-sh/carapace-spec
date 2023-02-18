@@ -12,3 +12,15 @@ commands:
        positional:
          - - "$(git branch --format '%(refname:short)\t%(subject)\tblue')"
            - "$(git tag --format '%(refname:short)\t\tyellow')"
+
+  -  name: sub3
+     description: shell with flags
+     run: "$(git log --author \"${C_FLAG_AUTHOR}\" $1)"
+     flags:
+       -a, --author=: limit to author
+     completion:
+       flag:
+         author: ["$(git shortlog --summary --email HEAD | sed -e 's/^.*\t//' -e 's/ </\t</')"]
+       positional:
+         - - "$(git branch --format '%(refname:short)\t%(subject)\tblue')"
+           - "$(git tag --format '%(refname:short)\t\tyellow')"
