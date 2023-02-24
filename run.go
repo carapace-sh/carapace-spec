@@ -57,13 +57,16 @@ func (r run) parse() func(cmd *cobra.Command, args []string) error {
 				mArgs = append(mArgs, "-c", matches[3], "--")
 			} else {
 				// pwsh handles arguments after `-c` differently (https://github.com/PowerShell/PowerShell/issues/13832)
-				path, err := os.CreateTemp(os.TempDir(), "carapace-spec_run")
+				path, err := os.CreateTemp(os.TempDir(), "carapace-spec_run*.ps1")
 				if err != nil {
 					return err
 				}
 				defer os.Remove(path.Name())
 
 				if err = os.WriteFile(path.Name(), []byte(matches[3]), 0700); err != nil {
+					return err
+				}
+				if err := path.Close(); err != nil {
 					return err
 				}
 				mArgs = append(mArgs, path.Name())
