@@ -20,6 +20,7 @@ func (r run) parse() func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
 		mCmd := ""
 		mArgs := make([]string, 0)
+		alias := false
 
 		switch {
 		case strings.HasPrefix(string(r), "["):
@@ -32,6 +33,7 @@ func (r run) parse() func(cmd *cobra.Command, args []string) error {
 
 			mCmd = mArgs[0]
 			mArgs = mArgs[1:]
+			alias = true
 
 		case strings.HasPrefix(string(r), "$"):
 			matches := regexp.MustCompile(`^\$(?P<macro>[^(]*)(\((?P<arg>.*)\))?$`).FindStringSubmatch(string(r))
@@ -85,11 +87,13 @@ func (r run) parse() func(cmd *cobra.Command, args []string) error {
 				context.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), f.Value.String())
 			}
 		})
-		var err error
-		for index, mArg := range mArgs {
-			mArgs[index], err = context.Envsubst(mArg)
-			if err != nil {
-				return err
+		if !alias {
+			var err error
+			for index, mArg := range mArgs {
+				mArgs[index], err = context.Envsubst(mArg)
+				if err != nil {
+					return err
+				}
 			}
 		}
 
