@@ -53,7 +53,22 @@ func (r run) parse() func(cmd *cobra.Command, args []string) error {
 				return fmt.Errorf("unknown macro: %#v", matches[1])
 			}
 
-			mArgs = append(mArgs, "-c", matches[3], "--")
+			if mCmd != "pwsh" {
+				mArgs = append(mArgs, "-c", matches[3], "--")
+			} else {
+				// pwsh handles arguments after `-c` differently (https://github.com/PowerShell/PowerShell/issues/13832)
+				path, err := os.CreateTemp(os.TempDir(), "carapace-spec_run")
+				if err != nil {
+					return err
+				}
+				defer os.Remove(path.Name())
+
+				if err = os.WriteFile(path.Name(), []byte(matches[3]), 0700); err != nil {
+					return err
+				}
+				mArgs = append(mArgs, path.Name())
+
+			}
 
 		default:
 			return fmt.Errorf("malformed macro: %#v", r)
