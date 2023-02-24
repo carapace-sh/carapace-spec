@@ -18,9 +18,17 @@ type run string
 
 func (r run) parse() func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
+		context := carapace.NewContext(args...)
+		cmd.Flags().Visit(func(f *pflag.Flag) {
+			if slice, ok := f.Value.(pflag.SliceValue); ok {
+				context.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), strings.Join(slice.GetSlice(), ","))
+			} else {
+				context.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), f.Value.String())
+			}
+		})
+
 		mCmd := ""
 		mArgs := make([]string, 0)
-		alias := false
 
 		switch {
 		case strings.HasPrefix(string(r), "["):
@@ -33,12 +41,16 @@ func (r run) parse() func(cmd *cobra.Command, args []string) error {
 
 			mCmd = mArgs[0]
 			mArgs = mArgs[1:]
-			alias = true
 
 		case strings.HasPrefix(string(r), "$"):
 			matches := regexp.MustCompile(`^\$(?P<macro>[^(]*)(\((?P<arg>.*)\))?$`).FindStringSubmatch(string(r))
 			if matches == nil {
 				return fmt.Errorf("malformed macro: %#v", r)
+			}
+
+			script, err := context.Envsubst(matches[3])
+			if err != nil {
+				return err
 			}
 
 			mCmd = "sh"
@@ -55,17 +67,22 @@ func (r run) parse() func(cmd *cobra.Command, args []string) error {
 				return fmt.Errorf("unknown macro: %#v", matches[1])
 			}
 
-			if mCmd != "pwsh" {
-				mArgs = append(mArgs, "-c", matches[3], "--")
-			} else {
-				// pwsh handles arguments after `-c` differently (https://github.com/PowerShell/PowerShell/issues/13832)
-				path, err := os.CreateTemp(os.TempDir(), "carapace-spec_run*.ps1")
+			switch mCmd {
+			case "nu", "pwsh":
+				// nu and pwsh handle arguments after `-c` differently (https://github.com/PowerShell/PowerShell/issues/13832)
+
+				suffix := ".nu"
+				if mCmd == "pwsh" {
+					suffix = ".ps1"
+				}
+
+				path, err := os.CreateTemp(os.TempDir(), "carapace-spec_run*"+suffix)
 				if err != nil {
 					return err
 				}
 				defer os.Remove(path.Name())
 
-				if err = os.WriteFile(path.Name(), []byte(matches[3]), 0700); err != nil {
+				if err = os.WriteFile(path.Name(), []byte(script), 0700); err != nil {
 					return err
 				}
 				if err := path.Close(); err != nil {
@@ -73,28 +90,12 @@ func (r run) parse() func(cmd *cobra.Command, args []string) error {
 				}
 				mArgs = append(mArgs, path.Name())
 
+			default:
+				mArgs = append(mArgs, "-c", script, "--")
 			}
 
 		default:
 			return fmt.Errorf("malformed macro: %#v", r)
-		}
-
-		context := carapace.NewContext(args...)
-		cmd.Flags().Visit(func(f *pflag.Flag) {
-			if slice, ok := f.Value.(pflag.SliceValue); ok {
-				context.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), strings.Join(slice.GetSlice(), ","))
-			} else {
-				context.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), f.Value.String())
-			}
-		})
-		if !alias {
-			var err error
-			for index, mArg := range mArgs {
-				mArgs[index], err = context.Envsubst(mArg)
-				if err != nil {
-					return err
-				}
-			}
 		}
 
 		execCmd := exec.Command(mCmd, append(mArgs, args...)...)
