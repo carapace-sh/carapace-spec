@@ -4,6 +4,7 @@
 [![GoReportCard](https://goreportcard.com/badge/github.com/rsteube/carapace-spec)](https://goreportcard.com/report/github.com/rsteube/carapace-spec)
 [![documentation](https://img.shields.io/badge/&zwnj;-documentation-blue?logo=gitbook)](https://rsteube.github.io/carapace-spec/)
 [![Coverage Status](https://coveralls.io/repos/github/rsteube/carapace-spec/badge.svg?branch=master)](https://coveralls.io/github/rsteube/carapace-spec?branch=master)
+[![Packaging status](https://repology.org/badge/tiny-repos/carapace-spec.svg)](https://repology.org/project/carapace-spec/versions)
 
 Define simple completions using a spec file (based on [carapace](https://github.com/rsteube/carapace)).
 
