@@ -17,6 +17,7 @@ func init() {
 
 	addCoreMacro("directories", MacroN(carapace.ActionDirectories))
 	addCoreMacro("files", MacroV(carapace.ActionFiles))
+	addCoreMacro("executables", MacroN(carapace.ActionExecutables))
 	addCoreMacro("message", MacroI(func(s string) carapace.Action { return carapace.ActionMessage(s) }))
 	addCoreMacro("noflag", MacroN(func() carapace.Action { return carapace.ActionValues() }).NoFlag())
 	addCoreMacro("spec", MacroI(ActionSpec).NoFlag())
