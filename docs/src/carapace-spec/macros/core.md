@@ -17,6 +17,14 @@ Core macros provided by [carapace-spec](https://github.com/rsteube/carapace-spec
 ["$(echo -e 'a\nb\nc')"]
 ```
 
+## executables
+
+[`$executables`](https://rsteube.github.io/carapace/carapace/action/actionExecutables.html) completes [PATH] executables.
+
+```yaml
+["$executables"]
+```
+
 ## files
 
 [`$files([<suffixes>])`](https://rsteube.github.io/carapace/carapace/action/actionFiles.html) completes files with an optional list of suffixes to filter on.
@@ -41,3 +49,5 @@ This implicitly [disables flag parsing](https://pkg.go.dev/github.com/spf13/cobr
 ```yaml
 ["$spec(example.yaml)"]
 ```
+
+[PATH]:https://en.wikipedia.org/wiki/PATH_(variable)
