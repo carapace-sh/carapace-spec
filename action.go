@@ -101,7 +101,7 @@ func (a action) parse(cmd *cobra.Command) carapace.Action {
 		for index, arg := range c.Args {
 			c.Setenv(fmt.Sprintf("C_ARG%v", index), arg)
 		}
-		c.Setenv("C_CALLBACK", c.CallbackValue)
+		c.Setenv("C_VALUE", c.Value)
 
 		cmd.Flags().Visit(func(f *pflag.Flag) {
 			c.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), f.Value.String())
@@ -148,7 +148,7 @@ func updateEnv(a carapace.Action) carapace.Action {
 		for index, arg := range c.Parts {
 			c.Setenv(fmt.Sprintf("C_PART%v", index), arg)
 		}
-		c.Setenv("C_CALLBACK", c.CallbackValue)
+		c.Setenv("C_VALUE", c.Value)
 		return a.Invoke(c).ToA()
 	})
 }

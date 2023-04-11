@@ -2,10 +2,10 @@
 
 Variables are replaced using [drone/envsubst](https://github.com/drone/envsubst).
 
-- `${C_ARG<position>}` positional values [0..n]
+- `${C_ARG<position>}` positional arguments [0..n]
 - `${C_FLAG_<flagname>}` flag values (if modified)
 - `${C_PART<position>}` parts of the current word during multipart completion [0..n]
-- `${C_CALLBACK}` the word currently being completed
+- `${C_VALUE}` the word currently being completed
 
 ```yaml
 name: myvar
