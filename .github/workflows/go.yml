@@ -19,7 +19,7 @@ jobs:
     - name: Replace dependency
       run: |
           go work init .
-          go work edit -replace github.com/spf13/pflag=github.com/rsteube/carapace-pflag@v0.0.4
+          go work edit -replace github.com/spf13/pflag=github.com/rsteube/carapace-pflag@v0.2.0
 
     - name: Build
       run: go build -v ./...
