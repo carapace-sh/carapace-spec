@@ -48,7 +48,7 @@ func (s scrapeXXX) formatCommand() string {
 	Aliases: []string{"%v"},
 	Run:     func(cmd *cobra.Command, args []string) {},
 }
-`, cmdVarName(s.cmd), s.cmd.Use, s.cmd.Short, s.cmd.GroupID, strings.Join(s.cmd.Aliases, `", "`))
+`, cmdVarName(s.cmd), strings.SplitN(s.cmd.Use, "\n", 2)[0], s.cmd.Short, s.cmd.GroupID, strings.Join(s.cmd.Aliases, `", "`))
 
 	if s.cmd.GroupID == "" {
 		re := regexp.MustCompile("(?m)\n\tGroupID:.*$")
@@ -180,7 +180,54 @@ func normaliceVarName(s string) string {
 }
 
 func flagType(f *pflag.Flag) string {
-	return strings.ToUpper(f.Value.Type()[:1]) + f.Value.Type()[1:]
+	switch f.Value.Type() {
+	case
+		"bool",
+		"boolSlice",
+		"bytesBase64",
+		"bytesHex",
+		"count",
+		"custom",
+		"duration",
+		"durationSlice",
+		"flagVar",
+		"float32",
+		"float32Slice",
+		"float64",
+		"float64Slice",
+		"int",
+		"int16",
+		"int32",
+		"int32Slice",
+		"int64",
+		"int64Slice",
+		"int8",
+		"intSlice",
+		"ip",
+		"ipMask",
+		"ipNet",
+		"ipNetSlice",
+		"ipSlice",
+		"string",
+		"stringArray",
+		"strings",
+		"stringSlice",
+		"uint",
+		"uint16",
+		"uint32",
+		"uint64",
+		"uint8",
+		"uintSlice",
+		"version":
+		return strings.ToUpper(f.Value.Type()[:1]) + f.Value.Type()[1:]
+	case
+		"stringToInt",
+		"stringToInt64",
+		"stringToString":
+		return "String"
+	default:
+		return "String"
+	}
 }
 
 func flagValue(f *pflag.Flag) string {
@@ -201,12 +248,56 @@ func flagValue(f *pflag.Flag) string {
 		return fmt.Sprintf(`[]%v{%v}`, strings.TrimSuffix(strings.TrimSuffix(f.Value.Type(), "Slice"), "Array"), f.Value.String()[1:len(f.Value.String())-1])
 	}
 
+	println(f.Value.String())
 	switch f.Value.Type() {
 	case "string":
 		return fmt.Sprintf(`"%v"`, f.Value.String())
-	case "duration":
+	case
+		"duration",
+		"float32",
+		"float64",
+		"int",
+		"int8",
+		"int16",
+		"int32",
+		"int64",
+		"uint",
+		"uint16",
+		"uint32",
+		"uint64",
+		"uint8":
 		return "0"
-	default:
+	case
+		"bool",
+		"boolSlice",
+		"bytesBase64",
+		"bytesHex",
+		"count",
+		"custom",
+		"durationSlice",
+		"flagVar",
+		"float32Slice",
+		"float64Slice",
+		"int32Slice",
+		"int64Slice",
+		"intSlice",
+		"ip",
+		"ipMask",
+		"ipNet",
+		"ipNetSlice",
+		"ipSlice",
+		"stringArray",
+		"strings",
+		"stringSlice",
+		"uintSlice",
+		"version":
 		return f.Value.String()
+	case
+		"stringToInt",
+		"stringToInt64",
+		"stringToString":
+		return `""`
+	default:
+		return `""`
 	}
 }
