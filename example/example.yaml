@@ -21,6 +21,9 @@ commands:
     --multiparts=: multiparts modifier
     -n, --nospace=: nospace
     -u, --uniquelist=: uniqelist flag
+  exclusiveflags:
+  - - styled
+    - repeatable
   completion:
     flag:
       chdir: ["$chdir(/tmp)", "$files"]

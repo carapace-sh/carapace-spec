@@ -12,6 +12,7 @@ type Command struct {
 	Group           string            `json:"group,omitempty" jsonschema_description:"Group of the command"`
 	Flags           map[string]string `json:"flags,omitempty" jsonschema_description:"Flags of the command with their description"`
 	PersistentFlags map[string]string `json:"persistentflags,omitempty" jsonschema_description:"Persistent flags of the command with their description"`
+	ExclusiveFlags  [][]string        `json:"exclusiveflags,omitempty" jsonschema_description:"Flags that are mutually exclusive"`
 	Run             run               `json:"run,omitempty" jsonschema_description:"Command or script to execute in runnable mode"`
 	Completion      struct {
 		Flag          map[string]action `json:"flag,omitempty" jsonschema_description:"Flag completion"`
@@ -53,6 +54,7 @@ func (c Command) ToCobraE() (*cobra.Command, error) {
 	for _, f := range []func(cmd *cobra.Command) error{
 		c.addFlags,
 		c.addPersistentFlags,
+		c.markFlagsExclusive,
 		c.addRun,
 		c.addFlagCompletion,
 		c.addPositionalCompletion,
@@ -95,6 +97,13 @@ func (c Command) addFlags(cmd *cobra.Command) error {
 			return err
 		}
 		flag.addTo(cmd.Flags())
+	}
+	return nil
+}
+
+func (c Command) markFlagsExclusive(cmd *cobra.Command) error {
+	for _, e := range c.ExclusiveFlags {
+		cmd.MarkFlagsMutuallyExclusive(e...)
 	}
 	return nil
 }

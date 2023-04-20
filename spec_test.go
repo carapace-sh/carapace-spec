@@ -45,6 +45,14 @@ func TestSpec(t *testing.T) {
 		t.Error(out)
 	}
 
+	if out := execute(t, example, "example", "sub1", "--sty"); !strings.Contains(out, "--styled") {
+		t.Error(out)
+	}
+
+	if out := execute(t, example, "example", "sub1", "--repeatable", "--sty"); strings.Contains(out, "--styled") {
+		t.Error(out)
+	}
+
 	if out := execute(t, example, "example", "sub1", "", ""); !strings.Contains(out, "action.go") {
 		t.Error(out)
 	}
