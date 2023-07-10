@@ -8,13 +8,16 @@ flags:
   -v=: shorthand with value
   --repeatable*: longhand repeatable
   -o, --optarg?: shorthand and longhand with optional argument
+  --hidden&: longhand hidden
+  --required!: longhand required
 ```
 
 ## Modifiers:
 - `=` flag takes an argument
 - `*` flag is repeatable
 - `?` flag takes an optional argument
-- `!` flag is hidden
+- `&` flag is hidden
+- `!` flag is required
 
 ## Non-posix
 
