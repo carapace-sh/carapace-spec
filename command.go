@@ -10,6 +10,7 @@ type Command struct {
 	Aliases         []string          `json:"aliases,omitempty" jsonschema_description:"Aliases of the command"`
 	Description     string            `json:"description,omitempty" jsonschema_description:"Description of the command"`
 	Group           string            `json:"group,omitempty" jsonschema_description:"Group of the command"`
+	Hidden          bool              `json:"hidden,omitempty" jsonschema_description:"Hidden state of the command"`
 	Flags           map[string]string `json:"flags,omitempty" jsonschema_description:"Flags of the command with their description"`
 	PersistentFlags map[string]string `json:"persistentflags,omitempty" jsonschema_description:"Persistent flags of the command with their description"`
 	ExclusiveFlags  [][]string        `json:"exclusiveflags,omitempty" jsonschema_description:"Flags that are mutually exclusive"`
@@ -47,6 +48,7 @@ func (c Command) ToCobraE() (*cobra.Command, error) {
 		Short:   c.Description,
 		GroupID: c.Group,
 		Args:    cobra.ArbitraryArgs,
+		Hidden:  c.Hidden,
 		Run:     func(cmd *cobra.Command, args []string) {},
 	}
 	carapace.Gen(cmd).Standalone()

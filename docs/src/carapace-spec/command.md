@@ -6,6 +6,7 @@ type Command struct {
 	Aliases         []string
 	Description     string
 	Group           string
+	Hidden          bool
 	Flags           map[string]string
 	PersistentFlags map[string]string
 	Completion      struct {

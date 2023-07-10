@@ -84,6 +84,20 @@ func TestSpecNonposix(t *testing.T) {
 	}
 }
 
+func TestHidden(t *testing.T) {
+	if out := execute(t, example, "example", ""); strings.Contains(out, "hidden") {
+		t.Error(out)
+	}
+
+	if out := execute(t, example, "example", "hidden", ""); !strings.Contains(out, "hPos1") {
+		t.Error(out)
+	}
+
+	if out := execute(t, example, "example", "hidden", "--hidden", ""); !strings.Contains(out, "first") {
+		t.Error(out)
+	}
+}
+
 func execute(t *testing.T, spec string, args ...string) string {
 	var stdout, stderr bytes.Buffer
 	var c Command
