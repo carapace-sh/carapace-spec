@@ -64,3 +64,13 @@ commands:
 - name: sub2
   group: group2
   description: subcommand2
+- name: hidden
+  description: hidden command
+  hidden: true
+  flags:
+    --hidden!=: hidden flag
+  completion:
+    flag:
+      hidden: ["first", "second", "third"]
+    positional:
+      - ["hPos1", "hPos2"]    

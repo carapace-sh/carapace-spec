@@ -14,6 +14,7 @@ flags:
 - `=` flag takes an argument
 - `*` flag is repeatable
 - `?` flag takes an optional argument
+- `!` flag is hidden
 
 ## Non-posix
 
