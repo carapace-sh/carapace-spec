@@ -68,7 +68,8 @@ commands:
   description: hidden command
   hidden: true
   flags:
-    --hidden!=: hidden flag
+    --hidden&=: hidden flag
+    --required!: required flag
   completion:
     flag:
       hidden: ["first", "second", "third"]

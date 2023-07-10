@@ -88,6 +88,9 @@ func (c Command) addPersistentFlags(cmd *cobra.Command) error {
 			return err
 		}
 		flag.addTo(cmd.PersistentFlags())
+		if flag.required {
+			cmd.MarkFlagRequired(flag.longhand)
+		}
 	}
 	return nil
 }
@@ -99,6 +102,9 @@ func (c Command) addFlags(cmd *cobra.Command) error {
 			return err
 		}
 		flag.addTo(cmd.Flags())
+		if flag.required {
+			cmd.MarkFlagRequired(flag.longhand)
+		}
 	}
 	return nil
 }

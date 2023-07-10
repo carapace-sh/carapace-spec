@@ -130,6 +130,10 @@ func scrape(cmd *cobra.Command, tmpDir string) {
 		if f.Hidden {
 			fmt.Fprintf(out, `    %vCmd.Flag("%v").Hidden = true`+"\n", cmdVarName(cmd), f.Name)
 		}
+
+		if annotation := f.Annotations[cobra.BashCompOneRequiredFlag]; len(annotation) == 1 && annotation[0] == "true" {
+			fmt.Fprintf(out, `    %vCmd.MarkFlagRequired("%v")`+"\n", cmdVarName(cmd), f.Name)
+		}
 	})
 
 	if cmd.HasParent() {
