@@ -46,9 +46,10 @@ func (s scrapeXXX) formatCommand() string {
 	Short:   "%v",
 	GroupID: "%v",
 	Aliases: []string{"%v"},
+	Hidden:  %v,
 	Run:     func(cmd *cobra.Command, args []string) {},
 }
-`, cmdVarName(s.cmd), strings.SplitN(s.cmd.Use, "\n", 2)[0], s.cmd.Short, s.cmd.GroupID, strings.Join(s.cmd.Aliases, `", "`))
+`, cmdVarName(s.cmd), strings.SplitN(s.cmd.Use, "\n", 2)[0], s.cmd.Short, s.cmd.GroupID, strings.Join(s.cmd.Aliases, `", "`), s.cmd.Hidden)
 
 	if s.cmd.GroupID == "" {
 		re := regexp.MustCompile("(?m)\n\tGroupID:.*$")
@@ -60,6 +61,12 @@ func (s scrapeXXX) formatCommand() string {
 		re := regexp.MustCompile("(?m)\n\t+Aliases:.*$")
 		snippet = re.ReplaceAllString(snippet, "")
 	}
+
+	// if !s.cmd.Hidden {
+	// 	re := regexp.MustCompile("(?m)\n\tHidden:.*$")
+	// 	snippet = re.ReplaceAllString(snippet, "")
+
+	// }
 
 	return snippet
 }
@@ -120,6 +127,10 @@ func scrape(cmd *cobra.Command, tmpDir string) {
 		if f.Value.Type() != "bool" && f.NoOptDefVal != "" {
 			fmt.Fprintf(out, `    %vCmd.Flag("%v").NoOptDefVal = "%v"`+"\n", cmdVarName(cmd), f.Name, f.NoOptDefVal)
 		}
+
+		if f.Hidden {
+			fmt.Fprintf(out, `    %vCmd.Flag("%v").Hidden = true`+"\n", cmdVarName(cmd), f.Name)
+		}
 	})
 
 	if cmd.HasParent() {
@@ -144,7 +155,7 @@ func scrape(cmd *cobra.Command, tmpDir string) {
 	os.WriteFile(filename, formatted, 0644)
 
 	for _, subcmd := range cmd.Commands() {
-		if !subcmd.Hidden && subcmd.Deprecated == "" {
+		if subcmd.Deprecated == "" && subcmd.Name() != "_carapace" {
 			scrape(subcmd, tmpDir)
 		}
 	}
@@ -248,7 +259,6 @@ func flagValue(f *pflag.Flag) string {
 		return fmt.Sprintf(`[]%v{%v}`, strings.TrimSuffix(strings.TrimSuffix(f.Value.Type(), "Slice"), "Array"), f.Value.String()[1:len(f.Value.String())-1])
 	}
 
-	println(f.Value.String())
 	switch f.Value.Type() {
 	case "string":
 		return fmt.Sprintf(`"%v"`, f.Value.String())
