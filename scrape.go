@@ -62,11 +62,10 @@ func (s scrapeXXX) formatCommand() string {
 		snippet = re.ReplaceAllString(snippet, "")
 	}
 
-	// if !s.cmd.Hidden {
-	// 	re := regexp.MustCompile("(?m)\n\tHidden:.*$")
-	// 	snippet = re.ReplaceAllString(snippet, "")
-
-	// }
+	if !s.cmd.Hidden {
+		re := regexp.MustCompile("(?m)\n\tHidden:.*$")
+		snippet = re.ReplaceAllString(snippet, "")
+	}
 
 	return snippet
 }
