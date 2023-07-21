@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/rsteube/carapace-spec/internal/pflagfork"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
@@ -104,17 +105,27 @@ func scrape(cmd *cobra.Command, tmpDir string) {
 			return
 		}
 
-		isShortHand := f.Shorthand != ""
-
 		persistentPrefix := ""
 		if cmd.PersistentFlags().Lookup(f.Name) != nil {
 			persistentPrefix = "Persistent"
 		}
 
-		if isShortHand {
-			fmt.Fprintf(out, `	%vCmd.%vFlags().%vP("%v", "%v", %v, "%v")`+"\n", cmdVarName(cmd), persistentPrefix, flagType(f), f.Name, f.Shorthand, flagValue(f), formatUsage(f.Usage))
-		} else {
-			fmt.Fprintf(out, `	%vCmd.%vFlags().%v("%v", %v, "%v")`+"\n", cmdVarName(cmd), persistentPrefix, flagType(f), f.Name, flagValue(f), formatUsage(f.Usage))
+		switch (pflagfork.Flag{Flag: f}).Mode() {
+		case pflagfork.ShorthandOnly:
+			fmt.Fprintf(out, `	%vCmd.%vFlags().%vS("%v", "%v", %v, "%v")`+"\n", cmdVarName(cmd), persistentPrefix, flagType(f), f.Name, f.Shorthand, flagValue(f), formatUsage(f.Usage))
+		case pflagfork.NameAsShorthand:
+			fmt.Fprintf(out, `	%vCmd.%vFlags().%vN("%v", "%v", %v, "%v")`+"\n", cmdVarName(cmd), persistentPrefix, flagType(f), f.Name, f.Shorthand, flagValue(f), formatUsage(f.Usage))
+		case pflagfork.Default:
+			switch {
+			case f.Shorthand != "" && f.Value.Type() == "count":
+				fmt.Fprintf(out, `	%vCmd.%vFlags().%vP("%v", "%v", "%v")`+"\n", cmdVarName(cmd), persistentPrefix, flagType(f), f.Name, f.Shorthand, formatUsage(f.Usage))
+			case f.Shorthand != "" && f.Value.Type() != "count":
+				fmt.Fprintf(out, `	%vCmd.%vFlags().%vP("%v", "%v", %v, "%v")`+"\n", cmdVarName(cmd), persistentPrefix, flagType(f), f.Name, f.Shorthand, flagValue(f), formatUsage(f.Usage))
+			case f.Value.Type() == "count":
+				fmt.Fprintf(out, `	%vCmd.%vFlags().%v("%v", "%v")`+"\n", cmdVarName(cmd), persistentPrefix, flagType(f), f.Name, formatUsage(f.Usage))
+			default:
+				fmt.Fprintf(out, `	%vCmd.%vFlags().%v("%v", %v, "%v")`+"\n", cmdVarName(cmd), persistentPrefix, flagType(f), f.Name, flagValue(f), formatUsage(f.Usage))
+			}
 		}
 	})
 
@@ -123,7 +134,7 @@ func scrape(cmd *cobra.Command, tmpDir string) {
 			return
 		}
 
-		if f.Value.Type() != "bool" && f.NoOptDefVal != "" {
+		if f.Value.Type() != "bool" && f.Value.Type() != "count" && f.NoOptDefVal != "" {
 			fmt.Fprintf(out, `    %vCmd.Flag("%v").NoOptDefVal = "%v"`+"\n", cmdVarName(cmd), f.Name, f.NoOptDefVal)
 		}
 

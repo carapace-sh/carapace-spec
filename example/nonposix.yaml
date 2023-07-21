@@ -2,7 +2,7 @@ name: nonposix
 description:
 flags:
   -opt, -optarg?: both nonposix
-  -styled=: nonpoxis shorthand
+  -styled=: nonposix shorthand
   -mx, --mixed*: mixed repeatable
 completion:
   flag:
