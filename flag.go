@@ -9,15 +9,15 @@ import (
 )
 
 type flag struct {
-	longhand  string
-	shorthand string
-	usage     string
-	slice     bool
-	optarg    bool
-	value     bool
-	nonposix  bool
-	hidden    bool
-	required  bool
+	longhand        string
+	shorthand       string
+	usage           string
+	slice           bool
+	optarg          bool
+	value           bool
+	nameAsShorthand bool
+	hidden          bool
+	required        bool
 }
 
 func parseFlag(s, usage string) (*flag, error) {
@@ -30,8 +30,8 @@ func parseFlag(s, usage string) (*flag, error) {
 
 	f := &flag{}
 	f.longhand = strings.TrimLeft(matches["longhand"], "-")
-	f.nonposix = matches["longhand"] != "" && !strings.HasPrefix(matches["longhand"], "--")
 	f.shorthand = strings.TrimPrefix(matches["shorthand"], "-")
+	f.nameAsShorthand = (matches["longhand"] != "" && !strings.HasPrefix(matches["longhand"], "--"))
 	f.usage = usage
 	f.slice = strings.Contains(matches["modifier"], "*")
 	f.optarg = strings.Contains(matches["modifier"], "?")
@@ -57,57 +57,57 @@ func (f flag) addTo(fset *pflag.FlagSet) error {
 	if f.longhand != "" && f.shorthand != "" {
 		if f.value {
 			if f.slice {
-				if !f.nonposix {
-					fs.StringSliceP(f.longhand, f.shorthand, []string{}, f.usage)
-				} else {
+				if f.nameAsShorthand {
 					fs.StringSliceN(f.longhand, f.shorthand, []string{}, f.usage)
+				} else {
+					fs.StringSliceP(f.longhand, f.shorthand, []string{}, f.usage)
 				}
 			} else {
-				if !f.nonposix {
-					fs.StringP(f.longhand, f.shorthand, "", f.usage)
-				} else {
+				if f.nameAsShorthand {
 					fs.StringN(f.longhand, f.shorthand, "", f.usage)
+				} else {
+					fs.StringP(f.longhand, f.shorthand, "", f.usage)
 				}
 			}
 		} else {
 			if f.slice {
-				if !f.nonposix {
-					fs.CountP(f.longhand, f.shorthand, f.usage)
-				} else {
+				if f.nameAsShorthand {
 					fs.CountN(f.longhand, f.shorthand, f.usage)
+				} else {
+					fs.CountP(f.longhand, f.shorthand, f.usage)
 				}
 			} else {
-				if !f.nonposix {
-					fs.BoolP(f.longhand, f.shorthand, false, f.usage)
-				} else {
+				if f.nameAsShorthand {
 					fs.BoolN(f.longhand, f.shorthand, false, f.usage)
+				} else {
+					fs.BoolP(f.longhand, f.shorthand, false, f.usage)
 				}
 			}
 		}
 	} else if f.longhand != "" {
 		if f.value {
 			if f.slice {
-				if !f.nonposix {
-					fs.StringSlice(f.longhand, []string{}, f.usage)
-				} else {
+				if f.nameAsShorthand {
 					fs.StringSliceS(f.longhand, f.longhand, []string{}, f.usage)
+				} else {
+					fs.StringSlice(f.longhand, []string{}, f.usage)
 				}
 			} else {
-				if !f.nonposix {
-					fs.String(f.longhand, "", f.usage)
-				} else {
+				if f.nameAsShorthand {
 					fs.StringS(f.longhand, f.longhand, "", f.usage)
+				} else {
+					fs.String(f.longhand, "", f.usage)
 				}
 			}
 		} else {
 			if f.slice {
-				if !f.nonposix {
-					fs.Count(f.longhand, f.usage)
-				} else {
+				if f.nameAsShorthand {
 					fs.CountS(f.longhand, f.longhand, f.usage)
+				} else {
+					fs.Count(f.longhand, f.usage)
 				}
 			} else {
-				if !f.nonposix {
+				if !f.nameAsShorthand {
 					fs.Bool(f.longhand, false, f.usage)
 				} else {
 					fs.BoolS(f.longhand, f.longhand, false, f.usage)

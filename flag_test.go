@@ -107,15 +107,15 @@ func TestParseFlag(t *testing.T) {
 	})
 
 	test("nonposix both", "-short, -long*", &flag{
-		shorthand: "short",
-		longhand:  "long",
-		slice:     true,
-		nonposix:  true,
+		shorthand:       "short",
+		longhand:        "long",
+		slice:           true,
+		nameAsShorthand: true,
 	})
 
 	test("nonposix mixed", "-short, --long", &flag{
-		shorthand: "short",
-		longhand:  "long",
-		nonposix:  false,
+		shorthand:       "short",
+		longhand:        "long",
+		nameAsShorthand: false,
 	})
 }
