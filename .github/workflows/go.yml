@@ -67,7 +67,7 @@ jobs:
           go work edit -replace github.com/spf13/pflag=github.com/rsteube/carapace-pflag@v0.0.4
 
     - name: Run GoReleaser
-      uses: goreleaser/goreleaser-action@v2
+      uses: goreleaser/goreleaser-action@v4
       if: startsWith(github.ref, 'refs/tags/')
       with:
         version: latest
