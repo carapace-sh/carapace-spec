@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/invopop/jsonschema v0.7.0
-	github.com/rsteube/carapace v0.42.1
+	github.com/rsteube/carapace v0.43.0
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/pflag v1.0.5
 	gopkg.in/yaml.v3 v3.0.1
@@ -13,5 +13,5 @@ require (
 require (
 	github.com/iancoleman/orderedmap v0.0.0-20190318233801-ac98e3ecb4b0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/rsteube/carapace-shlex v0.0.3 // indirect
+	github.com/rsteube/carapace-shlex v0.0.4 // indirect
 )
