@@ -6,24 +6,24 @@ import (
 )
 
 type Command struct {
-	Name            string            `yaml:"name" jsonschema_description:"Name of the command"`
-	Aliases         []string          `yaml:"aliases,omitempty" jsonschema_description:"Aliases of the command"`
-	Description     string            `yaml:"description,omitempty" jsonschema_description:"Description of the command"`
-	Group           string            `yaml:"group,omitempty" jsonschema_description:"Group of the command"`
-	Hidden          bool              `yaml:"hidden,omitempty" jsonschema_description:"Hidden state of the command"`
-	NonInterspersed bool              `yaml:"noninterspersed,omitempty" jsonschema_description:"Interspersed state of the command"`
-	Flags           map[string]string `yaml:"flags,omitempty" jsonschema_description:"Flags of the command with their description"`
-	PersistentFlags map[string]string `yaml:"persistentflags,omitempty" jsonschema_description:"Persistent flags of the command with their description"`
-	ExclusiveFlags  [][]string        `yaml:"exclusiveflags,omitempty" jsonschema_description:"Flags that are mutually exclusive"`
-	Run             run               `yaml:"run,omitempty" jsonschema_description:"Command or script to execute in runnable mode"`
+	Name            string            `yaml:"name" json:"name" jsonschema_description:"Name of the command"`
+	Aliases         []string          `yaml:"aliases,omitempty" json:"aliases,omitempty" jsonschema_description:"Aliases of the command"`
+	Description     string            `yaml:"description,omitempty" json:"description,omitempty" jsonschema_description:"Description of the command"`
+	Group           string            `yaml:"group,omitempty" json:"group,omitempty" jsonschema_description:"Group of the command"`
+	Hidden          bool              `yaml:"hidden,omitempty" json:"hidden,omitempty" jsonschema_description:"Hidden state of the command"`
+	NonInterspersed bool              `yaml:"noninterspersed,omitempty" json:"noninterspersed,omitempty" jsonschema_description:"Interspersed state of the command"`
+	Flags           map[string]string `yaml:"flags,omitempty" json:"flags,omitempty" jsonschema_description:"Flags of the command with their description"`
+	PersistentFlags map[string]string `yaml:"persistentflags,omitempty" json:"persistentflags,omitempty" jsonschema_description:"Persistent flags of the command with their description"`
+	ExclusiveFlags  [][]string        `yaml:"exclusiveflags,omitempty" json:"exclusiveflags,omitempty" jsonschema_description:"Flags that are mutually exclusive"`
+	Run             run               `yaml:"run,omitempty" json:"run,omitempty" jsonschema_description:"Command or script to execute in runnable mode"`
 	Completion      struct {
-		Flag          map[string]action `yaml:"flag,omitempty" jsonschema_description:"Flag completion"`
-		Positional    []action          `yaml:"positional,omitempty" jsonschema_description:"Positional completion"`
-		PositionalAny action            `yaml:"positionalany,omitempty" jsonschema_description:"Positional completion for every other position"`
-		Dash          []action          `yaml:"dash,omitempty" jsonschema_description:"Dash completion"`
-		DashAny       action            `yaml:"dashany,omitempty" jsonschema_description:"Dash completion of every other position"`
-	} `yaml:"completion,omitempty" jsonschema_description:"Completion definition"`
-	Commands []Command `yaml:"commands,omitempty" jsonschema_description:"Subcommands of the command"`
+		Flag          map[string]action `yaml:"flag,omitempty" json:"flag,omitempty" jsonschema_description:"Flag completion"`
+		Positional    []action          `yaml:"positional,omitempty" json:"positional,omitempty" jsonschema_description:"Positional completion"`
+		PositionalAny action            `yaml:"positionalany,omitempty" json:"positionalany,omitempty" jsonschema_description:"Positional completion for every other position"`
+		Dash          []action          `yaml:"dash,omitempty" json:"dash,omitempty" jsonschema_description:"Dash completion"`
+		DashAny       action            `yaml:"dashany,omitempty" json:"dashany,omitempty" jsonschema_description:"Dash completion of every other position"`
+	} `yaml:"completion,omitempty" json:"completion,omitempty" jsonschema_description:"Completion definition"`
+	Commands []Command `yaml:"commands,omitempty" json:"commands,omitempty" jsonschema_description:"Subcommands of the command"`
 }
 
 func (c Command) ToCobra() *cobra.Command {
