@@ -118,21 +118,34 @@ func (a action) parse(cmd *cobra.Command) carapace.Action {
 				batch = append(batch, carapace.ActionMessage("%v: %#v", err.Error(), elem))
 			} else if strings.HasPrefix(elemSubst, "$") { // macro
 				switch strings.SplitN(elemSubst, "(", 2)[0] {
-				case "$chdir":
-					action = MacroI(action.Chdir).parse(elemSubst)
-				case "$list":
-					action = MacroI(updateEnv(action).List).parse(elemSubst)
-				case "$multiparts":
-					action = MacroV(action.MultiParts).parse(elemSubst)
-				case "$nospace":
-					localAction := action
-					action = MacroI(func(s string) carapace.Action {
-						return localAction.NoSpace([]rune(s)...)
-					}).parse(elemSubst)
-				case "$uniquelist":
-					action = MacroI(updateEnv(action).UniqueList).parse(elemSubst)
+				case // TODO list in modifier.go
+					"$chdir",
+					"$filter",
+					"$filterargs",
+					"$list",
+					"$multiparts",
+					"$nospace",
+					"$prefix",
+					"$retain",
+					"$shift",
+					"$split",
+					"$splitp",
+					"$suffix",
+					"$suppress",
+					"$style",
+					"$tag",
+					"$uniquelist",
+					"$usage":
+					action = modifier{action}.Parse(elemSubst) // TODO does this need a local reference?
 				default:
-					batch = append(batch, ActionMacro(elemSubst))
+					splitted := strings.Split(elemSubst, " ||| ")
+					a := ActionMacro(splitted[0])
+					if len(splitted) > 1 {
+						for _, m := range splitted[1:] {
+							a = modifier{a}.Parse(m) // TODO does this need a local reference?
+						}
+					}
+					batch = append(batch, a)
 				}
 			} else {
 				vals = append(vals, parseValue(elemSubst)...)
@@ -140,16 +153,6 @@ func (a action) parse(cmd *cobra.Command) carapace.Action {
 		}
 		batch = append(batch, carapace.ActionStyledValuesDescribed(vals...))
 		return action.Invoke(c).ToA()
-	})
-}
-
-func updateEnv(a carapace.Action) carapace.Action {
-	return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
-		for index, arg := range c.Parts {
-			c.Setenv(fmt.Sprintf("C_PART%v", index), arg)
-		}
-		c.Setenv("C_VALUE", c.Value)
-		return a.Invoke(c).ToA()
 	})
 }
 
