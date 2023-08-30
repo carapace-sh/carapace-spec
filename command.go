@@ -11,6 +11,7 @@ type Command struct {
 	Description     string            `yaml:"description,omitempty" jsonschema_description:"Description of the command"`
 	Group           string            `yaml:"group,omitempty" jsonschema_description:"Group of the command"`
 	Hidden          bool              `yaml:"hidden,omitempty" jsonschema_description:"Hidden state of the command"`
+	NonInterspersed bool              `yaml:"noninterspersed,omitempty" jsonschema_description:"Interspersed state of the command"`
 	Flags           map[string]string `yaml:"flags,omitempty" jsonschema_description:"Flags of the command with their description"`
 	PersistentFlags map[string]string `yaml:"persistentflags,omitempty" jsonschema_description:"Persistent flags of the command with their description"`
 	ExclusiveFlags  [][]string        `yaml:"exclusiveflags,omitempty" jsonschema_description:"Flags that are mutually exclusive"`
@@ -51,6 +52,8 @@ func (c Command) ToCobraE() (*cobra.Command, error) {
 		Hidden:  c.Hidden,
 		Run:     func(cmd *cobra.Command, args []string) {},
 	}
+	cmd.Flags().SetInterspersed(!c.NonInterspersed)
+
 	carapace.Gen(cmd).Standalone()
 
 	for _, f := range []func(cmd *cobra.Command) error{
