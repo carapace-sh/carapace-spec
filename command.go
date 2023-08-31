@@ -13,8 +13,8 @@ type Parsing int
 const (
 	DEFAULT          Parsing = iota // INTERSPERSED but allows implicit changes
 	INTERSPERSED                    // mixed flags and positional arguments
-	DISABLED                        // flag parsing disabled
 	NON_INTERSPERSED                // flag parsing stopped after first positional argument
+	DISABLED                        // flag parsing disabled
 )
 
 func (p Parsing) MarshalYAML() (interface{}, error) {
