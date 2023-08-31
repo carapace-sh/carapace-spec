@@ -1,73 +1,12 @@
 package spec
 
 import (
-	"errors"
-
 	"github.com/rsteube/carapace"
+	"github.com/rsteube/carapace-spec/pkg/command"
 	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v3"
 )
 
-type Parsing int
-
-const (
-	DEFAULT          Parsing = iota // INTERSPERSED but allows implicit changes
-	INTERSPERSED                    // mixed flags and positional arguments
-	NON_INTERSPERSED                // flag parsing stopped after first positional argument
-	DISABLED                        // flag parsing disabled
-)
-
-func (p Parsing) MarshalYAML() (interface{}, error) {
-	switch p {
-	case DEFAULT:
-		return "", nil
-	case INTERSPERSED:
-		return "interspersed", nil
-	case DISABLED:
-		return "disabled", nil
-	case NON_INTERSPERSED:
-		return "non-interspersed", nil
-	default:
-		return "", errors.New("unknown parsing mode")
-	}
-}
-
-func (p *Parsing) UnmarshalYAML(value *yaml.Node) error {
-	switch value.Value {
-	case "":
-		*p = DEFAULT
-	case "interspersed":
-		*p = INTERSPERSED
-	case "disabled":
-		*p = DISABLED
-	case "non-interspersed":
-		*p = NON_INTERSPERSED
-	default:
-		return errors.New("unknown parsing mode")
-	}
-	return nil
-}
-
-type Command struct {
-	Name            string            `yaml:"name" json:"name" jsonschema_description:"Name of the command"`
-	Aliases         []string          `yaml:"aliases,omitempty" json:"aliases,omitempty" jsonschema_description:"Aliases of the command"`
-	Description     string            `yaml:"description,omitempty" json:"description,omitempty" jsonschema_description:"Description of the command"`
-	Group           string            `yaml:"group,omitempty" json:"group,omitempty" jsonschema_description:"Group of the command"`
-	Hidden          bool              `yaml:"hidden,omitempty" json:"hidden,omitempty" jsonschema_description:"Hidden state of the command"`
-	Parsing         Parsing           `yaml:"parsing,omitempty" json:"parsing,omitempty" jsonschema_description:"Flag parsing mode of the command"`
-	Flags           map[string]string `yaml:"flags,omitempty" json:"flags,omitempty" jsonschema_description:"Flags of the command with their description"`
-	PersistentFlags map[string]string `yaml:"persistentflags,omitempty" json:"persistentflags,omitempty" jsonschema_description:"Persistent flags of the command with their description"`
-	ExclusiveFlags  [][]string        `yaml:"exclusiveflags,omitempty" json:"exclusiveflags,omitempty" jsonschema_description:"Flags that are mutually exclusive"`
-	Run             run               `yaml:"run,omitempty" json:"run,omitempty" jsonschema_description:"Command or script to execute in runnable mode"`
-	Completion      struct {
-		Flag          map[string]action `yaml:"flag,omitempty" json:"flag,omitempty" jsonschema_description:"Flag completion"`
-		Positional    []action          `yaml:"positional,omitempty" json:"positional,omitempty" jsonschema_description:"Positional completion"`
-		PositionalAny action            `yaml:"positionalany,omitempty" json:"positionalany,omitempty" jsonschema_description:"Positional completion for every other position"`
-		Dash          []action          `yaml:"dash,omitempty" json:"dash,omitempty" jsonschema_description:"Dash completion"`
-		DashAny       action            `yaml:"dashany,omitempty" json:"dashany,omitempty" jsonschema_description:"Dash completion of every other position"`
-	} `yaml:"completion,omitempty" json:"completion,omitempty" jsonschema_description:"Completion definition"`
-	Commands []Command `yaml:"commands,omitempty" json:"commands,omitempty" jsonschema_description:"Subcommands of the command"`
-}
+type Command command.Command
 
 func (c Command) ToCobra() *cobra.Command {
 	cmd, err := c.ToCobraE()
@@ -97,9 +36,9 @@ func (c Command) ToCobraE() (*cobra.Command, error) {
 	}
 
 	switch c.Parsing {
-	case DISABLED:
+	case command.DISABLED:
 		cmd.DisableFlagParsing = true
-	case NON_INTERSPERSED:
+	case command.NON_INTERSPERSED:
 		cmd.Flags().SetInterspersed(false)
 	}
 
@@ -170,8 +109,8 @@ func (c Command) markFlagsExclusive(cmd *cobra.Command) error {
 
 func (c Command) addFlagCompletion(cmd *cobra.Command) error {
 	flagCompletions := make(carapace.ActionMap)
-	for key, action := range c.Completion.Flag {
-		flagCompletions[key] = action.parse(cmd)
+	for key, a := range c.Completion.Flag {
+		flagCompletions[key] = NewAction(a).parse(cmd)
 	}
 	carapace.Gen(cmd).FlagCompletion(flagCompletions)
 	return nil
@@ -186,7 +125,7 @@ func (c Command) addRun(cmd *cobra.Command) error {
 		cmd.DisableFlagParsing = true
 	}
 
-	cmd.RunE = c.Run.parse()
+	cmd.RunE = run(c.Run).parse()
 	return nil
 }
 
@@ -197,7 +136,7 @@ func (c Command) addPositionalCompletion(cmd *cobra.Command) error {
 
 	positionalCompletions := make([]carapace.Action, 0)
 	for _, pos := range c.Completion.Positional {
-		positionalCompletions = append(positionalCompletions, pos.parse(cmd))
+		positionalCompletions = append(positionalCompletions, NewAction(pos).parse(cmd))
 	}
 	carapace.Gen(cmd).PositionalCompletion(positionalCompletions...)
 
@@ -206,7 +145,7 @@ func (c Command) addPositionalCompletion(cmd *cobra.Command) error {
 
 func (c Command) addPositionalAnyCompletion(cmd *cobra.Command) error {
 	if len(c.Completion.PositionalAny) > 0 {
-		carapace.Gen(cmd).PositionalAnyCompletion(c.Completion.PositionalAny.parse(cmd))
+		carapace.Gen(cmd).PositionalAnyCompletion(NewAction(c.Completion.PositionalAny).parse(cmd))
 	}
 	return nil
 }
@@ -218,7 +157,7 @@ func (c Command) addDashCompletion(cmd *cobra.Command) error {
 
 	dashCompletions := make([]carapace.Action, 0)
 	for _, pos := range c.Completion.Dash {
-		dashCompletions = append(dashCompletions, pos.parse(cmd))
+		dashCompletions = append(dashCompletions, NewAction(pos).parse(cmd))
 	}
 	carapace.Gen(cmd).DashCompletion(dashCompletions...)
 	return nil
@@ -226,7 +165,7 @@ func (c Command) addDashCompletion(cmd *cobra.Command) error {
 
 func (c Command) addDashAnyCompletion(cmd *cobra.Command) error {
 	if len(c.Completion.DashAny) > 0 {
-		carapace.Gen(cmd).DashAnyCompletion(c.Completion.DashAny.parse(cmd))
+		carapace.Gen(cmd).DashAnyCompletion(NewAction(c.Completion.DashAny).parse(cmd))
 	}
 	return nil
 }
@@ -240,7 +179,7 @@ func (c Command) addSubcommands(cmd *cobra.Command) error {
 				groups[subcmd.Group] = true
 			}
 		}
-		subcmdCobra, err := subcmd.ToCobraE()
+		subcmdCobra, err := Command(subcmd).ToCobraE()
 		if err != nil {
 			return err
 		}
@@ -251,12 +190,12 @@ func (c Command) addSubcommands(cmd *cobra.Command) error {
 
 // disableFlagParsing handles implicit parsing mode.
 func (c Command) disableFlagParsing(cmd *cobra.Command) error {
-	if c.Parsing != DEFAULT {
+	if c.Parsing != command.DEFAULT {
 		return nil
 	}
 
-	for index, actions := range c.Completion.Positional {
-		if actions.disableFlagParsing() {
+	for index, positional := range c.Completion.Positional {
+		if NewAction(positional).disableFlagParsing() {
 			switch index {
 			case 0:
 				cmd.DisableFlagParsing = true
@@ -267,7 +206,7 @@ func (c Command) disableFlagParsing(cmd *cobra.Command) error {
 		}
 	}
 
-	if c.Completion.PositionalAny.disableFlagParsing() {
+	if NewAction(c.Completion.PositionalAny).disableFlagParsing() {
 		switch {
 		case len(c.Completion.Positional) > 0:
 			cmd.Flags().SetInterspersed(false)
