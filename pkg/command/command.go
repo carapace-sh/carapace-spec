@@ -20,3 +20,10 @@ type Command struct {
 	} `yaml:"completion,omitempty" json:"completion,omitempty" jsonschema_description:"Completion definition"`
 	Commands []Command `yaml:"commands,omitempty" json:"commands,omitempty" jsonschema_description:"Subcommands of the command"`
 }
+
+func (c *Command) AddFlag(f Flag) {
+	if c.Flags == nil {
+		c.Flags = make(map[string]string)
+	}
+	c.Flags[f.format()] = f.Usage
+}
