@@ -2,7 +2,7 @@ package spec
 
 import (
 	"github.com/rsteube/carapace"
-	"github.com/rsteube/carapace-spec/pkg/command"
+	"github.com/rsteube/carapace-spec-command"
 	"github.com/spf13/cobra"
 )
 

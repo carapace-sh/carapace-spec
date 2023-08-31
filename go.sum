@@ -13,6 +13,8 @@ github.com/rsteube/carapace v0.43.1 h1:u1cOxV49qKdlM6uFToyaCkFbRy4m6a4aUa0ksBeRg
 github.com/rsteube/carapace v0.43.1/go.mod h1:1l4sZA+/sGW9sBLqEholUd+kn9xKgh2ghBFDYC3D/zA=
 github.com/rsteube/carapace-shlex v0.0.4 h1:3GVn8PaM2RCxPTAiwVy9vDQI8Mi7DqrbdpDgf5ZzQmY=
 github.com/rsteube/carapace-shlex v0.0.4/go.mod h1:zPw1dOFwvLPKStUy9g2BYKanI6bsQMATzDMYQQybo3o=
+github.com/rsteube/carapace-spec-command v0.0.0-20230831223149-6ddc5efe5f89 h1:xCag/Zx04416MowBWl5D2irSFuYtENPAKgU4fLgSaJ0=
+github.com/rsteube/carapace-spec-command v0.0.0-20230831223149-6ddc5efe5f89/go.mod h1:7urqlNdPNsj/Fi77yVHhxDlj87Sy5lON26i6xR2v28s=
 github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
 github.com/spf13/cobra v1.7.0 h1:hyqWnYt1ZQShIddO5kBpj3vu05/++x6tJ6dg8EC572I=
 github.com/spf13/cobra v1.7.0/go.mod h1:uLxZILRyS/50WlhOIKD7W6V5bgeIt+4sICxh6uRMrb0=

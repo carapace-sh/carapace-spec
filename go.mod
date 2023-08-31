@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/invopop/jsonschema v0.7.0
 	github.com/rsteube/carapace v0.43.1
+	github.com/rsteube/carapace-spec-command v0.0.0-20230831223149-6ddc5efe5f89
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/pflag v1.0.5
 	gopkg.in/yaml.v3 v3.0.1
