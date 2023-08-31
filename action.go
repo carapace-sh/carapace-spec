@@ -21,6 +21,14 @@ type (
 	action []value
 )
 
+func NewAction(s []string) action { // TODO rename
+	a := make(action, len(s))
+	for index, v := range s {
+		a[index] = value(v)
+	}
+	return a
+}
+
 func (value) JSONSchema() *jsonschema.Schema {
 	sortedNames := make([]string, 0, len(macros))
 	for name := range macros {
