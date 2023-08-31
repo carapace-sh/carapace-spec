@@ -1,5 +1,5 @@
 name: interspersed
-noninterspersed: true
+parsing: non-interspersed
 flags:
   --bool: bool flag
   --string=: string flag

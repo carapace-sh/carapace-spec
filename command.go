@@ -1,9 +1,52 @@
 package spec
 
 import (
+	"errors"
+
 	"github.com/rsteube/carapace"
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v3"
 )
+
+type Parsing int
+
+const (
+	DEFAULT          Parsing = iota // INTERSPERSED but allows implicit changes
+	INTERSPERSED                    // mixed flags and positional arguments
+	DISABLED                        // flag parsing disabled
+	NON_INTERSPERSED                // flag parsing stopped after first positional argument
+)
+
+func (p Parsing) MarshalYAML() (interface{}, error) {
+	switch p {
+	case DEFAULT:
+		return "", nil
+	case INTERSPERSED:
+		return "interspersed", nil
+	case DISABLED:
+		return "disabled", nil
+	case NON_INTERSPERSED:
+		return "non-interspersed", nil
+	default:
+		return "", errors.New("unknown parsing mode")
+	}
+}
+
+func (p *Parsing) UnmarshalYAML(value *yaml.Node) error {
+	switch value.Value {
+	case "":
+		*p = DEFAULT
+	case "interspersed":
+		*p = INTERSPERSED
+	case "disabled":
+		*p = DISABLED
+	case "non-interspersed":
+		*p = NON_INTERSPERSED
+	default:
+		return errors.New("unknown parsing mode")
+	}
+	return nil
+}
 
 type Command struct {
 	Name            string            `yaml:"name" json:"name" jsonschema_description:"Name of the command"`
@@ -11,7 +54,7 @@ type Command struct {
 	Description     string            `yaml:"description,omitempty" json:"description,omitempty" jsonschema_description:"Description of the command"`
 	Group           string            `yaml:"group,omitempty" json:"group,omitempty" jsonschema_description:"Group of the command"`
 	Hidden          bool              `yaml:"hidden,omitempty" json:"hidden,omitempty" jsonschema_description:"Hidden state of the command"`
-	NonInterspersed bool              `yaml:"noninterspersed,omitempty" json:"noninterspersed,omitempty" jsonschema_description:"Interspersed state of the command"`
+	Parsing         Parsing           `yaml:"parsing,omitempty" json:"parsing,omitempty" jsonschema_description:"Flag parsing mode of the command"`
 	Flags           map[string]string `yaml:"flags,omitempty" json:"flags,omitempty" jsonschema_description:"Flags of the command with their description"`
 	PersistentFlags map[string]string `yaml:"persistentflags,omitempty" json:"persistentflags,omitempty" jsonschema_description:"Persistent flags of the command with their description"`
 	ExclusiveFlags  [][]string        `yaml:"exclusiveflags,omitempty" json:"exclusiveflags,omitempty" jsonschema_description:"Flags that are mutually exclusive"`
@@ -52,7 +95,13 @@ func (c Command) ToCobraE() (*cobra.Command, error) {
 		Hidden:  c.Hidden,
 		Run:     func(cmd *cobra.Command, args []string) {},
 	}
-	cmd.Flags().SetInterspersed(!c.NonInterspersed)
+
+	switch c.Parsing {
+	case DISABLED:
+		cmd.DisableFlagParsing = true
+	case NON_INTERSPERSED:
+		cmd.Flags().SetInterspersed(false)
+	}
 
 	carapace.Gen(cmd).Standalone()
 
@@ -200,37 +249,31 @@ func (c Command) addSubcommands(cmd *cobra.Command) error {
 	return nil
 }
 
+// disableFlagParsing handles implicit parsing mode.
 func (c Command) disableFlagParsing(cmd *cobra.Command) error {
-	for _, actions := range c.Completion.Flag {
-		if actions.disableFlagParsing() {
-			cmd.DisableFlagParsing = true
-			return nil
-		}
+	if c.Parsing != DEFAULT {
+		return nil
 	}
 
-	for _, actions := range c.Completion.Positional {
+	for index, actions := range c.Completion.Positional {
 		if actions.disableFlagParsing() {
-			cmd.DisableFlagParsing = true
+			switch index {
+			case 0:
+				cmd.DisableFlagParsing = true
+			default:
+				cmd.Flags().SetInterspersed(false)
+			}
 			return nil
 		}
 	}
 
 	if c.Completion.PositionalAny.disableFlagParsing() {
-		cmd.DisableFlagParsing = true
-		return nil
-	}
-
-	for _, actions := range c.Completion.Dash {
-		if actions.disableFlagParsing() {
+		switch {
+		case len(c.Completion.Positional) > 0:
+			cmd.Flags().SetInterspersed(false)
+		default:
 			cmd.DisableFlagParsing = true
-			return nil
 		}
 	}
-
-	if c.Completion.DashAny.disableFlagParsing() {
-		cmd.DisableFlagParsing = true
-		return nil
-	}
-
 	return nil
 }
