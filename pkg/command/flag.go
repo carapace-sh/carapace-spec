@@ -9,6 +9,7 @@ type Flag struct {
 	Value      bool
 	Hidden     bool
 	Required   bool
+	Persistent bool
 }
 
 func (f Flag) format() string {

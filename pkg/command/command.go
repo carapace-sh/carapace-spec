@@ -22,8 +22,17 @@ type Command struct {
 }
 
 func (c *Command) AddFlag(f Flag) {
-	if c.Flags == nil {
-		c.Flags = make(map[string]string)
+	switch {
+	case f.Persistent:
+		if c.PersistentFlags == nil {
+			c.PersistentFlags = make(map[string]string)
+		}
+		c.PersistentFlags[f.format()] = f.Usage
+
+	default:
+		if c.Flags == nil {
+			c.Flags = make(map[string]string)
+		}
+		c.Flags[f.format()] = f.Usage
 	}
-	c.Flags[f.format()] = f.Usage
 }
