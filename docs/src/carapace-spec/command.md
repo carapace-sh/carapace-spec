@@ -7,8 +7,11 @@ type Command struct {
 	Description     string
 	Group           string
 	Hidden          bool
+	Parsing         string
 	Flags           map[string]string
 	PersistentFlags map[string]string
+	ExclusiveFlags  [][]string
+	Run             string
 	Completion      struct {
 		Flag          map[string][]string
 		Positional    [][]string

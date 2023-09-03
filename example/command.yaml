@@ -1,0 +1,94 @@
+name: command
+commands:
+- name: name [value]
+
+- name: description
+  description: with description
+
+- name: aliases
+  aliases: [a, al]
+
+- name: hidden
+  hidden: true
+  completion:
+    positional:
+    - [p1, positional1]
+
+- name: parsing
+  commands:
+  - name: interspersed
+    parsing: interspersed
+    flags:
+      --bool: bool flag
+      --string=: string flag
+    completion:
+      flag:
+        string: [s1, s2, s3]
+      positional:
+      - [p1, positional1]
+      dash:
+      - [d1, dash1]
+  
+  - name: non-interspersed
+    parsing: non-interspersed
+    flags:
+      --bool: bool flag
+      --string=: string flag
+    completion:
+      flag:
+        string: [s1, s2, s3]
+      positional:
+      - [p1, positional1]
+
+  - name: disabled
+    parsing: disabled
+    flags:
+      --bool: bool flag
+      --string=: string flag
+    completion:
+      flag:
+        string: [s1, s2, s3]
+      positional:
+      - [p1, positional1]
+
+- name: flags
+  flags:
+    --bool: bool flag
+    --string=: string flag
+  completion:
+    flag:
+      string: [s1, s2, s3]
+
+- name: persistentflags
+  persistentflags:
+    --bool: bool flag
+    --string=: string flag
+  completion:
+    flag:
+      string: [s1, s2, s3]
+  commands:
+  - name: subcommand
+
+- name: exclusiveflags
+  flags:
+    --bool: bool flag
+    --string=: string flag
+  exclusiveflags:
+  - [bool, string]
+  completion:
+    flag:
+      string: [s1, s2, s3]
+
+- name: run
+  commands:
+  - name: alias
+    run: "[git, log]"
+  - name: shell
+    run: "$(git log --color=${C_FLAG_COLOR:-auto} $@)"
+    flags:
+      --color?: colored diff
+    completion:
+      flag:
+        color: [always, auto, never]
+      positional:
+      -  [master]

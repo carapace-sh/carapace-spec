@@ -1,9 +1,0 @@
-name: interspersed
-parsing: non-interspersed
-flags:
-  --bool: bool flag
-  --string=: string flag
-completion:
-  flag:
-    string: ["one", "two", "three"]
-  positionalany: ["four", "five", "six"]
