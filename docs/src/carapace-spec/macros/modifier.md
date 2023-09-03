@@ -13,6 +13,22 @@ These can be set generic `["<macro>", "<value>", "<modifier>"]` specific `["<mac
 ["$files", "$chdir(/tmp)"]
 ```
 
+The following macros can be passed as well instead of a static directory:
+
+- [`$gitdir`] .git folder
+- [`$gitworktree`] root of the working directory for a non-bare repository
+- [`$parent(\[file, dir\])`] first parent directory containing any of the given names/directories
+- [`$tempdir`] default directory to use for temporary files
+- [`$usercachedir`] root directory to use for user-specific cached data
+- [`$userconfigdir`] default root directory to use for user-specific configuration data
+- [`$userhomedir`] current user's home directory
+- [`$xdgcachehome`] cache directory (fallback to UserCacheDir)
+- [`$xdgconfighome`] home directory (fallback to UserConfigDir)
+
+```yaml
+["$files", "$chdir($gitdir)"]
+```
+
 ## filter
 
 [`$filter([<value>])`](https://rsteube.github.io/carapace/carapace/action/filter.html) filters given values.
@@ -139,3 +155,14 @@ These can be set generic `["<macro>", "<value>", "<modifier>"]` specific `["<mac
 ```yaml
 ["$usage(custom)"]
 ```
+
+
+[`$gitdir`]:https://pkg.go.dev/github.com/rsteube/carapace/pkg/traverse#GitDir
+[`$gitworktree`]:https://pkg.go.dev/github.com/rsteube/carapace/pkg/traverse#GitWorkTree
+[`$parent(\[file, dir\])`]:https://pkg.go.dev/github.com/rsteube/carapace/pkg/traverse#Parent
+[`$tempdir`]:https://pkg.go.dev/github.com/rsteube/carapace/pkg/traverse#TempDir
+[`$usercachedir`]:https://pkg.go.dev/github.com/rsteube/carapace/pkg/traverse#UserCacheDir
+[`$userconfigdir`]:https://pkg.go.dev/github.com/rsteube/carapace/pkg/traverse#UserConfigDir
+[`$userhomedir`]:https://pkg.go.dev/github.com/rsteube/carapace/pkg/traverse#UserHomeDir
+[`$xdgcachehome`]:https://pkg.go.dev/github.com/rsteube/carapace/pkg/traverse#XdgCacheHome
+[`$xdgconfighome`]:https://pkg.go.dev/github.com/rsteube/carapace/pkg/traverse#XdgConfigHome
