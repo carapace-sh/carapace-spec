@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/rsteube/carapace"
+	"github.com/rsteube/carapace/pkg/traverse"
 )
 
 type modifier struct {
@@ -21,7 +22,7 @@ func (m modifier) Parse(s string) carapace.Action {
 		}
 
 		modifiers := map[string]Macro{
-			"$chdir":      MacroI(m.Action.Chdir),
+			"$chdir":      MacroI(m.chdir),
 			"$filter":     MacroV(m.Action.Filter),
 			"$filterargs": MacroN(m.Action.FilterArgs),
 			"$list":       MacroI(m.Action.List),
@@ -45,6 +46,28 @@ func (m modifier) Parse(s string) carapace.Action {
 		}
 		return carapace.ActionMessage("unknown macro: %#v", s)
 	})
+}
+
+func (m modifier) chdir(s string) carapace.Action {
+	if !strings.HasPrefix(s, "$") {
+		return m.Action.Chdir(s)
+	}
+
+	traverse := map[string]Macro{
+		"$gitdir":        MacroN(func() carapace.Action { return m.Action.ChdirF(traverse.GitDir) }),
+		"$gitworktree":   MacroN(func() carapace.Action { return m.Action.ChdirF(traverse.GitWorkTree) }),
+		"$parent":        MacroV(func(s ...string) carapace.Action { return m.Action.ChdirF(traverse.Parent(s...)) }),
+		"$tempdir":       MacroN(func() carapace.Action { return m.Action.ChdirF(traverse.TempDir) }),
+		"$usercachedir":  MacroN(func() carapace.Action { return m.Action.ChdirF(traverse.UserCacheDir) }),
+		"$userconfigdir": MacroN(func() carapace.Action { return m.Action.ChdirF(traverse.UserConfigDir) }),
+		"$userhomedir":   MacroN(func() carapace.Action { return m.Action.ChdirF(traverse.UserHomeDir) }),
+		"$xdgcachehome":  MacroN(func() carapace.Action { return m.Action.ChdirF(traverse.XdgCacheHome) }),
+		"$xdgconfighome": MacroN(func() carapace.Action { return m.Action.ChdirF(traverse.XdgConfigHome) }),
+	}
+	if modifier, ok := traverse[strings.SplitN(s, "(", 2)[0]]; ok {
+		return modifier.parse(s)
+	}
+	return carapace.ActionMessage("unknown macro: %#v", s)
 }
 
 func updateEnv(a carapace.Action) carapace.Action {

@@ -1,0 +1,22 @@
+name: traverse
+flags:
+  --gitdir=: .git folder
+  --gitworktree=: root of the working directory for a non-bare repository
+  --parent=: first parent directory containing any of the given names/directories
+  --tempdir=: default directory to use for temporary files
+  --usercachedir=: root directory to use for user-specific cached data
+  --userconfigdir=: default root directory to use for user-specific configuration data
+  --userhomedir=: current user's home directory
+  --xdgcachehome=: cache directory (fallback to UserCacheDir)
+  --xdgconfighome=: home directory (fallback to UserConfigDir)
+completion:
+  flag:
+    gitdir: ["$files", "$chdir($gitdir)"]
+    gitworktree: ["$files", "$chdir($gitworktree)"]
+    parent: ["$files", "$chdir($parent([go.mod, go.sum]))"]
+    tempdir: ["$files", "$chdir($tempdir)"]
+    usercachedir: ["$files", "$chdir($usercachedir)"]
+    userconfigdir: ["$files", "$chdir($userconfigdir)"]
+    userhomedir: ["$files", "$chdir($userhomedir)"]
+    xdgcachehome: ["$files", "$chdir($xdgcachehome)"]
+    xdgconfighome: ["$files", "$chdir($xdgconfighome)"]
