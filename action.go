@@ -9,7 +9,6 @@ import (
 
 	"github.com/invopop/jsonschema"
 	"github.com/rsteube/carapace"
-	"github.com/rsteube/carapace/pkg/style"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"gopkg.in/yaml.v3"
@@ -116,17 +115,22 @@ func (a action) parse(cmd *cobra.Command) carapace.Action {
 		})
 
 		batch := carapace.Batch()
-		action := carapace.ActionCallback(func(c carapace.Context) carapace.Action {
+		batchAction := carapace.ActionCallback(func(c carapace.Context) carapace.Action {
 			return batch.ToA()
 		})
 
-		vals := make([]string, 0)
 		for _, elem := range a {
-			if elemSubst, err := c.Envsubst(string(elem)); err != nil {
+			elemSubst, err := c.Envsubst(string(elem))
+			if err != nil {
 				batch = append(batch, carapace.ActionMessage("%v: %#v", err.Error(), elem))
-			} else if strings.HasPrefix(elemSubst, "$") { // macro
-				switch strings.SplitN(elemSubst, "(", 2)[0] {
-				case // TODO list in modifier.go
+				continue
+			}
+
+			splitted := strings.Split(elemSubst, " ||| ")
+
+			if strings.HasPrefix(splitted[0], "$") { // macro
+				switch strings.SplitN(splitted[0], "(", 2)[0] {
+				case // generic modifier applied to batch
 					"$chdir",
 					"$filter",
 					"$filterargs",
@@ -144,33 +148,47 @@ func (a action) parse(cmd *cobra.Command) carapace.Action {
 					"$tag",
 					"$uniquelist",
 					"$usage":
-					action = modifier{action}.Parse(elemSubst) // TODO does this need a local reference?
+					batchAction = modifier{batchAction}.Parse(splitted[0])
+					if len(splitted) > 1 {
+						for _, m := range splitted[1:] {
+							batchAction = modifier{batchAction}.Parse(m)
+						}
+					}
 				default:
-					splitted := strings.Split(elemSubst, " ||| ")
 					a := ActionMacro(splitted[0])
 					if len(splitted) > 1 {
 						for _, m := range splitted[1:] {
-							a = modifier{a}.Parse(m) // TODO does this need a local reference?
+							a = modifier{a}.Parse(m)
 						}
 					}
 					batch = append(batch, a)
 				}
 			} else {
-				vals = append(vals, parseValue(elemSubst)...)
+				a := parseValue(splitted[0])
+				if len(splitted) > 1 {
+					for _, m := range splitted[1:] {
+						a = modifier{a}.Parse(m)
+					}
+				}
+				batch = append(batch, a)
 			}
 		}
-		batch = append(batch, carapace.ActionStyledValuesDescribed(vals...))
-		return action.Invoke(c).ToA()
+		return batchAction.Invoke(c).ToA()
 	})
 }
 
-func parseValue(s string) []string {
-	if splitted := strings.SplitN(s, "\t", 3); len(splitted) > 2 {
-		return splitted
-	} else if len(splitted) > 1 {
-		return []string{splitted[0], splitted[1], style.Default}
-	} else {
-		return []string{splitted[0], "", style.Default}
+func parseValue(s string) carapace.Action {
+	splitted := strings.SplitN(s, "\t", 3)
+	switch len(splitted) {
+	case 1:
+		return carapace.ActionValues(splitted...)
+	case 2:
+		return carapace.ActionValuesDescribed(splitted...)
+	case 3:
+		return carapace.ActionStyledValuesDescribed(splitted...)
+	default:
+		return carapace.ActionValues("invalid value: %#v", s)
+
 	}
 }
 

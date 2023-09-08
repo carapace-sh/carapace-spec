@@ -52,13 +52,13 @@ func shell(shell, command string) carapace.Action {
 
 		return carapace.ActionExecCommand(shell, "-c", command)(func(output []byte) carapace.Action {
 			lines := strings.Split(string(output), "\n")
-			vals := make([]string, 0)
+			batch := carapace.Batch()
 			for _, line := range lines {
 				if line != "" {
-					vals = append(vals, parseValue(line)...)
+					batch = append(batch, parseValue(line))
 				}
 			}
-			return carapace.ActionStyledValuesDescribed(vals...)
+			return batch.ToA()
 		}).Invoke(c).ToA()
 	})
 
