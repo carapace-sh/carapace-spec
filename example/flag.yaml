@@ -1,0 +1,11 @@
+name: flag
+flags:
+  --hidden&: hidden
+  --hidden-arg&=: hidden with argument
+  --hidden-opt&?: hidden with optional argument
+  --repeatable*: repeatable
+  --required!: required
+completion:
+  flag:
+    hidden-arg: [h1, h2]
+    hidden-opt: [ho1, ho2]
