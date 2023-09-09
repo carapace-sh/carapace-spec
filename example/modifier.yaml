@@ -65,7 +65,7 @@ commands:
       filter: ["$(printf '%s\\n' one two three) ||| $filter([two])"]
       filterargs: ["$files ||| $filterargs"]
       list: ["$(printf '%s\\n' one two three) ||| $list(,)"]
-      multiparts: ["$(echo one/two/three) ||| $multiparts([/])"]
+      multiparts: ["one/two/three ||| $multiparts([/])"]
       nospace: ["$(printf '%s\\n' one two/ three,) ||| $nospace(/,)"]
       prefix: ["$files ||| $prefix(file://)"]
       retain: ["$(printf '%s\\n' one two three) ||| $retain([two])"]
