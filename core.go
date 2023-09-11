@@ -15,6 +15,16 @@ func init() {
 	addCoreMacro("nospace", MacroI(func(s string) carapace.Action { return carapace.ActionValues() }))
 	addCoreMacro("uniquelist", MacroI(func(s string) carapace.Action { return carapace.ActionValues() }))
 
+	addCoreMacro("multipartsn", MacroV(func(s ...string) carapace.Action {
+		if len(s) < 3 {
+			return carapace.ActionMessage("malformed macro") // TODO better message
+		}
+
+		return carapace.ActionMultiPartsN(s[0], len(s)-1, func(c carapace.Context) carapace.Action {
+			return ActionMacro(s[len(c.Parts)+1])
+		})
+	}))
+
 	addCoreMacro("directories", MacroN(carapace.ActionDirectories))
 	addCoreMacro("files", MacroV(carapace.ActionFiles))
 	addCoreMacro("executables", MacroN(carapace.ActionExecutables))

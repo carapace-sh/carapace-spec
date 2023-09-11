@@ -1,0 +1,7 @@
+name: multiparts
+completion:
+  positional:
+    - ["$multipartsn([':', '', '$(bat --list-languages | sed \"s/:/\t/\")'])"]
+    - ["$__languages"]
+macros:
+  languages: ["$(bat --list-languages | sed 's/:/\t')"]
