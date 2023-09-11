@@ -32,7 +32,7 @@ func addCoreMacro(s string, m Macro) {
 
 // AddMacro adds a custom macro
 func AddMacro(s string, m Macro) {
-	macros["_"+s] = m
+	macros["_."+s] = m
 }
 
 func MacroN(f func() carapace.Action) Macro {
