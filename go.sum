@@ -9,8 +9,8 @@ github.com/invopop/jsonschema v0.8.0 h1:9Vblm5uNqURXUSaX0QUYcI/Hcu5rrvOz5MbpWgw0
 github.com/invopop/jsonschema v0.8.0/go.mod h1:O9uiLokuu0+MGFlyiaqtWxwqJm41/+8Nj0lD7A36YH0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/rsteube/carapace v0.43.4 h1:w9jdbpep134NgBg6usD1HGTKRDDJa9CYAgqXJfC7IdM=
-github.com/rsteube/carapace v0.43.4/go.mod h1:1l4sZA+/sGW9sBLqEholUd+kn9xKgh2ghBFDYC3D/zA=
+github.com/rsteube/carapace v0.43.5 h1:rbXIGGoffXew0Pk/oM5LHlMf1jBv34TedFXscl59zy4=
+github.com/rsteube/carapace v0.43.5/go.mod h1:1l4sZA+/sGW9sBLqEholUd+kn9xKgh2ghBFDYC3D/zA=
 github.com/rsteube/carapace-shlex v0.0.4 h1:3GVn8PaM2RCxPTAiwVy9vDQI8Mi7DqrbdpDgf5ZzQmY=
 github.com/rsteube/carapace-shlex v0.0.4/go.mod h1:zPw1dOFwvLPKStUy9g2BYKanI6bsQMATzDMYQQybo3o=
 github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
