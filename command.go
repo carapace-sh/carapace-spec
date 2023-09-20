@@ -110,7 +110,7 @@ func (c Command) markFlagsExclusive(cmd *cobra.Command) error {
 func (c Command) addFlagCompletion(cmd *cobra.Command) error {
 	flagCompletions := make(carapace.ActionMap)
 	for key, a := range c.Completion.Flag {
-		flagCompletions[key] = NewAction(a).parse(cmd)
+		flagCompletions[key] = NewAction(a).Parse(cmd)
 	}
 	carapace.Gen(cmd).FlagCompletion(flagCompletions)
 	return nil
@@ -136,7 +136,7 @@ func (c Command) addPositionalCompletion(cmd *cobra.Command) error {
 
 	positionalCompletions := make([]carapace.Action, 0)
 	for _, pos := range c.Completion.Positional {
-		positionalCompletions = append(positionalCompletions, NewAction(pos).parse(cmd))
+		positionalCompletions = append(positionalCompletions, NewAction(pos).Parse(cmd))
 	}
 	carapace.Gen(cmd).PositionalCompletion(positionalCompletions...)
 
@@ -145,7 +145,7 @@ func (c Command) addPositionalCompletion(cmd *cobra.Command) error {
 
 func (c Command) addPositionalAnyCompletion(cmd *cobra.Command) error {
 	if len(c.Completion.PositionalAny) > 0 {
-		carapace.Gen(cmd).PositionalAnyCompletion(NewAction(c.Completion.PositionalAny).parse(cmd))
+		carapace.Gen(cmd).PositionalAnyCompletion(NewAction(c.Completion.PositionalAny).Parse(cmd))
 	}
 	return nil
 }
@@ -157,7 +157,7 @@ func (c Command) addDashCompletion(cmd *cobra.Command) error {
 
 	dashCompletions := make([]carapace.Action, 0)
 	for _, pos := range c.Completion.Dash {
-		dashCompletions = append(dashCompletions, NewAction(pos).parse(cmd))
+		dashCompletions = append(dashCompletions, NewAction(pos).Parse(cmd))
 	}
 	carapace.Gen(cmd).DashCompletion(dashCompletions...)
 	return nil
@@ -165,7 +165,7 @@ func (c Command) addDashCompletion(cmd *cobra.Command) error {
 
 func (c Command) addDashAnyCompletion(cmd *cobra.Command) error {
 	if len(c.Completion.DashAny) > 0 {
-		carapace.Gen(cmd).DashAnyCompletion(NewAction(c.Completion.DashAny).parse(cmd))
+		carapace.Gen(cmd).DashAnyCompletion(NewAction(c.Completion.DashAny).Parse(cmd))
 	}
 	return nil
 }

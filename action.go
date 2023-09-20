@@ -102,7 +102,8 @@ func (a action) disableFlagParsing() bool {
 	return false
 }
 
-func (a action) parse(cmd *cobra.Command) carapace.Action {
+// TODO experimentally public
+func (a action) Parse(cmd *cobra.Command) carapace.Action {
 	return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
 		// TODO yuck - where to set thes best?
 		for index, arg := range c.Args {
