@@ -37,7 +37,7 @@ func (value) JSONSchema() *jsonschema.Schema {
 
 	examples := make([]interface{}, 0, len(macros))
 	for _, name := range sortedNames {
-		examples = append(examples, fmt.Sprintf("$%v(%v)", name, macros[name].Signature()))
+		examples = append(examples, fmt.Sprintf("$%v(%v)", name, macros[name].macro.Signature()))
 	}
 	return &jsonschema.Schema{
 		Type:        "string",
@@ -59,7 +59,7 @@ func ActionMacro(s string) carapace.Action {
 		if m, ok := macros[matches["macro"]]; !ok {
 			return carapace.ActionMessage("unknown macro: %#v", s)
 		} else {
-			return m.f(matches["arg"])
+			return m.Parse(s)
 		}
 	})
 }
