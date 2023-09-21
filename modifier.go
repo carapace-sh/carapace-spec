@@ -42,7 +42,7 @@ func (m modifier) Parse(s string) carapace.Action {
 		}
 
 		if modifier, ok := modifiers[strings.SplitN(s, "(", 2)[0]]; ok {
-			return modifier.parse(s)
+			return modifier.Parse(s)
 		}
 		return carapace.ActionMessage("unknown macro: %#v", s)
 	})
@@ -65,7 +65,7 @@ func (m modifier) chdir(s string) carapace.Action {
 		"$xdgconfighome": MacroN(func() carapace.Action { return m.Action.ChdirF(traverse.XdgConfigHome) }),
 	}
 	if modifier, ok := traverse[strings.SplitN(s, "(", 2)[0]]; ok {
-		return modifier.parse(s)
+		return modifier.Parse(s)
 	}
 	return carapace.ActionMessage("unknown macro: %#v", s)
 }
