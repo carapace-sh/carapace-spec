@@ -50,17 +50,11 @@ func (value) JSONSchema() *jsonschema.Schema {
 // ActionMacro completes given macro
 func ActionMacro(s string) carapace.Action {
 	return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
-		r := regexp.MustCompile(`^\$(?P<macro>[^(]*)(\((?P<arg>.*)\))?$`)
-		if !r.MatchString(s) {
-			return carapace.ActionMessage("malformed macro: %#v", s)
+		m, err := macros.Lookup(s)
+		if err != nil {
+			return carapace.ActionMessage(err.Error())
 		}
-
-		matches := findNamedMatches(r, s)
-		if m, ok := macros[matches["macro"]]; !ok {
-			return carapace.ActionMessage("unknown macro: %#v", s)
-		} else {
-			return m.Parse(s)
-		}
+		return m.Parse(s)
 	})
 }
 
