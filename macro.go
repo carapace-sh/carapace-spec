@@ -24,7 +24,7 @@ func (m Macro) Signature() string {
 
 func (m Macro) NoFlag() Macro { m.disableFlagParsing = true; return m }
 
-var macros = make(map[string]Macro)
+var macros = make(macro.MacroMap[Macro])
 
 func addCoreMacro(s string, m Macro) {
 	macros[s] = m

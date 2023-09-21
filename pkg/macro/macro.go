@@ -9,6 +9,24 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+type MacroMap[T any] map[string]T
+
+func (m MacroMap[T]) Lookup(s string) (*T, error) {
+	r := regexp.MustCompile(`^\$(?P<macro>[^(]*)(\((?P<arg>.*)\))?$`)
+
+	matches := r.FindStringSubmatch(s)
+	if matches == nil {
+		return nil, fmt.Errorf("malformed macro: %#v", s)
+	}
+
+	if m, ok := m[matches[1]]; !ok {
+		return nil, fmt.Errorf("unknown macro: %#v", s) // TODO return bool to handle this - or custom error
+	} else {
+		return &m, nil
+	}
+
+}
+
 type Macro[T any] struct {
 	f func(string) (*T, error)
 	s func() string
