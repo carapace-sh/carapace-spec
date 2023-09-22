@@ -11,6 +11,10 @@ import (
 
 type MacroMap[T any] map[string]T
 
+type UnknownError struct{ s string }
+
+func (e *UnknownError) Error() string { return e.s }
+
 func (m MacroMap[T]) Lookup(s string) (*T, error) {
 	r := regexp.MustCompile(`^\$(?P<macro>[^(]*)(\((?P<arg>.*)\))?$`)
 
@@ -19,12 +23,10 @@ func (m MacroMap[T]) Lookup(s string) (*T, error) {
 		return nil, fmt.Errorf("malformed macro: %#v", s)
 	}
 
-	if m, ok := m[matches[1]]; !ok {
-		return nil, fmt.Errorf("unknown macro: %#v", s) // TODO return bool to handle this - or custom error
-	} else {
+	if m, ok := m[matches[1]]; ok {
 		return &m, nil
 	}
-
+	return nil, &UnknownError{fmt.Sprintf("unknown macro: %#v", s)}
 }
 
 type Macro[T any] struct {
