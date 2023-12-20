@@ -136,7 +136,11 @@ func init() {
 		default:
 			cmd.Flags().Parse(args[:1]) // TODO unnecessary
 		}
+
 	})
+
+	spec.AddMacro("Spec", spec.MacroI(spec.ActionSpec))
+	spec.Register(rootCmd)
 }
 
 func bridgeCompletion(cmd *cobra.Command, spec string, args ...string) {

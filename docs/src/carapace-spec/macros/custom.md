@@ -1,6 +1,6 @@
 # Custom
 
-Custom macros can be added with [`AddMacro`](https://pkg.go.dev/github.com/rsteube/carapace-spec#AddMacro) (names are prefixed with `$_`).
+Custom macros can be added with [`AddMacro`](https://pkg.go.dev/github.com/rsteube/carapace-spec#AddMacro).
 
 ```go
 // `$_noarg` without argument

@@ -3,6 +3,7 @@ package spec
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"regexp"
 	"sort"
 	"strings"
@@ -47,14 +48,50 @@ func (value) JSONSchema() *jsonschema.Schema {
 	}
 }
 
+func executable() string {
+	s, err := os.Executable()
+	if err != nil {
+		panic(err.Error()) // TODO handle error, eval symlink, how to handle "go test"
+	}
+
+	return filepath.Base(s)
+}
+
 // ActionMacro completes given macro
 func ActionMacro(s string) carapace.Action {
 	return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
-		m, err := macros.Lookup(s)
-		if err != nil {
-			return carapace.ActionMessage(err.Error())
+		r := regexp.MustCompile(`^\$(?P<macro>[^(]*)(\((?P<arg>.*)\))?$`)
+		matches := r.FindStringSubmatch(s)
+		if matches == nil {
+			return carapace.ActionMessage("malformed macro: %#v", s)
 		}
-		return m.Parse(s)
+		if strings.HasPrefix(matches[1], "_") && !strings.HasPrefix(matches[1], "_.") {
+			return carapace.ActionMessage(`"$_" deprecated: replace %#v with %#v`, "$"+matches[1], "$carapace."+strings.TrimPrefix(matches[1], "_"))
+		}
+		prefix := fmt.Sprintf("$%v.", executable())
+
+		switch {
+		case !strings.HasPrefix(matches[1], "_.") && strings.Contains(matches[1], ".") && !strings.HasPrefix(s, prefix):
+			splitted := strings.SplitN(strings.TrimPrefix(s, "$"), ".", 2)
+			args := []string{"_carapace", "macro"}
+			args = append(args, splitted[1])
+			args = append(args, c.Args...)
+			args = append(args, c.Value)
+			carapace.LOG.Printf("%#v", args)
+			return carapace.ActionExecCommand(splitted[0], args...)(func(output []byte) carapace.Action {
+				return carapace.ActionImport(output)
+			})
+
+		default:
+			if strings.HasPrefix(s, prefix) {
+				s = "$_." + strings.TrimPrefix(s, prefix)
+			}
+			m, err := macros.Lookup(s)
+			if err != nil {
+				return carapace.ActionMessage(err.Error())
+			}
+			return m.Parse(s)
+		}
 	})
 }
 
