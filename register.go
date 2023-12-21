@@ -31,7 +31,7 @@ func Register(cmd *cobra.Command) {
 
 				for _, key := range keys {
 					if strings.HasPrefix(key, "_") {
-						fmt.Fprintln(cmd.OutOrStdout(), strings.TrimPrefix(key, "_"))
+						fmt.Fprintln(cmd.OutOrStdout(), strings.TrimPrefix(key, "_."))
 					}
 				}
 			case 1:
