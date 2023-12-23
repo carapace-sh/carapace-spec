@@ -1,9 +1,14 @@
 package spec
 
 import (
+	"os"
+	"path/filepath"
+	"regexp"
+
 	"github.com/rsteube/carapace"
 	"github.com/rsteube/carapace-spec/pkg/command"
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v3"
 )
 
 type Command command.Command
@@ -56,6 +61,7 @@ func (c Command) ToCobraE() (*cobra.Command, error) {
 		c.addDashAnyCompletion,
 		c.addSubcommands,
 		c.disableFlagParsing,
+		c.addAliasCompletion,
 	} {
 		if err := f(cmd); err != nil {
 			return nil, err
@@ -213,6 +219,51 @@ func (c Command) disableFlagParsing(cmd *cobra.Command) error {
 		default:
 			cmd.DisableFlagParsing = true
 		}
+	}
+	return nil
+}
+
+func (c Command) addAliasCompletion(cmd *cobra.Command) error {
+	if c.Run != "" &&
+		len(c.Flags) == 0 &&
+		len(c.PersistentFlags) == 0 &&
+		len(c.Completion.Positional) == 0 &&
+		len(c.Completion.PositionalAny) == 0 &&
+		len(c.Completion.Dash) == 0 &&
+		len(c.Completion.DashAny) == 0 {
+
+		cmd.DisableFlagParsing = true
+		carapace.Gen(cmd).PositionalAnyCompletion(
+			carapace.ActionCallback(func(context carapace.Context) carapace.Action {
+				switch {
+				case regexp.MustCompile(`^\[.*\]$`).MatchString(string(c.Run)):
+					var mArgs []string
+					if err := yaml.Unmarshal([]byte(c.Run), &mArgs); err != nil {
+						return carapace.ActionMessage(err.Error())
+					}
+					if len(mArgs) == 0 {
+						return carapace.ActionMessage("empty alias: %#v", c.Run)
+					}
+
+					// TODO keep in sync with ActionCarapaceBin in carapace-bridge
+					carapaceCmd := "carapace"
+					if executable, err := os.Executable(); err == nil && filepath.Base(executable) == "carapace" {
+						carapaceCmd = executable // workaround for sandbox tests: directly call executable which was built with "go run"
+					}
+
+					execArgs := []string{mArgs[0], "export", mArgs[0]}
+					execArgs = append(execArgs, mArgs[1:]...)
+					execArgs = append(execArgs, context.Args...)
+					execArgs = append(execArgs, context.Value)
+					return carapace.ActionExecCommand(carapaceCmd, execArgs...)(func(output []byte) carapace.Action {
+						return carapace.ActionImport(output)
+					})
+
+				default:
+					return carapace.ActionValues()
+				}
+			}),
+		)
 	}
 	return nil
 }
