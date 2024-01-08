@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/rsteube/carapace"
+	"github.com/rsteube/carapace/pkg/condition"
 	"github.com/rsteube/carapace/pkg/traverse"
 )
 
@@ -38,6 +39,7 @@ func (m modifier) Parse(s string) carapace.Action {
 			"$style":      MacroI(m.Action.Style),
 			"$tag":        MacroI(m.Action.Tag),
 			"$uniquelist": MacroI(m.Action.UniqueList),
+			"$unless":     MacroI(m.unless),
 			"$usage":      MacroI(func(s string) carapace.Action { return m.Action.Usage(s) }),
 		}
 
@@ -70,6 +72,20 @@ func (m modifier) chdir(s string) carapace.Action {
 	return carapace.ActionMessage("unknown macro: %#v", s)
 }
 
+func (m modifier) unless(s string) carapace.Action {
+	traverse := map[string]Macro{
+		"$arch":            MacroV(func(s ...string) carapace.Action { return m.Action.Unless(condition.Arch(s...)) }),
+		"$os":              MacroV(func(s ...string) carapace.Action { return m.Action.Unless(condition.Os(s...)) }),
+		"$executable":      MacroV(func(s ...string) carapace.Action { return m.Action.Unless(condition.Executable(s...)) }),
+		"$file":            MacroI(func(s string) carapace.Action { return m.Action.Unless(condition.File(s)) }),
+		"$completingpath":  MacroN(func() carapace.Action { return m.Action.Unless(condition.CompletingPath) }),
+		"$completingpaths": MacroN(func() carapace.Action { return m.Action.Unless(condition.CompletingPathS) }),
+	}
+	if modifier, ok := traverse[strings.SplitN(s, "(", 2)[0]]; ok {
+		return modifier.Parse(s)
+	}
+	return carapace.ActionMessage("unknown macro: %#v", s)
+}
 func updateEnv(a carapace.Action) carapace.Action {
 	return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
 		for index, arg := range c.Parts {
