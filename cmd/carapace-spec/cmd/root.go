@@ -114,13 +114,7 @@ func init() {
 				return carapace.ActionFiles(".yaml")
 
 			case !strings.HasPrefix(c.Args[0], "-"):
-				path := c.Args[0]
-				if len(c.Args) < 3 {
-					c.Args[0] = "_carapace"
-				} else {
-					c.Args = c.Args[3:]
-				}
-				return spec.ActionSpec(path).Invoke(c).ToA()
+				return spec.ActionSpec(c.Args[0]).Shift(1)
 
 			default:
 				return carapace.ActionValues()
