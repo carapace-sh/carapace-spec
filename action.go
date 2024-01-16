@@ -125,6 +125,15 @@ func (a action) disableFlagParsing() bool {
 	for _, value := range a {
 		if strings.HasPrefix(string(value), "$") {
 			macro := strings.SplitN(strings.TrimPrefix(string(value), "$"), "(", 2)[0]
+
+			// TODO changing macro names from `$_{name}` to `$executable.{name}` botched this
+			// NoFlag is a convenience feature for simple bridging and won't work with macros not locally interpreted
+			// This is a quick fix so that the macro is found in the map and flag completion works again.
+			// Might as well store the flags with their true name as all this renaming isn't great (would give some issues with test and renamed binaries though).
+			if prefix := fmt.Sprintf("%v.", executable()); strings.HasPrefix(macro, prefix) {
+				macro = "_." + strings.TrimPrefix(macro, prefix)
+			}
+
 			if m, ok := macros[macro]; ok && m.disableFlagParsing {
 				return true
 			}
