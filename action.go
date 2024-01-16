@@ -130,7 +130,9 @@ func (a action) disableFlagParsing() bool {
 			// NoFlag is a convenience feature for simple bridging and won't work with macros not locally interpreted
 			// This is a quick fix so that the macro is found in the map and flag completion works again.
 			// Might as well store the flags with their true name as all this renaming isn't great (would give some issues with test and renamed binaries though).
-			if prefix := fmt.Sprintf("%v.", executable()); strings.HasPrefix(macro, prefix) {
+			if strings.HasPrefix(macro, "carapace.bridge.") {
+				return true // TODO duh!
+			} else if prefix := fmt.Sprintf("%v.", executable()); strings.HasPrefix(macro, prefix) {
 				macro = "_." + strings.TrimPrefix(macro, prefix)
 			}
 
