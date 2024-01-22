@@ -6,8 +6,7 @@ import (
 )
 
 type Macro struct {
-	macro              macro.Macro[carapace.Action]
-	disableFlagParsing bool
+	macro macro.Macro[carapace.Action]
 }
 
 func (m Macro) Parse(s string) carapace.Action {
@@ -21,8 +20,6 @@ func (m Macro) Parse(s string) carapace.Action {
 func (m Macro) Signature() string {
 	return m.macro.Signature()
 }
-
-func (m Macro) NoFlag() Macro { m.disableFlagParsing = true; return m }
 
 var macros = make(macro.MacroMap[Macro])
 

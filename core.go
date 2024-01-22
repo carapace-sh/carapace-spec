@@ -19,8 +19,8 @@ func init() {
 	addCoreMacro("files", MacroV(carapace.ActionFiles))
 	addCoreMacro("executables", MacroN(carapace.ActionExecutables))
 	addCoreMacro("message", MacroI(func(s string) carapace.Action { return carapace.ActionMessage(s) }))
-	addCoreMacro("noflag", MacroN(func() carapace.Action { return carapace.ActionValues() }).NoFlag())
-	addCoreMacro("spec", MacroI(ActionSpec).NoFlag())
+	// TODO is there still use for this? addCoreMacro("noflag", MacroN(func() carapace.Action { return carapace.ActionValues() }).NoFlag())
+	addCoreMacro("spec", MacroI(ActionSpec))
 
 	addCoreMacro("", MacroI(func(s string) carapace.Action {
 		if runtime.GOOS == "windows" {
