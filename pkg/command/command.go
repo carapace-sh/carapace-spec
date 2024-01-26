@@ -1,12 +1,13 @@
 package command
 
 type Command struct {
-	Name            string            `yaml:"name" json:"name" jsonschema_description:"Name of the command"`
-	Aliases         []string          `yaml:"aliases,omitempty" json:"aliases,omitempty" jsonschema_description:"Aliases of the command"`
-	Description     string            `yaml:"description,omitempty" json:"description,omitempty" jsonschema_description:"Description of the command"`
-	Group           string            `yaml:"group,omitempty" json:"group,omitempty" jsonschema_description:"Group of the command"`
-	Hidden          bool              `yaml:"hidden,omitempty" json:"hidden,omitempty" jsonschema_description:"Hidden state of the command"`
-	Parsing         Parsing           `yaml:"parsing,omitempty" json:"parsing,omitempty" jsonschema_description:"Flag parsing mode of the command"`
+	Name        string   `yaml:"name" json:"name" jsonschema_description:"Name of the command"`
+	Aliases     []string `yaml:"aliases,omitempty" json:"aliases,omitempty" jsonschema_description:"Aliases of the command"`
+	Description string   `yaml:"description,omitempty" json:"description,omitempty" jsonschema_description:"Description of the command"`
+	Group       string   `yaml:"group,omitempty" json:"group,omitempty" jsonschema_description:"Group of the command"`
+	Hidden      bool     `yaml:"hidden,omitempty" json:"hidden,omitempty" jsonschema_description:"Hidden state of the command"`
+	Parsing     Parsing  `yaml:"parsing,omitempty" json:"parsing,omitempty" jsonschema_description:"Flag parsing mode of the command" jsonschema:"enum=interspersed,enum=non-interspersed,enum=disabled"`
+
 	Flags           map[string]string `yaml:"flags,omitempty" json:"flags,omitempty" jsonschema_description:"Flags of the command with their description"`
 	PersistentFlags map[string]string `yaml:"persistentflags,omitempty" json:"persistentflags,omitempty" jsonschema_description:"Persistent flags of the command with their description"`
 	ExclusiveFlags  [][]string        `yaml:"exclusiveflags,omitempty" json:"exclusiveflags,omitempty" jsonschema_description:"Flags that are mutually exclusive"`
