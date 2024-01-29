@@ -60,7 +60,6 @@ func (c Command) ToCobraE() (*cobra.Command, error) {
 		c.addDashCompletion,
 		c.addDashAnyCompletion,
 		c.addSubcommands,
-		c.disableFlagParsing,
 		c.addAliasCompletion,
 	} {
 		if err := f(cmd); err != nil {
@@ -190,35 +189,6 @@ func (c Command) addSubcommands(cmd *cobra.Command) error {
 			return err
 		}
 		cmd.AddCommand(subcmdCobra)
-	}
-	return nil
-}
-
-// disableFlagParsing handles implicit parsing mode.
-func (c Command) disableFlagParsing(cmd *cobra.Command) error {
-	if c.Parsing != command.DEFAULT {
-		return nil
-	}
-
-	for index, positional := range c.Completion.Positional {
-		if NewAction(positional).disableFlagParsing() {
-			switch index {
-			case 0:
-				cmd.DisableFlagParsing = true
-			default:
-				cmd.Flags().SetInterspersed(false)
-			}
-			return nil
-		}
-	}
-
-	if NewAction(c.Completion.PositionalAny).disableFlagParsing() {
-		switch {
-		case len(c.Completion.Positional) > 0:
-			cmd.Flags().SetInterspersed(false)
-		default:
-			cmd.DisableFlagParsing = true
-		}
 	}
 	return nil
 }
