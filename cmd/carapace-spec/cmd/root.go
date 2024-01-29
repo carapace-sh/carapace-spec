@@ -38,15 +38,15 @@ var rootCmd = &cobra.Command{
 		switch args[0] {
 		case "-h", "--help":
 			cmd.Help()
-		case "--scrape":
+		case "--codegen":
 			if len(args) < 2 {
-				return errors.New("flag needs an argument: --scrape")
+				return errors.New("flag needs an argument: --codegen")
 			}
 			command, err := loadSpec(args[1])
 			if err != nil {
 				return err
 			}
-			command.Scrape()
+			command.Codegen()
 		case "--run":
 			command, err := loadSpec(args[1])
 			if err != nil {
@@ -92,7 +92,7 @@ func Execute() error {
 	return rootCmd.Execute()
 }
 func init() {
-	rootCmd.Flags().Bool("scrape", false, "scrape to go code")
+	rootCmd.Flags().Bool("codegen", false, "generate code for spec file")
 	rootCmd.Flags().Bool("run", false, "run with given args")
 
 	carapace.Gen(rootCmd).PositionalCompletion(
@@ -110,7 +110,7 @@ func init() {
 				}
 				return carapace.ActionFiles(".yaml")
 
-			case c.Args[0] == "--scrape" && len(c.Args) == 1:
+			case c.Args[0] == "--codegen" && len(c.Args) == 1:
 				return carapace.ActionFiles(".yaml")
 
 			case !strings.HasPrefix(c.Args[0], "-"):

@@ -15,11 +15,11 @@ import (
 	"github.com/spf13/pflag"
 )
 
-type scrapeXXX struct {
+type codegenCmd struct {
 	cmd *cobra.Command
 }
 
-func (s scrapeXXX) formatHeader() string {
+func (s codegenCmd) formatHeader() string {
 	return `package cmd
 import (
 	"github.com/rsteube/carapace"
@@ -28,7 +28,7 @@ import (
 `
 }
 
-func (s scrapeXXX) formatGroups() string {
+func (s codegenCmd) formatGroups() string {
 	if len(s.cmd.Groups()) == 0 {
 		return ""
 	}
@@ -40,7 +40,7 @@ func (s scrapeXXX) formatGroups() string {
 	return fmt.Sprintf("%vCmd.AddGroup(\n%v\n)\n", cmdVarName(s.cmd), strings.Join(groups, "\n"))
 }
 
-func (s scrapeXXX) formatCommand() string {
+func (s codegenCmd) formatCommand() string {
 	snippet := fmt.Sprintf(
 		`var %vCmd = &cobra.Command{
 	Use:     "%v",
@@ -71,7 +71,7 @@ func (s scrapeXXX) formatCommand() string {
 	return snippet
 }
 
-func (s scrapeXXX) formatExecute() string {
+func (s codegenCmd) formatExecute() string {
 	if s.cmd.HasParent() {
 		return ""
 	}
@@ -80,25 +80,25 @@ func (s scrapeXXX) formatExecute() string {
 }
 `
 }
-func Scrape(cmd *cobra.Command) {
-	dir, err := os.MkdirTemp(os.TempDir(), "carapace-scrape-")
+func Codegen(cmd *cobra.Command) {
+	dir, err := os.MkdirTemp(os.TempDir(), "carapace-codegen-")
 	if err != nil {
 		panic(err.Error())
 	}
 
-	scrape(cmd, dir)
+	codegen(cmd, dir)
 }
 
-func scrape(cmd *cobra.Command, tmpDir string) {
+func codegen(cmd *cobra.Command, tmpDir string) {
 	out := &bytes.Buffer{}
-	fmt.Fprintln(out, scrapeXXX{cmd}.formatHeader())
-	fmt.Fprintln(out, scrapeXXX{cmd}.formatCommand())
-	fmt.Fprintln(out, scrapeXXX{cmd}.formatExecute())
+	fmt.Fprintln(out, codegenCmd{cmd}.formatHeader())
+	fmt.Fprintln(out, codegenCmd{cmd}.formatCommand())
+	fmt.Fprintln(out, codegenCmd{cmd}.formatExecute())
 
 	fmt.Fprintf(out, `func init() {
 	carapace.Gen(%vCmd).Standalone()
 %v
-`, cmdVarName(cmd), scrapeXXX{cmd}.formatGroups())
+`, cmdVarName(cmd), codegenCmd{cmd}.formatGroups())
 
 	cmd.LocalFlags().VisitAll(func(f *pflag.Flag) {
 		if f.Deprecated != "" {
@@ -170,7 +170,7 @@ func scrape(cmd *cobra.Command, tmpDir string) {
 
 	for _, subcmd := range cmd.Commands() {
 		if subcmd.Deprecated == "" && subcmd.Name() != "_carapace" {
-			scrape(subcmd, tmpDir)
+			codegen(subcmd, tmpDir)
 		}
 	}
 }
