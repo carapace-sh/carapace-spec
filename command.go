@@ -69,11 +69,11 @@ func (c Command) ToCobraE() (*cobra.Command, error) {
 	return cmd, nil
 }
 
-func (c Command) Scrape() {
+func (c Command) Codegen() {
 	cmd, err := c.ToCobraE()
 	// TODO handle error
 	if err == nil {
-		Scrape(cmd)
+		Codegen(cmd)
 	}
 }
 
