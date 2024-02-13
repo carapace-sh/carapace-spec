@@ -35,7 +35,7 @@ func (s codegenCmd) formatGroups() string {
 
 	groups := make([]string, 0)
 	for _, group := range s.cmd.Groups() {
-		groups = append(groups, fmt.Sprintf(`&cobra.Group{ID: "%v", Title: "%v"},`, group.ID, group.Title))
+		groups = append(groups, fmt.Sprintf(`&cobra.Group{ID: %#v, Title: %#v},`, group.ID, group.Title))
 	}
 	return fmt.Sprintf("%vCmd.AddGroup(\n%v\n)\n", cmdVarName(s.cmd), strings.Join(groups, "\n"))
 }
@@ -43,10 +43,10 @@ func (s codegenCmd) formatGroups() string {
 func (s codegenCmd) formatCommand() string {
 	snippet := fmt.Sprintf(
 		`var %vCmd = &cobra.Command{
-	Use:     "%v",
-	Short:   "%v",
-	GroupID: "%v",
-	Aliases: []string{"%v"},
+	Use:     %#v,
+	Short:   %#v,
+	GroupID: %#v,
+	Aliases: []string{%#v},
 	Hidden:  %v,
 	Run:     func(cmd *cobra.Command, args []string) {},
 }
