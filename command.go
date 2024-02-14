@@ -69,12 +69,12 @@ func (c Command) ToCobraE() (*cobra.Command, error) {
 	return cmd, nil
 }
 
-func (c Command) Codegen() {
+func (c Command) Codegen() error {
 	cmd, err := c.ToCobraE()
-	// TODO handle error
-	if err == nil {
-		Codegen(cmd)
+	if err != nil {
+		return err
 	}
+	return Codegen(cmd)
 }
 
 func (c Command) addPersistentFlags(cmd *cobra.Command) error {

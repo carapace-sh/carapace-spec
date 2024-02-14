@@ -80,16 +80,16 @@ func (s codegenCmd) formatExecute() string {
 }
 `
 }
-func Codegen(cmd *cobra.Command) {
+func Codegen(cmd *cobra.Command) error {
 	dir, err := os.MkdirTemp(os.TempDir(), "carapace-codegen-")
 	if err != nil {
-		panic(err.Error())
+		return err
 	}
 
-	codegen(cmd, dir)
+	return codegen(cmd, dir)
 }
 
-func codegen(cmd *cobra.Command, tmpDir string) {
+func codegen(cmd *cobra.Command, tmpDir string) error {
 	out := &bytes.Buffer{}
 	fmt.Fprintln(out, codegenCmd{cmd}.formatHeader())
 	fmt.Fprintln(out, codegenCmd{cmd}.formatCommand())
@@ -163,16 +163,19 @@ func codegen(cmd *cobra.Command, tmpDir string) {
 			unformatted[line-1] = "\033[31m" + unformatted[line-1] + "\033[2;37m"
 		}
 		println("\033[2;37m" + strings.Join(unformatted, "\n") + "\033[0m")
-		panic(err.Error())
+		return err
 	}
 
 	os.WriteFile(filename, formatted, 0644)
 
 	for _, subcmd := range cmd.Commands() {
 		if subcmd.Deprecated == "" && subcmd.Name() != "_carapace" {
-			codegen(subcmd, tmpDir)
+			if err := codegen(subcmd, tmpDir); err != nil {
+				return err
+			}
 		}
 	}
+	return nil
 }
 
 func formatUsage(usage string) string {
