@@ -46,7 +46,7 @@ func (s codegenCmd) formatCommand() string {
 	Use:     %#v,
 	Short:   %#v,
 	GroupID: %#v,
-	Aliases: []string{%#v},
+	Aliases: []string{"%v"},
 	Hidden:  %v,
 	Run:     func(cmd *cobra.Command, args []string) {},
 }
