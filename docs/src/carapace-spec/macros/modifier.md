@@ -1,7 +1,9 @@
 # Modifier
 
 Modifiers change the completion of macros and values.
-These can be set generic `["<macro>", "<value>", "<modifier>"]` specific `["<macro> ||| <modifier> ||| <modifier>"]`.
+These can be set
+- generic `["<macro>", "<value>", "<modifier>"]`
+- specific `["<macro> ||| <modifier> ||| <modifier>"]`.
 
 > The delimiter (` ||| `) is currently very strict and not trimmed.
 
