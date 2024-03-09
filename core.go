@@ -50,7 +50,12 @@ func shell(shell, command string) carapace.Action {
 			return carapace.ActionMessage("unsupported shell [%v]: %v", runtime.GOOS, shell)
 		}
 
-		return carapace.ActionExecCommand(shell, "-c", command)(func(output []byte) carapace.Action {
+		args := []string{"-c", command}
+		if shell != "pwsh" {
+			args = append(args, "--")
+		}
+		args = append(args, c.Args...)
+		return carapace.ActionExecCommand(shell, args...)(func(output []byte) carapace.Action {
 			lines := strings.Split(string(output), "\n")
 			batch := carapace.Batch()
 			for _, line := range lines {
