@@ -1,6 +1,6 @@
 # Dash
 
-Define [dash completion](https://rsteube.github.io/carapace/carapace/gen/dashCompletion.html).
+Define [dash completion](https://carapace-sh.github.io/carapace/carapace/gen/dashCompletion.html).
 
 ```yaml
 # yaml-language-server: $schema=https://carapace.sh/schemas/command.json

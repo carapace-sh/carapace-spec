@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/rsteube/carapace"
+	"github.com/carapace-sh/carapace"
 	"github.com/spf13/cobra"
 )
 

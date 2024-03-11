@@ -21,7 +21,7 @@ flags:
 
 ## Non-posix
 
-With [carapace-pflag](https://github.com/rsteube/carapace-pflag) non-posix flags possible as well:
+With [carapace-pflag](https://github.com/carapace-sh/carapace-pflag) non-posix flags possible as well:
 
 ```yaml
   -np: non-posix shorthand

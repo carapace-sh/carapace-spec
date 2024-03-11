@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/rsteube/carapace"
-	"github.com/rsteube/carapace/pkg/traverse"
+	"github.com/carapace-sh/carapace"
+	"github.com/carapace-sh/carapace/pkg/traverse"
 )
 
 type modifier struct {

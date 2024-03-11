@@ -1,17 +1,17 @@
 # Core
 
-Core macros provided by [carapace-spec](https://github.com/rsteube/carapace-spec).
+Core macros provided by [carapace-spec](https://github.com/carapace-sh/carapace-spec).
 
 ## directories
 
-[`$directories`](https://rsteube.github.io/carapace/carapace/defaultActions/actionDirectories.html) completes directories.
+[`$directories`](https://carapace-sh.githbub.io/carapace/carapace/defaultActions/actionDirectories.html) completes directories.
 ```yaml
 ["$directories"]
 ```
 
 ## exec
 
-[`$(<command>)`](https://rsteube.github.io/carapace/carapace/defaultActions/actionExecCommand.html) executes given command in a `sh` / `pwsh` shell.
+[`$(<command>)`](https://carapace-sh.githbub.io/carapace/carapace/defaultActions/actionExecCommand.html) executes given command in a `sh` / `pwsh` shell.
 
 ```yaml
 ["$(echo -e 'a\nb\nc')"]
@@ -19,7 +19,7 @@ Core macros provided by [carapace-spec](https://github.com/rsteube/carapace-spec
 
 ## executables
 
-[`$executables`](https://rsteube.github.io/carapace/carapace/defaultActions/actionExecutables.html) completes [PATH] executables.
+[`$executables`](https://carapace-sh.githbub.io/carapace/carapace/defaultActions/actionExecutables.html) completes [PATH] executables.
 
 ```yaml
 ["$executables"]
@@ -27,7 +27,7 @@ Core macros provided by [carapace-spec](https://github.com/rsteube/carapace-spec
 
 ## files
 
-[`$files([<suffixes>])`](https://rsteube.github.io/carapace/carapace/defaultActions/actionFiles.html) completes files with an optional list of suffixes to filter on.
+[`$files([<suffixes>])`](https://carapace-sh.githbub.io/carapace/carapace/defaultActions/actionFiles.html) completes files with an optional list of suffixes to filter on.
 
 ```yaml
 ["$files([.go, go.mod, go.sum])"]
@@ -35,7 +35,7 @@ Core macros provided by [carapace-spec](https://github.com/rsteube/carapace-spec
 
 ## message
 
-[`$message(<message>)`](https://rsteube.github.io/carapace/carapace/defaultActions/actionMessage.html) adds given error message to completion.
+[`$message(<message>)`](https://carapace-sh.githbub.io/carapace/carapace/defaultActions/actionMessage.html) adds given error message to completion.
 
 ```yaml
 ["$message(some error)"]

@@ -1,6 +1,6 @@
 package main
 
-import "github.com/rsteube/carapace-spec/cmd/carapace-spec/cmd"
+import "github.com/carapace-sh/carapace-spec/cmd/carapace-spec/cmd"
 
 func main() {
 	cmd.Execute()

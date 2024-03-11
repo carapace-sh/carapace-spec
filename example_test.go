@@ -4,7 +4,7 @@ import (
 	_ "embed"
 	"testing"
 
-	"github.com/rsteube/carapace/pkg/sandbox"
+	"github.com/carapace-sh/carapace/pkg/sandbox"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )

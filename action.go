@@ -8,8 +8,8 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/carapace-sh/carapace"
 	"github.com/invopop/jsonschema"
-	"github.com/rsteube/carapace"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"gopkg.in/yaml.v3"

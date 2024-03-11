@@ -9,8 +9,8 @@ title = "carapace-spec"
 default-theme = "Mocha"
 additional-css = ["asciinema/asciinema-player.css", "./theme/catppuccin.css"]
 additional-js = ["asciinema/asciinema-player.min.js", "asciinema/load.js"]
-git-repository-url = "https://github.com/rsteube/carapace-spec"
-edit-url-template = "https://github.com/rsteube/carapace-spec/edit/master/docs/{path}"
+git-repository-url = "https://github.com/carapace-sh/carapace-spec"
+edit-url-template = "https://github.com/carapace-sh/carapace-spec/edit/master/docs/{path}"
 
 [output.html.fold]
 enable = true

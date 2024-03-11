@@ -9,7 +9,7 @@ These can be set
 
 ## chdir
 
-[`$chdir(<directory>)`](https://rsteube.github.io/carapace/carapace/action/chdir.html) changes the directory.
+[`$chdir(<directory>)`](https://carapace-sh.github.io/carapace/carapace/action/chdir.html) changes the directory.
 
 ```yaml
 ["$files", "$chdir(/tmp)"]
@@ -33,7 +33,7 @@ The following macros can be passed as well instead of a static directory:
 
 ## filter
 
-[`$filter([<value>])`](https://rsteube.github.io/carapace/carapace/action/filter.html) filters given values.
+[`$filter([<value>])`](https://carapace-sh.github.io/carapace/carapace/action/filter.html) filters given values.
 
 ```yaml
 ["one", "two", "three", "$filter([two])"]
@@ -41,7 +41,7 @@ The following macros can be passed as well instead of a static directory:
 
 ## filterargs
 
-[`$filterargs`](https://rsteube.github.io/carapace/carapace/action/filterArgs.html) filters `Context.Args`.
+[`$filterargs`](https://carapace-sh.github.io/carapace/carapace/action/filterArgs.html) filters `Context.Args`.
 
 ```yaml
 ["$files", "$filterargs"]
@@ -49,7 +49,7 @@ The following macros can be passed as well instead of a static directory:
 
 ## list
 
-[`$list(<delimiter>)`](https://rsteube.github.io/carapace/carapace/action/list.html) creates a list with given divider.
+[`$list(<delimiter>)`](https://carapace-sh.github.io/carapace/carapace/action/list.html) creates a list with given divider.
 
 ```yaml
 ["one", "two", "three", "$list(,)"]
@@ -57,7 +57,7 @@ The following macros can be passed as well instead of a static directory:
 
 ## multiparts
 
-[`$multiparts([<delimiter>])`](https://rsteube.github.io/carapace/carapace/action/multiParts.html) completes values splitted by given delimiter(s) separately.
+[`$multiparts([<delimiter>])`](https://carapace-sh.github.io/carapace/carapace/action/multiParts.html) completes values splitted by given delimiter(s) separately.
 
 ```yaml
 ["one/two/three", "$multiparts([/])"]
@@ -65,7 +65,7 @@ The following macros can be passed as well instead of a static directory:
 
 ## nospace
 
-[`$nospace(<characters>)`](https://rsteube.github.io/carapace/carapace/action/noSpace.html) disables space suffix for given character(s).
+[`$nospace(<characters>)`](https://carapace-sh.github.io/carapace/carapace/action/noSpace.html) disables space suffix for given character(s).
 
 ```yaml
 ["one", "two/", "three,", "$nospace(/,)"]
@@ -73,7 +73,7 @@ The following macros can be passed as well instead of a static directory:
 
 ## prefix
 
-[`$pefix(<prefix>)`](https://rsteube.github.io/carapace/carapace/action/prefix.html) adds a prefix to the inserted values.
+[`$pefix(<prefix>)`](https://carapace-sh.github.io/carapace/carapace/action/prefix.html) adds a prefix to the inserted values.
 
 ```yaml
 ["$files", "$prefix(file://)"]
@@ -81,7 +81,7 @@ The following macros can be passed as well instead of a static directory:
 
 ## retain
 
-[`$retain([<value>])`](https://rsteube.github.io/carapace/carapace/action/retain.html) retains given values.
+[`$retain([<value>])`](https://carapace-sh.github.io/carapace/carapace/action/retain.html) retains given values.
 
 ```yaml
 ["one", "two", "three", "$retain([two])"]
@@ -89,7 +89,7 @@ The following macros can be passed as well instead of a static directory:
 
 ## shift
 
-[`$shift(<n>)`](https://rsteube.github.io/carapace/carapace/action/shift.html) shifts positional arguments left n times.
+[`$shift(<n>)`](https://carapace-sh.github.io/carapace/carapace/action/shift.html) shifts positional arguments left n times.
 
 ```yaml
 ["one", "two", "three", "$filterargs", "$shift(1)"]
@@ -97,7 +97,7 @@ The following macros can be passed as well instead of a static directory:
 
 ## split
 
-[`$split`](https://rsteube.github.io/carapace/carapace/action/split.html) splits `Context.Value` lexicographically and replaces `Context.Args` with the tokens.
+[`$split`](https://carapace-sh.github.io/carapace/carapace/action/split.html) splits `Context.Value` lexicographically and replaces `Context.Args` with the tokens.
 
 ```yaml
 ["one", "two", "three", "$filterargs", "$split"]
@@ -105,7 +105,7 @@ The following macros can be passed as well instead of a static directory:
 
 ## splitp
 
-[`$splitp`](https://rsteube.github.io/carapace/carapace/action/splitP.html) is like Split but supports pipelines.
+[`$splitp`](https://carapace-sh.github.io/carapace/carapace/action/splitP.html) is like Split but supports pipelines.
 
 ```yaml
 ["one", "two", "three", "$filterargs", "$splitp"]
@@ -113,7 +113,7 @@ The following macros can be passed as well instead of a static directory:
 
 ## suffix
 
-[`$suffix(<suffix>)`](https://rsteube.github.io/carapace/carapace/action/suffix.html) adds a suffix to the inserted values.
+[`$suffix(<suffix>)`](https://carapace-sh.github.io/carapace/carapace/action/suffix.html) adds a suffix to the inserted values.
 
 ```yaml
 ["apple", "melon", "orange", "$suffix(juice)"]
@@ -121,14 +121,14 @@ The following macros can be passed as well instead of a static directory:
 
 ## suppress
 
-[`$suppress(<regex>)`](https://rsteube.github.io/carapace/carapace/action/suppress.html) suppresses specific error messages using a regular expression.
+[`$suppress(<regex>)`](https://carapace-sh.github.io/carapace/carapace/action/suppress.html) suppresses specific error messages using a regular expression.
 ```yaml
 ["$message(fail)", "$suppress(fail)"]
 ```
 
 ## style
 
-[`$style(<style>)`](https://rsteube.github.io/carapace/carapace/action/style.html) sets the style for all values.
+[`$style(<style>)`](https://carapace-sh.github.io/carapace/carapace/action/style.html) sets the style for all values.
 
 ```yaml
 ["one", "two", "three", "$style(underlined)"]
@@ -136,7 +136,7 @@ The following macros can be passed as well instead of a static directory:
 
 ## tag
 
-[`$tag(<tag>)`](https://rsteube.github.io/carapace/carapace/action/tag.html) sets the tag for all values.
+[`$tag(<tag>)`](https://carapace-sh.github.io/carapace/carapace/action/tag.html) sets the tag for all values.
 
 ```yaml
 ["one", "two", "three", "$tag(numbers)"]
@@ -144,7 +144,7 @@ The following macros can be passed as well instead of a static directory:
 
 ## uniquelist
 
-[`$uniquelist(<delimiter>)`](https://rsteube.github.io/carapace/carapace/action/uniqueList.html) creates a unique list with given divider.
+[`$uniquelist(<delimiter>)`](https://carapace-sh.github.io/carapace/carapace/action/uniqueList.html) creates a unique list with given divider.
 
 ```yaml
 ["one", "two", "three", "$uniquelist(,)"]
@@ -152,19 +152,19 @@ The following macros can be passed as well instead of a static directory:
 
 ## usage
 
-[`$usage(<usage>)`](https://rsteube.github.io/carapace/carapace/action/usage.html) sets the usage message.
+[`$usage(<usage>)`](https://carapace-sh.github.io/carapace/carapace/action/usage.html) sets the usage message.
 
 ```yaml
 ["$usage(custom)"]
 ```
 
 
-[`$gitdir`]:https://pkg.go.dev/github.com/rsteube/carapace/pkg/traverse#GitDir
-[`$gitworktree`]:https://pkg.go.dev/github.com/rsteube/carapace/pkg/traverse#GitWorkTree
-[`$parent(\[file, dir\])`]:https://pkg.go.dev/github.com/rsteube/carapace/pkg/traverse#Parent
-[`$tempdir`]:https://pkg.go.dev/github.com/rsteube/carapace/pkg/traverse#TempDir
-[`$usercachedir`]:https://pkg.go.dev/github.com/rsteube/carapace/pkg/traverse#UserCacheDir
-[`$userconfigdir`]:https://pkg.go.dev/github.com/rsteube/carapace/pkg/traverse#UserConfigDir
-[`$userhomedir`]:https://pkg.go.dev/github.com/rsteube/carapace/pkg/traverse#UserHomeDir
-[`$xdgcachehome`]:https://pkg.go.dev/github.com/rsteube/carapace/pkg/traverse#XdgCacheHome
-[`$xdgconfighome`]:https://pkg.go.dev/github.com/rsteube/carapace/pkg/traverse#XdgConfigHome
+[`$gitdir`]:https://pkg.go.dev/github.com/carapace-sh/carapace/pkg/traverse#GitDir
+[`$gitworktree`]:https://pkg.go.dev/github.com/carapace-sh/carapace/pkg/traverse#GitWorkTree
+[`$parent(\[file, dir\])`]:https://pkg.go.dev/github.com/carapace-sh/carapace/pkg/traverse#Parent
+[`$tempdir`]:https://pkg.go.dev/github.com/carapace-sh/carapace/pkg/traverse#TempDir
+[`$usercachedir`]:https://pkg.go.dev/github.com/carapace-sh/carapace/pkg/traverse#UserCacheDir
+[`$userconfigdir`]:https://pkg.go.dev/github.com/carapace-sh/carapace/pkg/traverse#UserConfigDir
+[`$userhomedir`]:https://pkg.go.dev/github.com/carapace-sh/carapace/pkg/traverse#UserHomeDir
+[`$xdgcachehome`]:https://pkg.go.dev/github.com/carapace-sh/carapace/pkg/traverse#XdgCacheHome
+[`$xdgconfighome`]:https://pkg.go.dev/github.com/carapace-sh/carapace/pkg/traverse#XdgConfigHome
