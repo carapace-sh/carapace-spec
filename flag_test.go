@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/rsteube/carapace"
-	"github.com/rsteube/carapace/pkg/sandbox"
+	"github.com/carapace-sh/carapace"
+	"github.com/carapace-sh/carapace/pkg/sandbox"
 	"github.com/spf13/pflag"
 )
 

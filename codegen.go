@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/rsteube/carapace-spec/internal/pflagfork"
+	"github.com/carapace-sh/carapace-spec/internal/pflagfork"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
@@ -22,7 +22,7 @@ type codegenCmd struct {
 func (s codegenCmd) formatHeader() string {
 	return `package cmd
 import (
-	"github.com/rsteube/carapace"
+	"github.com/carapace-sh/carapace"
 	"github.com/spf13/cobra"
 )
 `

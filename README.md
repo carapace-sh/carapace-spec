@@ -3,13 +3,13 @@
 
 # carapace-spec
 
-[![PkgGoDev](https://pkg.go.dev/badge/github.com/rsteube/carapace-spec/pkg/actions)](https://pkg.go.dev/github.com/rsteube/carapace-spec)
-[![GoReportCard](https://goreportcard.com/badge/github.com/rsteube/carapace-spec)](https://goreportcard.com/report/github.com/rsteube/carapace-spec)
-[![documentation](https://img.shields.io/badge/&zwnj;-documentation-blue?logo=gitbook)](https://rsteube.github.io/carapace-spec/)
-[![Coverage Status](https://coveralls.io/repos/github/rsteube/carapace-spec/badge.svg?branch=master)](https://coveralls.io/github/rsteube/carapace-spec?branch=master)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/carapace-sh/carapace-spec/pkg/actions)](https://pkg.go.dev/github.com/carapace-sh/carapace-spec)
+[![GoReportCard](https://goreportcard.com/badge/github.com/carapace-sh/carapace-spec)](https://goreportcard.com/report/github.com/carapace-sh/carapace-spec)
+[![documentation](https://img.shields.io/badge/&zwnj;-documentation-blue?logo=gitbook)](https://carapace-sh.github.io/carapace-spec/)
+[![Coverage Status](https://coveralls.io/repos/github/carapace-sh/carapace-spec/badge.svg?branch=master)](https://coveralls.io/github/carapace-sh/carapace-spec?branch=master)
 [![Packaging status](https://repology.org/badge/tiny-repos/carapace-spec.svg)](https://repology.org/project/carapace-spec/versions)
 
-Define simple completions using a spec file (based on [carapace](https://github.com/rsteube/carapace)).
+Define simple completions using a spec file (based on [carapace](https://github.com/carapace-sh/carapace)).
 
 The `carapace-spec` binary can be used to complete spec files, but [carapace-bin](https://github.com/rsteube/carapace-bin) is recommended as it supports a range of [custom macros](https://rsteube.github.io/carapace-bin/spec/macros.html).
 

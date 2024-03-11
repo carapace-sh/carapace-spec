@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"regexp"
 
-	"github.com/rsteube/carapace"
-	"github.com/rsteube/carapace-spec/pkg/command"
+	"github.com/carapace-sh/carapace"
+	"github.com/carapace-sh/carapace-spec/pkg/command"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )

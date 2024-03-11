@@ -48,10 +48,10 @@ func parseFlag(s, usage string) (*flag, error) {
 func (f flag) addTo(fset *pflag.FlagSet) error {
 	fs := flagSet{fset}
 	if len(f.shorthand) > 1 && !fs.IsFork() {
-		return fmt.Errorf("long shorthand only supported with rsteube/carapace-pflag: %v", f.shorthand)
+		return fmt.Errorf("long shorthand only supported with carapace-sh/carapace-pflag: %v", f.shorthand)
 	}
 	if f.longhand == "" && !fs.IsFork() {
-		return fmt.Errorf("shorthand-only only supported with rsteube/carapace-pflag: %v", f.shorthand)
+		return fmt.Errorf("shorthand-only only supported with carapace-sh/carapace-pflag: %v", f.shorthand)
 	}
 
 	if f.longhand != "" && f.shorthand != "" {

@@ -1,6 +1,6 @@
 # Flag
 
-Define [flag completion](https://rsteube.github.io/carapace/carapace/gen/flagCompletion.html).
+Define [flag completion](https://carapace-sh.github.io/carapace/carapace/gen/flagCompletion.html).
 
 ```yaml
 # yaml-language-server: $schema=https://carapace.sh/schemas/command.json

@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/rsteube/carapace"
-	spec "github.com/rsteube/carapace-spec"
+	"github.com/carapace-sh/carapace"
+	spec "github.com/carapace-sh/carapace-spec"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )

@@ -1,6 +1,6 @@
 # PositionalAny
 
-Define [positional any completion](https://rsteube.github.io/carapace/carapace/gen/positionalCompletion.html).
+Define [positional any completion](https://carapace-sh.github.io/carapace/carapace/gen/positionalCompletion.html).
 
 ```yaml
 # yaml-language-server: $schema=https://carapace.sh/schemas/command.json

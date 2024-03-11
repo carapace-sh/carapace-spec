@@ -6,4 +6,4 @@
 group: core
 ```
 
-[Group]:https://rsteube.github.io/carapace/carapace/command/group.html
+[Group]:https://carapace-sh.github.io/carapace/carapace/command/group.html
