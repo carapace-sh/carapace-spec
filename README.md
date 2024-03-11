@@ -37,8 +37,8 @@ commands:
 
 ## Generators
 
-- [carapace-spec-clap](https://github.com/rsteube/carapace-spec-clap) spec generation for clap-rs/clap
-- [carapace-spec-kingpin](https://github.com/rsteube/carapace-spec-kingpin) spec generation for alecthomas/kingpin
-- [carapace-spec-kong](https://github.com/rsteube/carapace-spec-kong) spec generation for alecthomas/kong
-- [carapace-spec-man](https://github.com/rsteube/carapace-spec-man) spec generation for manpages
-- [carapace-spec-urfavecli](https://github.com/rsteube/carapace-spec-urfavecli) spec generation for urfave/cli
+- [carapace-spec-clap](https://github.com/carapace-sh/carapace-spec-clap) spec generation for clap-rs/clap
+- [carapace-spec-kingpin](https://github.com/carapace-sh/carapace-spec-kingpin) spec generation for alecthomas/kingpin
+- [carapace-spec-kong](https://github.com/carapace-sh/carapace-spec-kong) spec generation for alecthomas/kong
+- [carapace-spec-man](https://github.com/carapace-sh/carapace-spec-man) spec generation for manpages
+- [carapace-spec-urfavecli](https://github.com/carapace-sh/carapace-spec-urfavecli) spec generation for urfave/cli
