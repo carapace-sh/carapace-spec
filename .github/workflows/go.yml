@@ -19,7 +19,7 @@ jobs:
     - name: Replace dependency
       run: |
           go work init .
-          go work edit -replace github.com/spf13/pflag=github.com/rsteube/carapace-pflag@v0.2.0
+          go work edit -replace github.com/spf13/pflag=github.com/carapace-sh/carapace-pflag@v1.0.0
 
     - name: Build
       run: go build -v ./...
@@ -64,7 +64,7 @@ jobs:
     - name: Replace dependency
       run: |
           go work init .
-          go work edit -replace github.com/spf13/pflag=github.com/rsteube/carapace-pflag@v0.0.4
+          go work edit -replace github.com/spf13/pflag=github.com/carapace-sh/carapace-pflag@v1.0.0
 
     - name: Run GoReleaser
       uses: goreleaser/goreleaser-action@v5
@@ -79,7 +79,7 @@ jobs:
 
   doc:
     runs-on: ubuntu-latest
-    container: ghcr.io/rsteube/carapace
+    container: ghcr.io/carapace-sh/carapace
     steps:
       - uses: actions/checkout@v4
       - name: "build docs"
@@ -94,6 +94,6 @@ jobs:
             git config user.email rsteube@users.noreply.github.com
             git add .
             git commit -m "initial commit [ci skip]"
-            git push --force https://rsteube:${GITHUB_TOKEN}@github.com/rsteube/carapace-spec.git master:gh-pages
+            git push --force https://rsteube:${GITHUB_TOKEN}@github.com/carapace-sh/carapace-spec.git master:gh-pages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
