@@ -1,6 +1,3 @@
-> [!IMPORTANT]
-> In the process of moving to [github.com/carapace-sh](https://github.com/carapace-sh)
-
 # carapace-spec
 
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/carapace-sh/carapace-spec/pkg/actions)](https://pkg.go.dev/github.com/carapace-sh/carapace-spec)
