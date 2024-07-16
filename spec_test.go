@@ -31,14 +31,14 @@ func TestNonposix(t *testing.T) {
 				"-styled", "nonposix shorthand").
 				NoSpace('.').
 				Style(style.Carapace.FlagArg).
-				Tag("flags"))
+				Tag("shorthand flags"))
 
 		s.Run("--m").
 			Expect(carapace.ActionValuesDescribed(
 				"--mixed", "mixed repeatable",
 			).NoSpace('.').
 				Style(style.Carapace.FlagNoArg).
-				Tag("flags"))
+				Tag("longhand flags"))
 
 		s.Run("-opt=").
 			Expect(carapace.ActionValues(

@@ -3,7 +3,7 @@ module github.com/carapace-sh/carapace-spec
 go 1.18
 
 require (
-	github.com/carapace-sh/carapace v1.1.2
+	github.com/carapace-sh/carapace v1.1.3
 	github.com/invopop/jsonschema v0.12.0
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/pflag v1.0.5

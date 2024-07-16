@@ -149,6 +149,6 @@ func TestFlag(t *testing.T) {
 			Expect(carapace.ActionValuesDescribed(
 				"--repeatable", "repeatable",
 			).NoSpace('.').
-				Tag("flags"))
+				Tag("longhand flags"))
 	})
 }
