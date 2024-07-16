@@ -54,7 +54,7 @@ func TestCommand(t *testing.T) {
 			Expect(carapace.ActionStyledValuesDescribed(
 				"--string", "string flag", style.Blue,
 			).NoSpace('.').
-				Tag("flags"))
+				Tag("longhand flags"))
 
 		s.Run("parsing", "interspersed", "--bool", "p1", "--string", "").
 			Expect(carapace.ActionValues(
@@ -80,39 +80,39 @@ func TestCommand(t *testing.T) {
 				"--bool", "bool flag", style.Default,
 				"--string", "string flag", style.Blue,
 			).NoSpace('.').
-				Tag("flags"))
+				Tag("longhand flags"))
 
 		s.Run("persistentflags", "--").
 			Expect(carapace.ActionStyledValuesDescribed(
 				"--bool", "bool flag", style.Default,
 				"--string", "string flag", style.Blue,
 			).NoSpace('.').
-				Tag("flags"))
+				Tag("longhand flags"))
 
 		s.Run("persistentflags", "subcommand", "--").
 			Expect(carapace.ActionStyledValuesDescribed(
 				"--bool", "bool flag", style.Default,
 				"--string", "string flag", style.Blue,
 			).NoSpace('.').
-				Tag("flags"))
+				Tag("longhand flags"))
 
 		s.Run("persistentflags", "--bool", "subcommand", "--").
 			Expect(carapace.ActionStyledValuesDescribed(
 				"--string", "string flag", style.Blue,
 			).NoSpace('.').
-				Tag("flags"))
+				Tag("longhand flags"))
 
 		s.Run("exclusiveflags", "--").
 			Expect(carapace.ActionStyledValuesDescribed(
 				"--bool", "bool flag", style.Default,
 				"--string", "string flag", style.Blue,
 			).NoSpace('.').
-				Tag("flags"))
+				Tag("longhand flags"))
 
 		s.Run("exclusiveflags", "--bool", "--").
 			Expect(carapace.ActionValues().
 				NoSpace('.').
-				Tag("flags"))
+				Tag("longhand flags"))
 
 		s.Run("run", "shell", "--color=").
 			Expect(carapace.ActionValues(
