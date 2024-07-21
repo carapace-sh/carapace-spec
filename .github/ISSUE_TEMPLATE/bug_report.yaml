@@ -1,7 +1,7 @@
 name: Bug
 description: File a bug/issue
 title: "<title>"
-labels: [bug]
+labels: [bug, fund]
 body:
 - type: textarea
   attributes:
@@ -26,6 +26,12 @@ body:
       4. See error...
   validations:
     required: false
+- type: input
+  attributes:
+    label: Version
+    description: Version where this occured.
+  validations:
+    required: false
 - type: checkboxes
   attributes:
     label: OS
@@ -33,6 +39,7 @@ body:
     options:
     - label: Linux
     - label: OSX
+    - label: Termux
     - label: Windows
 - type: checkboxes
   attributes:
