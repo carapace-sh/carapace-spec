@@ -186,21 +186,22 @@ func cmdVarName(cmd *cobra.Command) string {
 	if !cmd.HasParent() {
 		return "root"
 	}
-	return strings.TrimPrefix(fmt.Sprintf(`%v_%v`, cmdVarName(cmd.Parent()), normaliceVarName(cmd.Name())), "root_")
+	return strings.TrimPrefix(fmt.Sprintf(`%v_%v`, cmdVarName(cmd.Parent()), normalizeVarName(cmd.Name())), "root_")
 }
 
-func normaliceVarName(s string) string {
+func normalizeVarName(s string) string {
 	normalized := make([]string, 0)
 	capitalize := false
 
 	for _, c := range s {
-		if c == '-' {
+		switch {
+		case c == '-' || c == ':':
 			capitalize = true
 			continue
-		} else if capitalize {
+		case capitalize:
 			normalized = append(normalized, strings.ToUpper(string(c)))
 			capitalize = false
-		} else {
+		default:
 			normalized = append(normalized, string(c))
 		}
 	}
