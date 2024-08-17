@@ -19,10 +19,9 @@ Core macros provided by [carapace-spec](https://github.com/carapace-sh/carapace-
 
 ## executables
 
-[`$executables`](https://carapace-sh.githbub.io/carapace/carapace/defaultActions/actionExecutables.html) completes [PATH] executables.
-
+[`$executables`](https://carapace-sh.githbub.io/carapace/carapace/defaultActions/actionExecutables.html) completes executables either from [PATH] or given directories.
 ```yaml
-["$executables"]
+["$executables", "$executables([~/.local/bin])"]
 ```
 
 ## files

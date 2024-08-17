@@ -17,7 +17,7 @@ func init() {
 
 	addCoreMacro("directories", MacroN(carapace.ActionDirectories))
 	addCoreMacro("files", MacroV(carapace.ActionFiles))
-	addCoreMacro("executables", MacroN(carapace.ActionExecutables))
+	addCoreMacro("executables", MacroV(carapace.ActionExecutables))
 	addCoreMacro("message", MacroI(func(s string) carapace.Action { return carapace.ActionMessage(s) }))
 	// TODO is there still use for this? addCoreMacro("noflag", MacroN(func() carapace.Action { return carapace.ActionValues() }).NoFlag())
 	addCoreMacro("spec", MacroI(ActionSpec))
