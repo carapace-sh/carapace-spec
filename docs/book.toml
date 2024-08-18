@@ -15,4 +15,4 @@ edit-url-template = "https://github.com/carapace-sh/carapace-spec/edit/master/do
 [output.html.fold]
 enable = true
 
-#[output.linkcheck]
+[output.linkcheck]
