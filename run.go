@@ -19,11 +19,13 @@ type run string
 func (r run) parse() func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
 		context := carapace.NewContext(args...)
-		cmd.Flags().Visit(func(f *pflag.Flag) {
-			if slice, ok := f.Value.(pflag.SliceValue); ok {
-				context.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), strings.Join(slice.GetSlice(), ","))
-			} else {
-				context.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), f.Value.String())
+		cmd.Flags().VisitAll(func(f *pflag.Flag) { // VisitAll as Visit() skips changed persistent flags of parent commands
+			if f.Changed {
+				if slice, ok := f.Value.(pflag.SliceValue); ok {
+					context.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), strings.Join(slice.GetSlice(), ","))
+				} else {
+					context.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), f.Value.String())
+				}
 			}
 		})
 
