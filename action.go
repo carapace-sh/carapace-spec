@@ -130,8 +130,10 @@ func (a action) Parse(cmd *cobra.Command) carapace.Action {
 		}
 		c.Setenv("C_VALUE", c.Value)
 
-		cmd.Flags().Visit(func(f *pflag.Flag) {
-			c.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), f.Value.String())
+		cmd.Flags().VisitAll(func(f *pflag.Flag) { // VisitAll as Visit() skips changed persistent flags of parent commands
+			if f.Changed {
+				c.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), f.Value.String())
+			}
 		})
 
 		batch := carapace.Batch()
