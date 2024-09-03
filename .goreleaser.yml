@@ -1,3 +1,4 @@
+version: 2
 before:
   hooks:
     - go mod download
@@ -32,20 +33,22 @@ brews:
     description: "define simple completions using a spec file"
     homepage: "https://github.com/rsteube/carapace-spec"
     license: "MIT"
-    tap:
+    repository:
       owner: rsteube
       name: homebrew-tap
       token: "{{ .Env.GORELEASER_GITHUB_TOKEN }}"
     commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
-scoop:
-  description: "define simple completions using a spec file"
-  homepage: "https://github.com/rsteube/carapace-spec"
-  license: "MIT"
-  bucket:
-    owner: rsteube
-    name: scoop-bucket
-    token: "{{ .Env.GORELEASER_GITHUB_TOKEN }}"
-  commit_msg_template: "Scoop update for {{ .ProjectName }} version {{ .Tag }}"
+
+scoops:
+  -
+    description: "define simple completions using a spec file"
+    homepage: "https://github.com/rsteube/carapace-spec"
+    license: "MIT"
+    repository:
+      owner: rsteube
+      name: scoop-bucket
+      token: "{{ .Env.GORELEASER_GITHUB_TOKEN }}"
+    commit_msg_template: "Scoop update for {{ .ProjectName }} version {{ .Tag }}"
 
 aurs:
   -
