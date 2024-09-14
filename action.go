@@ -58,8 +58,11 @@ func executable() string {
 }
 
 // ActionMacro completes given macro
-func ActionMacro(s string) carapace.Action {
+func ActionMacro(s string, a ...any) carapace.Action {
 	return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
+		if len(a) > 0 {
+			s = fmt.Sprintf(s, a...)
+		}
 		r := regexp.MustCompile(`^\$(?P<macro>[^(]*)(\((?P<arg>.*)\))?$`)
 		matches := r.FindStringSubmatch(s)
 		if matches == nil {
