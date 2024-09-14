@@ -34,7 +34,7 @@ func AddMacro(s string, m Macro) {
 
 func MacroN(f func() carapace.Action) Macro {
 	return Macro{
-		macro: macro.MacroN[carapace.Action](func() (*carapace.Action, error) {
+		macro: macro.MacroN(func() (*carapace.Action, error) {
 			a := f()
 			return &a, nil
 		}),
@@ -43,7 +43,7 @@ func MacroN(f func() carapace.Action) Macro {
 
 func MacroI[T any](f func(t T) carapace.Action) Macro {
 	return Macro{
-		macro: macro.MacroI[T, carapace.Action](func(t T) (*carapace.Action, error) {
+		macro: macro.MacroI(func(t T) (*carapace.Action, error) {
 			a := f(t)
 			return &a, nil
 		}),
@@ -52,7 +52,7 @@ func MacroI[T any](f func(t T) carapace.Action) Macro {
 
 func MacroV[T any](f func(t ...T) carapace.Action) Macro {
 	return Macro{
-		macro: macro.MacroV[T, carapace.Action](func(t ...T) (*carapace.Action, error) {
+		macro: macro.MacroV(func(t ...T) (*carapace.Action, error) {
 			a := f(t...)
 			return &a, nil
 		}),
