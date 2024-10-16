@@ -39,3 +39,4 @@ commands:
 - [carapace-spec-kong](https://github.com/carapace-sh/carapace-spec-kong) spec generation for alecthomas/kong
 - [carapace-spec-man](https://github.com/carapace-sh/carapace-spec-man) spec generation for manpages
 - [carapace-spec-urfavecli](https://github.com/carapace-sh/carapace-spec-urfavecli) spec generation for urfave/cli
+- [carapace-spec-oclif](https://github.com/cristiand391/oclif-carapace-spec-plugin) spec generation for oclif
