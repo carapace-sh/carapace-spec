@@ -1,7 +1,18 @@
 package main
 
-import "github.com/carapace-sh/carapace-spec/cmd/carapace-spec/cmd"
+import (
+	"fmt"
+	"strings"
+
+	"github.com/carapace-sh/carapace-spec/cmd/carapace-spec/cmd"
+)
+
+var date string
+var version = "develop"
 
 func main() {
-	cmd.Execute()
+	if strings.HasSuffix(version, "-next") {
+		version += fmt.Sprintf(" (%v)", date)
+	}
+	cmd.Execute(version)
 }
