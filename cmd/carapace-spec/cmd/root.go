@@ -38,6 +38,8 @@ var rootCmd = &cobra.Command{
 		switch args[0] {
 		case "-h", "--help":
 			cmd.Help()
+		case "-v", "--version":
+			cmd.Println(cmd.Version)
 		case "--codegen":
 			if len(args) < 2 {
 				return errors.New("flag needs an argument: --codegen")
@@ -88,7 +90,8 @@ func loadSpec(path string) (*spec.Command, error) {
 	return &specCmd, nil
 }
 
-func Execute() error {
+func Execute(version string) error {
+	rootCmd.Version = version
 	return rootCmd.Execute()
 }
 func init() {
