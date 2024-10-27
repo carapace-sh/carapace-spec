@@ -11,8 +11,6 @@ builds:
       - darwin
     main: ./cmd/carapace-spec
     binary: carapace-spec
-    tags:
-      - release
 archives:
   - name_template: '{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
     format_overrides:
