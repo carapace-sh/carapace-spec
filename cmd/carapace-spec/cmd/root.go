@@ -39,7 +39,7 @@ var rootCmd = &cobra.Command{
 		case "-h", "--help":
 			cmd.Help()
 		case "-v", "--version":
-			cmd.Println(cmd.Version)
+			cmd.Println("carapace-spec " + cmd.Version)
 		case "--codegen":
 			if len(args) < 2 {
 				return errors.New("flag needs an argument: --codegen")
