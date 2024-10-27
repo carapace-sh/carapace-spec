@@ -3,7 +3,8 @@ before:
   hooks:
     - go mod download
 builds:
-  - env:
+  - id: default
+    env:
       - CGO_ENABLED=0
     goos:
       - linux
@@ -11,11 +12,30 @@ builds:
       - darwin
     main: ./cmd/carapace-spec
     binary: carapace-spec
+  - id: termux
+    env:
+      - CGO_ENABLED=1
+    goos:
+      - android
+    goarch:
+      - amd64
+      - arm64
+      - arm
+      - "386"
+    main: ./cmd/carapace-spec
+    binary: carapace-spec
+    gobinary: go-termux
 archives:
-  - name_template: '{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
+  - id: default
+    builds:
+     - default
     format_overrides:
       - goos: windows
         format: zip
+  - id: termux
+    builds:
+      - termux
+    name_template: '{{ .Binary }}_{{ .Version }}_termux_{{ .Arch }}{{ with .Arm }}v{{ . }}{{ end }}{{ with .Mips }}_{{ . }}{{ end }}{{ if not (eq .Amd64 "v1") }}{{ .Amd64 }}{{ end }}'
 
 brews:
   -
