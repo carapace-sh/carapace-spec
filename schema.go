@@ -1,15 +1,13 @@
 package spec
 
 import (
-	"github.com/invopop/jsonschema"
+	_ "embed"
 )
 
-// Schema returns a json schema with currently registered macros
-func Schema() (string, error) {
-	schema := jsonschema.Reflect(&Command{})
-	out, err := schema.MarshalJSON()
-	if err != nil {
-		return "", err
-	}
-	return string(out), nil
+//go:embed schema.json
+var schema string
+
+//go:generate go run -C cmd/schema . ../../schema.json
+func Schema() string {
+	return schema
 }

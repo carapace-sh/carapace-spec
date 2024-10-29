@@ -5,11 +5,9 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"sort"
 	"strings"
 
 	"github.com/carapace-sh/carapace"
-	"github.com/invopop/jsonschema"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"gopkg.in/yaml.v3"
@@ -27,25 +25,6 @@ func NewAction(s []string) action { // TODO rename
 		a[index] = value(v)
 	}
 	return a
-}
-
-func (value) JSONSchema() *jsonschema.Schema {
-	sortedNames := make([]string, 0, len(macros))
-	for name := range macros {
-		sortedNames = append(sortedNames, name)
-	}
-	sort.Strings(sortedNames)
-
-	examples := make([]interface{}, 0, len(macros))
-	for _, name := range sortedNames {
-		examples = append(examples, fmt.Sprintf("$%v(%v)", name, macros[name].macro.Signature()))
-	}
-	return &jsonschema.Schema{
-		Type:        "string",
-		Title:       "Action",
-		Description: "A static value or a macro",
-		Examples:    examples,
-	}
 }
 
 func executable() string {
