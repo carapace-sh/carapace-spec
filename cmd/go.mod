@@ -5,7 +5,7 @@ go 1.23.1
 replace github.com/carapace-sh/carapace-spec => ../
 
 require (
-	github.com/carapace-sh/carapace v1.3.3
+	github.com/carapace-sh/carapace v1.4.0
 	github.com/carapace-sh/carapace-spec v0.0.0-00010101000000-000000000000
 	github.com/invopop/jsonschema v0.12.0
 	github.com/spf13/cobra v1.8.1
