@@ -21,3 +21,5 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/wk8/go-ordered-map/v2 v2.1.8 // indirect
 )
+
+replace github.com/spf13/pflag => github.com/carapace-sh/carapace-pflag v1.0.0

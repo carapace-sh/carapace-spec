@@ -7,7 +7,7 @@ on:
 jobs:
   nonposix:
     runs-on: ubuntu-latest
-    container: ghcr.io/carapace-sh/go:1.23.0
+    container: ghcr.io/carapace-sh/go:1.23.1
     steps:
     - name: shallow clone
       uses: actions/checkout@v4
@@ -16,9 +16,7 @@ jobs:
       run:  git config --global --add safe.directory '*'
 
     - name: Replace dependency
-      run: |
-          go work init .
-          go work edit -replace github.com/spf13/pflag=github.com/carapace-sh/carapace-pflag@v1.0.0
+      run: go mod edit -replace github.com/spf13/pflag=github.com/carapace-sh/carapace-pflag@v1.0.0
 
     - name: Build
       run: go build -v ./...
@@ -28,7 +26,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    container: ghcr.io/carapace-sh/go:1.23.0
+    container: ghcr.io/carapace-sh/go:1.23.1
     steps:
     - name: shallow clone
       uses: actions/checkout@v4
@@ -58,11 +56,6 @@ jobs:
 
     - name: "staticcheck"
       run: go install honnef.co/go/tools/cmd/staticcheck@latest && staticcheck ./...
-
-    - name: Replace dependency
-      run: |
-          go work init .
-          go work edit -replace github.com/spf13/pflag=github.com/carapace-sh/carapace-pflag@v1.0.0
 
     - name: Run GoReleaser
       uses: goreleaser/goreleaser-action@v6
