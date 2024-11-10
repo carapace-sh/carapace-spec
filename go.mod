@@ -1,6 +1,6 @@
 module github.com/carapace-sh/carapace-spec
 
-go 1.23.0
+go 1.23.1
 
 require (
 	github.com/carapace-sh/carapace v1.4.0
