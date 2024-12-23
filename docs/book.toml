@@ -4,6 +4,7 @@ language = "en"
 multilingual = false
 src = "src"
 title = "carapace-spec"
+description = "A multi-shell completion spec."
 
 [output.html]
 default-theme = "Latte"
