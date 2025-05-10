@@ -263,7 +263,7 @@ func flagValue(f *pflag.Flag) string {
 	if strings.HasSuffix(f.Value.Type(), "Slice") ||
 		strings.HasSuffix(f.Value.Type(), "Array") {
 		if strings.HasPrefix(f.Value.Type(), "string") {
-			if len(f.Value.String()) == 0 {
+			if f.Value.String() == "[]" {
 				return "nil"
 			}
 
