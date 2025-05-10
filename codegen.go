@@ -264,7 +264,7 @@ func flagValue(f *pflag.Flag) string {
 		strings.HasSuffix(f.Value.Type(), "Array") {
 		if strings.HasPrefix(f.Value.Type(), "string") {
 			if len(f.Value.String()) == 0 {
-				return "[]string{}"
+				return "nil"
 			}
 
 			vals, _ := csv.NewReader(strings.NewReader(f.Value.String()[1 : len(f.Value.String())-1])).Read()
