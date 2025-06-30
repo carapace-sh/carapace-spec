@@ -56,6 +56,7 @@ func (m modifier) chdir(s string) carapace.Action {
 	traverse := map[string]Macro{
 		"$gitdir":        MacroN(func() carapace.Action { return m.Action.ChdirF(traverse.GitDir) }),
 		"$gitworktree":   MacroN(func() carapace.Action { return m.Action.ChdirF(traverse.GitWorkTree) }),
+		"$nixprofile":    MacroN(func() carapace.Action { return m.Action.ChdirF(traverse.NixProfile) }),
 		"$parent":        MacroV(func(s ...string) carapace.Action { return m.Action.ChdirF(traverse.Parent(s...)) }),
 		"$tempdir":       MacroN(func() carapace.Action { return m.Action.ChdirF(traverse.TempDir) }),
 		"$usercachedir":  MacroN(func() carapace.Action { return m.Action.ChdirF(traverse.UserCacheDir) }),
