@@ -19,6 +19,7 @@ The following macros can be passed as well instead of a static directory:
 
 - [`$gitdir`] .git folder
 - [`$gitworktree`] root of the working directory for a non-bare repository
+- [`$nixprofile`] ~/.nix-profile folder
 - [`$parent(\[file, dir\])`] first parent directory containing any of the given names/directories
 - [`$tempdir`] default directory to use for temporary files
 - [`$usercachedir`] root directory to use for user-specific cached data
@@ -161,6 +162,7 @@ The following macros can be passed as well instead of a static directory:
 
 [`$gitdir`]:https://pkg.go.dev/github.com/carapace-sh/carapace/pkg/traverse#GitDir
 [`$gitworktree`]:https://pkg.go.dev/github.com/carapace-sh/carapace/pkg/traverse#GitWorkTree
+[`$nixprofile`]:https://pkg.go.dev/github.com/carapace-sh/carapace/pkg/traverse#NixProfile
 [`$parent(\[file, dir\])`]:https://pkg.go.dev/github.com/carapace-sh/carapace/pkg/traverse#Parent
 [`$tempdir`]:https://pkg.go.dev/github.com/carapace-sh/carapace/pkg/traverse#TempDir
 [`$usercachedir`]:https://pkg.go.dev/github.com/carapace-sh/carapace/pkg/traverse#UserCacheDir

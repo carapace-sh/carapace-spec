@@ -1,3 +1,7 @@
+github.com/carapace-sh/carapace v1.8.4 h1:JMnJgrXqnV4BL0r1hoEsWtcC4+iJR5t3gQVa+VkcT5g=
+github.com/carapace-sh/carapace v1.8.4/go.mod h1:C0PH0NpNW+Gb2nvnJ8nl2yRvvPxEHqVgYU8fphWGoEg=
+github.com/carapace-sh/carapace v1.8.6 h1:nYHFcooPyN7ZlAsr21sHKAkkpAYOEPkSO2S6/LQdQvs=
+github.com/carapace-sh/carapace v1.8.6/go.mod h1:C0PH0NpNW+Gb2nvnJ8nl2yRvvPxEHqVgYU8fphWGoEg=
 github.com/cpuguy83/go-md2man/v2 v2.0.4 h1:wfIWP927BUkWJb2NmU/kNDYIBTh/ziUX91+lVfRxZq4=
 github.com/josharian/intern v1.0.0 h1:vlS4z54oSdjm0bgjRigI+G1HpF+tI+9rE5LLzOg8HmY=
 github.com/russross/blackfriday/v2 v2.1.0 h1:JIOH55/0cWyOuilr9/qlrm0BSXldqnqwMsf35Ld67mk=
