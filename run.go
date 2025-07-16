@@ -44,6 +44,13 @@ func (r run) parse() func(cmd *cobra.Command, args []string) error {
 			mCmd = mArgs[0]
 			mArgs = mArgs[1:]
 
+			var err error
+			for index, arg := range mArgs {
+				if mArgs[index], err = context.Envsubst(arg); err != nil {
+					return err
+				}
+			}
+
 		case strings.HasPrefix(string(r), "$"):
 			matches := regexp.MustCompile(`^\$(?P<macro>[^(]*)(\((?P<arg>.*)\))?$`).FindStringSubmatch(string(r))
 			if matches == nil {

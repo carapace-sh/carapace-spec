@@ -215,6 +215,13 @@ func (c Command) addAliasCompletion(cmd *cobra.Command) error {
 						return carapace.ActionMessage("empty alias: %#v", c.Run)
 					}
 
+					var err error
+					for index, arg := range mArgs {
+						if mArgs[index], err = context.Envsubst(arg); err != nil {
+							return carapace.ActionMessage(err.Error())
+						}
+					}
+
 					// TODO keep in sync with ActionCarapaceBin in carapace-bridge
 					carapaceCmd := "carapace"
 					if executable, err := os.Executable(); err == nil && filepath.Base(executable) == "carapace" {
