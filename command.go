@@ -1,6 +1,7 @@
 package spec
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -217,6 +218,26 @@ func (c Command) addAliasCompletion(cmd *cobra.Command) error {
 
 					var err error
 					for index, arg := range mArgs {
+
+						if m, err := macros.Lookup(arg); err == nil { // TODO error handling (only if given arg is really a macro)
+							mContext := carapace.Context{
+								Dir: context.Dir,
+								Env: context.Env,
+							}
+							if b, err := m.Parse(arg).Invoke(mContext).MarshalJSON(); err == nil {
+								var res struct {
+									Messages []string
+									Values   []struct {
+										Value string
+									}
+								}
+								if err := json.Unmarshal(b, &res); err == nil && len(res.Values) > 0 {
+									arg = res.Values[0].Value
+									mArgs[index] = arg
+								}
+							}
+						}
+
 						if mArgs[index], err = context.Envsubst(arg); err != nil {
 							return carapace.ActionMessage(err.Error())
 						}
