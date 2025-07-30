@@ -51,7 +51,7 @@ func shell(shell, command string) carapace.Action {
 		}
 
 		args := []string{"-c", command}
-		if shell != "pwsh" {
+		if shell != "pwsh" && shell != "nu" { // TODO how to pass args to nu?
 			args = append(args, "--")
 		}
 		args = append(args, c.Args...)
