@@ -40,7 +40,7 @@ func (r *run) UnmarshalYAML(b []byte) error {
 		case strings.HasPrefix(m, "$"):
 			r.runnable = macro(m)
 		case strings.HasPrefix(m, "#!"):
-			r.runnable = shebang(m)
+			r.runnable = script(m)
 		case strings.HasPrefix(m, "["):
 			// TODO legacy alias
 		}
@@ -62,9 +62,9 @@ func (m macro) parse() func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error { return nil }
 }
 
-type shebang string
+type script string
 
-func (s shebang) parse() func(cmd *cobra.Command, args []string) error {
+func (s script) parse() func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
 		sb, _, _ := strings.Cut(string(s), "\n")
 		r := regexp.MustCompile(`^#!(?P<command>[^ ]+)( (?P<arg>.*))?$`)
@@ -84,6 +84,6 @@ func Alias(command string, args ...string) run {
 func Macro(s string) run {
 	return run{macro(s)}
 }
-func Shebang(s string) run {
-	return run{shebang(s)}
+func Script(s string) run {
+	return run{script(s)}
 }
