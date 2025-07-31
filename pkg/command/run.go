@@ -1,6 +1,8 @@
 package command
 
 import (
+	"errors"
+	"regexp"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -12,6 +14,13 @@ type runnable interface {
 }
 
 type run struct{ runnable }
+
+func (r run) Parse() func(cmd *cobra.Command, args []string) error {
+	if r.runnable == nil {
+		return nil
+	}
+	return r.runnable.parse()
+}
 
 func (r run) MarshalYAML() ([]byte, error) {
 	return yaml.Marshal(r.runnable)
@@ -56,7 +65,17 @@ func (m macro) parse() func(cmd *cobra.Command, args []string) error {
 type shebang string
 
 func (s shebang) parse() func(cmd *cobra.Command, args []string) error {
-	return func(cmd *cobra.Command, args []string) error { return nil }
+	return func(cmd *cobra.Command, args []string) error {
+		sb, _, _ := strings.Cut(string(s), "\n")
+		r := regexp.MustCompile(`^#!(?P<command>[^ ]+)( (?P<arg>.*))?$`)
+
+		matches := r.FindStringSubmatch(sb)
+		if matches == nil {
+			return errors.New("TODO") // TODO
+		}
+
+		return nil
+	}
 }
 
 func Alias(command string, args ...string) run {
