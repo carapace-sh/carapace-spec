@@ -1,0 +1,17 @@
+name: run
+commands:
+  - name: alias
+    # run: "[git, status]"
+    run: [git, status]
+
+  - name: macro
+    run: "$(pwd)"
+    # run: "$fish(pwd) ||| $chdir(/tmp)"
+
+  - name: shebang
+    run: |
+      #!/usr/bin/env bash
+      echo "$@"
+    completion:
+      positional:
+        - [one, two]
