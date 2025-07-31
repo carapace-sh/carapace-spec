@@ -122,7 +122,7 @@ func (c Command) addFlagCompletion(cmd *cobra.Command) error {
 }
 
 func (c Command) addRun(cmd *cobra.Command) error {
-	if c.Run == "" {
+	if c.Run == nil {
 		return nil
 	}
 
