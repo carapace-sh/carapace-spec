@@ -65,8 +65,8 @@ func ActionMacro(s string, a ...any) carapace.Action {
 			})
 
 		default:
-			if strings.HasPrefix(s, prefix) {
-				s = "$_." + strings.TrimPrefix(s, prefix)
+			if after, ok := strings.CutPrefix(s, prefix); ok {
+				s = "$_." + after
 			}
 			m, err := macros.Lookup(s)
 			if err != nil {

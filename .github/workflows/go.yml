@@ -7,7 +7,7 @@ on:
 jobs:
   nonposix:
     runs-on: ubuntu-latest
-    container: ghcr.io/carapace-sh/go:1.23.1
+    container: ghcr.io/carapace-sh/dev
     steps:
     - name: shallow clone
       uses: actions/checkout@v4
@@ -21,12 +21,15 @@ jobs:
     - name: Build
       run: go build -v ./...
 
+    - name: install carapace
+      run: curl -L https://github.com/carapace-sh/carapace-bin/releases/download/v1.4.1/carapace-bin_1.4.1_linux_amd64.tar.gz | tar -xzvf - -C /usr/local/bin/ carapace
+
     - name: Test
       run: go test -v -coverprofile=profile.cov ./...
 
   build:
     runs-on: ubuntu-latest
-    container: ghcr.io/carapace-sh/go:1.23.1
+    container: ghcr.io/carapace-sh/dev
     steps:
     - name: shallow clone
       uses: actions/checkout@v4
@@ -44,6 +47,9 @@ jobs:
     - name: Build
       run: go build -v ./...
 
+    - name: install carapace
+      run: curl -L https://github.com/carapace-sh/carapace-bin/releases/download/v1.4.1/carapace-bin_1.4.1_linux_amd64.tar.gz | tar -xzvf - -C /usr/local/bin/ carapace
+
     - name: Test
       run: go test -v -coverprofile=profile.cov ./...
 
@@ -57,9 +63,21 @@ jobs:
     - name: "staticcheck"
       run: go install honnef.co/go/tools/cmd/staticcheck@latest && staticcheck ./...
 
+  release:
+    runs-on: ubuntu-latest
+    container: ghcr.io/carapace-sh/go:1.23.1
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+    - name: deep clone
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: fix git safe.directory
+      run:  git config --global --add safe.directory '*'
+
     - name: Run GoReleaser
       uses: goreleaser/goreleaser-action@v6
-      if: startsWith(github.ref, 'refs/tags/')
       with:
         version: latest
         args: release --clean
