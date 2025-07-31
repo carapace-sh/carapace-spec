@@ -1,10 +1,12 @@
 package spec
 
 import (
+	"fmt"
 	"runtime"
 	"strings"
 
 	"github.com/carapace-sh/carapace"
+	shlex "github.com/carapace-sh/carapace-shlex"
 )
 
 func init() {
@@ -50,11 +52,18 @@ func shell(shell, command string) carapace.Action {
 			return carapace.ActionMessage("unsupported shell [%v]: %v", runtime.GOOS, shell)
 		}
 
-		args := []string{"-c", command}
-		if shell != "pwsh" {
+		args := []string{"-c"}
+		switch shell {
+		case "nu":
+			args = append(args, fmt.Sprintf("def --wrapped main [...args] { %v }; main %v", command, shlex.Join(c.Args)))
+		case "pwsh":
+			args = append(args, command)
+			args = append(args, c.Args...)
+		default:
+			args = append(args, command)
 			args = append(args, "--")
+			args = append(args, c.Args...)
 		}
-		args = append(args, c.Args...)
 		return carapace.ActionExecCommand(shell, args...)(func(output []byte) carapace.Action {
 			lines := strings.Split(string(output), "\n")
 			batch := carapace.Batch()
