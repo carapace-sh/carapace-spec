@@ -2,6 +2,7 @@ package spec
 
 import (
 	_ "embed"
+	"os"
 	"testing"
 
 	"github.com/carapace-sh/carapace"
@@ -9,6 +10,11 @@ import (
 	"github.com/carapace-sh/carapace/pkg/style"
 	"github.com/spf13/pflag"
 )
+
+func TestMain(m *testing.M) {
+	os.Unsetenv("LS_COLORS")
+	os.Exit(m.Run())
+}
 
 //go:embed example/nonposix.yaml
 var nonposix string
