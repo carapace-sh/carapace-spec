@@ -2,12 +2,16 @@ package command
 
 import (
 	"errors"
+	"fmt"
 	"os"
+	"os/exec"
 	"regexp"
 	"strings"
 
+	"github.com/carapace-sh/carapace"
 	"github.com/carapace-sh/carapace/pkg/execlog"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 	"gopkg.in/yaml.v3"
 )
 
@@ -60,7 +64,47 @@ func (r *run) UnmarshalYAML(value *yaml.Node) error {
 type alias []string
 
 func (a alias) parse() func(cmd *cobra.Command, args []string) error {
-	return func(cmd *cobra.Command, args []string) error { return nil }
+	return func(cmd *cobra.Command, args []string) error {
+		context := carapace.NewContext(args...)
+		cmd.Flags().VisitAll(func(f *pflag.Flag) { // VisitAll as Visit() skips changed persistent flags of parent commands
+			if f.Changed {
+				if slice, ok := f.Value.(pflag.SliceValue); ok {
+					context.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), strings.Join(slice.GetSlice(), ","))
+				} else {
+					context.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), f.Value.String())
+				}
+			}
+		})
+
+		mCmd := ""
+		mArgs := a
+		if len(mArgs) < 1 {
+			return fmt.Errorf("malformed alias: %#v", mArgs)
+		}
+
+		mCmd = mArgs[0]
+		mArgs = mArgs[1:]
+
+		var err error
+		for index, arg := range mArgs {
+			if mArgs[index], err = context.Envsubst(arg); err != nil {
+				return err
+			}
+		}
+
+		execCmd := execlog.Command(mCmd, append(mArgs, args...)...)
+		execCmd.Stdin = cmd.InOrStdin()
+		execCmd.Stdout = cmd.OutOrStdout()
+		execCmd.Stderr = cmd.ErrOrStderr()
+		execCmd.Env = context.Env
+		if err := execCmd.Run(); err != nil {
+			if exitErr, ok := err.(*exec.ExitError); ok {
+				os.Exit(exitErr.ProcessState.ExitCode())
+			}
+			return err
+		}
+		return nil
+	}
 }
 
 type macro string
