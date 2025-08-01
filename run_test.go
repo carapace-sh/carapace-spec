@@ -4,6 +4,8 @@ import (
 	_ "embed"
 	"testing"
 
+	"github.com/carapace-sh/carapace"
+	"github.com/carapace-sh/carapace/pkg/sandbox"
 	"gopkg.in/yaml.v3"
 )
 
@@ -17,8 +19,14 @@ func TestRun(t *testing.T) {
 	}
 
 	cmd := command.ToCobra()
-	cmd.SetArgs([]string{"script", "one", "two", "three"})
+	cmd.SetArgs([]string{"script", "one"})
 	if err := cmd.Execute(); err != nil {
 		t.Error(err)
 	}
+
+	sandboxSpec(t, runSpec)(func(s *sandbox.Sandbox) {
+		s.Run("script", "").
+			Expect(carapace.ActionValues("one", "two").
+				Usage("script ARG"))
+	})
 }

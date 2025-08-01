@@ -11,7 +11,7 @@ commands:
     run: "$(pwd)"
     # run: "$fish(pwd) ||| $chdir(/tmp)"
 
-  - name: script
+  - name: script ARG
     run: |
       #!/usr/bin/env bash
       echo "$@"
