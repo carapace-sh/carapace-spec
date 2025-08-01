@@ -89,19 +89,18 @@ func (s script) parse() func(cmd *cobra.Command, args []string) error {
 
 		os.WriteFile(file.Name(), []byte(s), os.ModePerm) // TODO make only readable by current user
 
-		cmdArgs := make([]string, 0)
+		scriptArgs := make([]string, 0)
 		if matches[3] != "" { // TODO allow explicit empty string argument?
-			cmdArgs = append(cmdArgs, matches[3])
+			scriptArgs = append(scriptArgs, matches[3])
 		}
-		cmdArgs = append(cmdArgs, file.Name(), "--")
-		cmdArgs = append(cmdArgs, args...)
+		scriptArgs = append(scriptArgs, file.Name())
+		scriptArgs = append(scriptArgs, args...)
 		// panic(fmt.Sprintf("%v %#v", matches[1], cmdArgs))
-		err = execlog.Command(matches[1], cmdArgs...).Run()
-		if err != nil {
-			return err
-		}
-		// TODO stdin/stdout
-		return nil
+		scriptCmd := execlog.Command(matches[1], scriptArgs...)
+		scriptCmd.Stdout = cmd.OutOrStdout()
+		scriptCmd.Stderr = cmd.ErrOrStderr()
+		scriptCmd.Stdin = cmd.InOrStdin()
+		return scriptCmd.Run()
 	}
 }
 
