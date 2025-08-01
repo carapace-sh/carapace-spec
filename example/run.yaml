@@ -4,11 +4,14 @@ commands:
     # run: "[git, status]"
     run: [git, status]
 
+  - name: legacy
+    run: "[git, status]"
+
   - name: macro
     run: "$(pwd)"
     # run: "$fish(pwd) ||| $chdir(/tmp)"
 
-  - name: shebang
+  - name: script
     run: |
       #!/usr/bin/env bash
       echo "$@"

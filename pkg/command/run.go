@@ -2,11 +2,11 @@ package command
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"regexp"
 	"strings"
 
+	"github.com/carapace-sh/carapace/pkg/execlog"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )
@@ -81,13 +81,27 @@ func (s script) parse() func(cmd *cobra.Command, args []string) error {
 			return errors.New("invalid shebang header") // TODO
 		}
 
-		_, err := os.CreateTemp(os.TempDir(), "carapace-spec_run")
+		file, err := os.CreateTemp(os.TempDir(), "carapace-spec_run")
 		if err != nil {
 			return err
 		}
+		defer os.Remove(file.Name())
 
-		return fmt.Errorf("%#v", matches)
-		//return nil
+		os.WriteFile(file.Name(), []byte(s), os.ModePerm) // TODO make only readable by current user
+
+		cmdArgs := make([]string, 0)
+		if matches[3] != "" { // TODO allow explicit empty string argument?
+			cmdArgs = append(cmdArgs, matches[3])
+		}
+		cmdArgs = append(cmdArgs, file.Name(), "--")
+		cmdArgs = append(cmdArgs, args...)
+		// panic(fmt.Sprintf("%v %#v", matches[1], cmdArgs))
+		err = execlog.Command(matches[1], cmdArgs...).Run()
+		if err != nil {
+			return err
+		}
+		// TODO stdin/stdout
+		return nil
 	}
 }
 
