@@ -90,12 +90,12 @@ func (s script) parse() func(cmd *cobra.Command, args []string) error {
 		os.WriteFile(file.Name(), []byte(s), os.ModePerm) // TODO make only readable by current user
 
 		scriptArgs := make([]string, 0)
-		if matches[3] != "" { // TODO allow explicit empty string argument?
+		if matches[3] != "" {
 			scriptArgs = append(scriptArgs, matches[3])
 		}
 		scriptArgs = append(scriptArgs, file.Name())
 		scriptArgs = append(scriptArgs, args...)
-		// panic(fmt.Sprintf("%v %#v", matches[1], cmdArgs))
+
 		scriptCmd := execlog.Command(matches[1], scriptArgs...)
 		scriptCmd.Stdout = cmd.OutOrStdout()
 		scriptCmd.Stderr = cmd.ErrOrStderr()
