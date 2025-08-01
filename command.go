@@ -1,14 +1,9 @@
 package spec
 
 import (
-	"os"
-	"path/filepath"
-	"regexp"
-
 	"github.com/carapace-sh/carapace"
 	"github.com/carapace-sh/carapace-spec/pkg/command"
 	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v3"
 )
 
 type Command command.Command
@@ -60,7 +55,7 @@ func (c Command) ToCobraE() (*cobra.Command, error) {
 		c.addDashCompletion,
 		c.addDashAnyCompletion,
 		c.addSubcommands,
-		c.addAliasCompletion,
+		// c.addAliasCompletion, // TODO re-add alias completion
 	} {
 		if err := f(cmd); err != nil {
 			return nil, err
@@ -122,15 +117,13 @@ func (c Command) addFlagCompletion(cmd *cobra.Command) error {
 }
 
 func (c Command) addRun(cmd *cobra.Command) error {
-	if c.Run == nil {
+	if cmd.RunE = c.Run.Parse(); cmd.RunE == nil {
 		return nil
 	}
 
 	if len(c.Flags) == 0 && len(c.PersistentFlags) == 0 {
 		cmd.DisableFlagParsing = true
 	}
-
-	cmd.RunE = run(c.Run).parse()
 	return nil
 }
 
@@ -193,54 +186,54 @@ func (c Command) addSubcommands(cmd *cobra.Command) error {
 	return nil
 }
 
-func (c Command) addAliasCompletion(cmd *cobra.Command) error {
-	if c.Run != "" &&
-		len(c.Flags) == 0 &&
-		len(c.PersistentFlags) == 0 &&
-		len(c.Completion.Positional) == 0 &&
-		len(c.Completion.PositionalAny) == 0 &&
-		len(c.Completion.Dash) == 0 &&
-		len(c.Completion.DashAny) == 0 {
+// func (c Command) addAliasCompletion(cmd *cobra.Command) error {
+// 	if c.Run != "" &&
+// 		len(c.Flags) == 0 &&
+// 		len(c.PersistentFlags) == 0 &&
+// 		len(c.Completion.Positional) == 0 &&
+// 		len(c.Completion.PositionalAny) == 0 &&
+// 		len(c.Completion.Dash) == 0 &&
+// 		len(c.Completion.DashAny) == 0 {
 
-		cmd.DisableFlagParsing = true
-		carapace.Gen(cmd).PositionalAnyCompletion(
-			carapace.ActionCallback(func(context carapace.Context) carapace.Action {
-				switch {
-				case regexp.MustCompile(`^\[.*\]$`).MatchString(string(c.Run)):
-					var mArgs []string
-					if err := yaml.Unmarshal([]byte(c.Run), &mArgs); err != nil {
-						return carapace.ActionMessage(err.Error())
-					}
-					if len(mArgs) == 0 {
-						return carapace.ActionMessage("empty alias: %#v", c.Run)
-					}
+// 		cmd.DisableFlagParsing = true
+// 		carapace.Gen(cmd).PositionalAnyCompletion(
+// 			carapace.ActionCallback(func(context carapace.Context) carapace.Action {
+// 				switch {
+// 				case regexp.MustCompile(`^\[.*\]$`).MatchString(string(c.Run)):
+// 					var mArgs []string
+// 					if err := yaml.Unmarshal([]byte(c.Run), &mArgs); err != nil {
+// 						return carapace.ActionMessage(err.Error())
+// 					}
+// 					if len(mArgs) == 0 {
+// 						return carapace.ActionMessage("empty alias: %#v", c.Run)
+// 					}
 
-					var err error
-					for index, arg := range mArgs {
-						if mArgs[index], err = context.Envsubst(arg); err != nil {
-							return carapace.ActionMessage(err.Error())
-						}
-					}
+// 					var err error
+// 					for index, arg := range mArgs {
+// 						if mArgs[index], err = context.Envsubst(arg); err != nil {
+// 							return carapace.ActionMessage(err.Error())
+// 						}
+// 					}
 
-					// TODO keep in sync with ActionCarapaceBin in carapace-bridge
-					carapaceCmd := "carapace"
-					if executable, err := os.Executable(); err == nil && filepath.Base(executable) == "carapace" {
-						carapaceCmd = executable // workaround for sandbox tests: directly call executable which was built with "go run"
-					}
+// 					// TODO keep in sync with ActionCarapaceBin in carapace-bridge
+// 					carapaceCmd := "carapace"
+// 					if executable, err := os.Executable(); err == nil && filepath.Base(executable) == "carapace" {
+// 						carapaceCmd = executable // workaround for sandbox tests: directly call executable which was built with "go run"
+// 					}
 
-					execArgs := []string{mArgs[0], "export", mArgs[0]}
-					execArgs = append(execArgs, mArgs[1:]...)
-					execArgs = append(execArgs, context.Args...)
-					execArgs = append(execArgs, context.Value)
-					return carapace.ActionExecCommand(carapaceCmd, execArgs...)(func(output []byte) carapace.Action {
-						return carapace.ActionImport(output)
-					})
+// 					execArgs := []string{mArgs[0], "export", mArgs[0]}
+// 					execArgs = append(execArgs, mArgs[1:]...)
+// 					execArgs = append(execArgs, context.Args...)
+// 					execArgs = append(execArgs, context.Value)
+// 					return carapace.ActionExecCommand(carapaceCmd, execArgs...)(func(output []byte) carapace.Action {
+// 						return carapace.ActionImport(output)
+// 					})
 
-				default:
-					return carapace.ActionValues()
-				}
-			}),
-		)
-	}
-	return nil
-}
+// 				default:
+// 					return carapace.ActionValues()
+// 				}
+// 			}),
+// 		)
+// 	}
+// 	return nil
+// }

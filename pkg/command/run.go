@@ -2,6 +2,8 @@ package command
 
 import (
 	"errors"
+	"fmt"
+	"os"
 	"regexp"
 	"strings"
 
@@ -26,28 +28,33 @@ func (r run) MarshalYAML() ([]byte, error) {
 	return yaml.Marshal(r.runnable)
 }
 
-func (r *run) UnmarshalYAML(b []byte) error {
-	var m any
-	if err := yaml.Unmarshal(b, &m); err != nil {
-		return err
+func (r *run) UnmarshalYAML(value *yaml.Node) error {
+	var a []string
+	if err := value.Decode(&a); err == nil {
+		if len(a) > 0 {
+			r.runnable = alias(a)
+		}
+		return nil
 	}
 
-	switch m := m.(type) {
-	case []string:
-		r.runnable = alias(m)
-	case string:
+	var s string
+	if err := value.Decode(&s); err == nil {
 		switch {
-		case strings.HasPrefix(m, "$"):
-			r.runnable = macro(m)
-		case strings.HasPrefix(m, "#!"):
-			r.runnable = script(m)
-		case strings.HasPrefix(m, "["):
+		case strings.HasPrefix(s, "$"):
+			r.runnable = macro(s)
+			return nil
+		case strings.HasPrefix(s, "#!"):
+			r.runnable = script(s)
+			return nil
+		case strings.HasPrefix(s, "["):
 			// TODO legacy alias
+			if err := yaml.Unmarshal([]byte(s), &a); err == nil {
+				r.runnable = alias(a)
+				return nil
+			}
 		}
-	default:
-		// invalid
 	}
-	return nil // TODO invalid?
+	return errors.New("invalid type")
 }
 
 type alias []string
@@ -71,10 +78,16 @@ func (s script) parse() func(cmd *cobra.Command, args []string) error {
 
 		matches := r.FindStringSubmatch(sb)
 		if matches == nil {
-			return errors.New("TODO") // TODO
+			return errors.New("invalid shebang header") // TODO
 		}
 
-		return nil
+		_, err := os.CreateTemp(os.TempDir(), "carapace-spec_run")
+		if err != nil {
+			return err
+		}
+
+		return fmt.Errorf("%#v", matches)
+		//return nil
 	}
 }
 
