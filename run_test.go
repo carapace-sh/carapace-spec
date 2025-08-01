@@ -31,6 +31,25 @@ func TestRunAlias(t *testing.T) {
 	})
 }
 
+func TestRunMacro(t *testing.T) {
+	var command Command
+	if err := yaml.Unmarshal([]byte(runSpec), &command); err != nil {
+		t.Error(err)
+	}
+
+	cmd := command.ToCobra()
+	cmd.SetArgs([]string{"macro", "one"})
+	if err := cmd.Execute(); err != nil {
+		t.Error(err)
+	}
+
+	sandboxSpec(t, runSpec)(func(s *sandbox.Sandbox) {
+		s.Run("macro", "").
+			Expect(carapace.ActionValues("one", "two").
+				Usage("macro ARG"))
+	})
+}
+
 func TestRunScript(t *testing.T) {
 	var command Command
 	if err := yaml.Unmarshal([]byte(runSpec), &command); err != nil {

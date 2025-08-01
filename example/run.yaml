@@ -1,13 +1,13 @@
 name: run
 commands:
-  - name: alias
+  - name: alias ARG
     # run: "[git, status]"
     run: [git, status]
 
-  - name: legacy
+  - name: legacy ARG
     run: "[git, status]"
 
-  - name: macro
+  - name: macro ARG
     run: "$(pwd)"
     # run: "$fish(pwd) ||| $chdir(/tmp)"
 
