@@ -190,7 +190,7 @@ func (c Command) addSubcommands(cmd *cobra.Command) error {
 	return nil
 }
 
-func (c Command) addAliasCompletion(cmd *cobra.Command) error {
+func (c Command) addAliasCompletion(cmd *cobra.Command) error { // TODO add tests for alias completion
 	if c.Run != "" && // TODO string/alias check
 		len(c.Flags) == 0 &&
 		len(c.PersistentFlags) == 0 &&

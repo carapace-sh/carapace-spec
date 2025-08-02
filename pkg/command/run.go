@@ -26,13 +26,13 @@ func Alias(s string, args ...string) (Run, error) {
 	return Run(m), nil
 }
 
-func (r Run) Type() string { // TODO return custom type?
-	switch {
-	case strings.HasPrefix(string(r), "$"):
+func (r Run) Type() string { // TODO return custom type
+	switch s := string(r); {
+	case strings.HasPrefix(s, "$"):
 		return "macro"
-	case strings.HasPrefix(string(r), "#!"):
+	case strings.HasPrefix(s, "#!"):
 		return "shebang" // shebang or script?
-	case strings.HasPrefix(string(r), "["): // legacy
+	case strings.HasPrefix(s, "["):
 		return "alias"
 	default:
 		return ""
@@ -42,11 +42,14 @@ func (r Run) Type() string { // TODO return custom type?
 func (r *Run) UnmarshalYAML(value *yaml.Node) error {
 	var script string
 	if err := value.Decode(&script); err == nil {
+		*r = Run(script)
 		return nil
 	}
 
-	var alias []string
-	if err := value.Decode(&alias); err != nil {
+	var alias struct { // pseudo-struct to enforce `flow`
+		A []string `yaml:",flow"`
+	}
+	if err := value.Decode(&alias.A); err != nil {
 		return err
 	}
 
@@ -54,9 +57,7 @@ func (r *Run) UnmarshalYAML(value *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-
-	run := Run(m)
-	r = &run
+	*r = Run(m[3:]) // cut `a: ` prefix
 	return nil
 }
 
