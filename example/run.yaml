@@ -8,8 +8,9 @@ commands:
     run: "[git, status]"
 
   - name: macro ARG
-    run: "$(pwd)"
-    # TODO: support modifiers -  run: "$fish(pwd) ||| $chdir(/tmp)"
+    run: "$(ls $@)" # TODO: support modifiers -  run: "$fish(pwd) ||| $chdir(/tmp)"
+    completion:
+      positionalany: ["$files"]
 
   - name: script ARG
     run: |
