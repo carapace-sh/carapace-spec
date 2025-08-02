@@ -39,7 +39,7 @@ func (r Run) Type() string { // TODO return custom type
 	case strings.HasPrefix(s, "$"):
 		return "macro"
 	case strings.HasPrefix(s, "#!"):
-		return "shebang" // shebang or script?
+		return "script"
 	case strings.HasPrefix(s, "["):
 		return "alias"
 	default:
@@ -68,8 +68,8 @@ func (r Run) Parse() func(cmd *cobra.Command, args []string) error {
 	switch r.Type() {
 	case "macro":
 		return r.parseMacro()
-	case "shebang":
-		return r.parseShebang()
+	case "script":
+		return r.parseScript()
 	case "alias": // legacy
 		return r.parseAlias()
 	default:
@@ -206,7 +206,35 @@ func (r Run) parseMacro() func(cmd *cobra.Command, args []string) error {
 	}
 }
 
-func (r Run) parseShebang() func(cmd *cobra.Command, args []string) error {
+type shebang struct {
+	Command string
+	Args    []string // optional single argument
+}
+
+func (r Run) parseShebang() (*shebang, error) {
+	firstLine, _, ok := strings.Cut(string(r), "\n")
+	if !ok {
+		return nil, errors.New("missing shebang header")
+	}
+
+	re := regexp.MustCompile(`^#!(?P<command>[^ ]+)( (?P<arg>.*))?$`)
+	matches := re.FindStringSubmatch(strings.TrimSpace(firstLine))
+	if matches == nil {
+		return nil, errors.New("invalid shebang header")
+	}
+
+	shebang := &shebang{
+		Command: matches[1],
+		Args:    []string{},
+	}
+	if matches[3] != "" {
+		shebang.Args = []string{matches[3]} // optional arg
+	}
+
+	return shebang, nil
+}
+
+func (r Run) parseScript() func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
 		// TODO currently duplicated in each run type
 		context := carapace.NewContext(args...)
@@ -220,12 +248,9 @@ func (r Run) parseShebang() func(cmd *cobra.Command, args []string) error {
 			}
 		})
 
-		sb, _, _ := strings.Cut(string(r), "\n")
-		re := regexp.MustCompile(`^#!(?P<command>[^ ]+)( (?P<arg>.*))?$`)
-
-		matches := re.FindStringSubmatch(sb)
-		if matches == nil {
-			return errors.New("invalid shebang header") // TODO
+		shebang, err := r.parseShebang()
+		if err != nil {
+			return err
 		}
 
 		file, err := os.CreateTemp(os.TempDir(), "carapace-spec_run")
@@ -236,14 +261,10 @@ func (r Run) parseShebang() func(cmd *cobra.Command, args []string) error {
 
 		os.WriteFile(file.Name(), []byte(r), os.ModePerm) // TODO make only readable by current user
 
-		scriptArgs := make([]string, 0)
-		if matches[3] != "" {
-			scriptArgs = append(scriptArgs, matches[3])
-		}
-		scriptArgs = append(scriptArgs, file.Name())
+		scriptArgs := append(shebang.Args, file.Name())
 		scriptArgs = append(scriptArgs, args...)
 
-		scriptCmd := execlog.Command(matches[1], scriptArgs...)
+		scriptCmd := execlog.Command(shebang.Command, scriptArgs...)
 		scriptCmd.Stdout = cmd.OutOrStdout()
 		scriptCmd.Stderr = cmd.ErrOrStderr()
 		scriptCmd.Stdin = cmd.InOrStdin()
