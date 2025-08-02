@@ -40,7 +40,8 @@ func (r Run) Type() string { // TODO return custom type?
 }
 
 func (r *Run) UnmarshalYAML(value *yaml.Node) error {
-	if err := value.Decode(r); err == nil {
+	var script string
+	if err := value.Decode(&script); err == nil {
 		return nil
 	}
 
