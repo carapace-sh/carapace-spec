@@ -16,55 +16,63 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type runnable interface {
-	parse() func(cmd *cobra.Command, args []string) error
+type Run string
+
+func Alias(s string, args ...string) (Run, error) {
+	m, err := yaml.Marshal(append([]string{s}, args...)) // TODO ensure this is single line style
+	if err != nil {
+		return "", err
+	}
+	return Run(m), nil
 }
 
-type run struct{ runnable }
+func (r Run) Type() string { // TODO return custom type?
+	switch {
+	case strings.HasPrefix(string(r), "$"):
+		return "macro"
+	case strings.HasPrefix(string(r), "#!"):
+		return "shebang" // shebang or script?
+	case strings.HasPrefix(string(r), "["): // legacy
+		return "alias"
+	default:
+		return ""
+	}
+}
 
-func (r run) Parse() func(cmd *cobra.Command, args []string) error {
-	if r.runnable == nil {
+func (r *Run) UnmarshalYAML(value *yaml.Node) error {
+	if err := value.Decode(r); err == nil {
 		return nil
 	}
-	return r.runnable.parse()
-}
 
-func (r run) MarshalYAML() ([]byte, error) {
-	return yaml.Marshal(r.runnable)
-}
-
-func (r *run) UnmarshalYAML(value *yaml.Node) error {
-	var a []string
-	if err := value.Decode(&a); err == nil {
-		if len(a) > 0 {
-			r.runnable = alias(a)
-		}
-		return nil
+	var alias []string
+	if err := value.Decode(&alias); err != nil {
+		return err
 	}
 
-	var s string
-	if err := value.Decode(&s); err == nil {
-		switch {
-		case strings.HasPrefix(s, "$"):
-			r.runnable = macro(s)
-			return nil
-		case strings.HasPrefix(s, "#!"):
-			r.runnable = script(s)
-			return nil
-		case strings.HasPrefix(s, "["):
-			// TODO legacy alias
-			if err := yaml.Unmarshal([]byte(s), &a); err == nil {
-				r.runnable = alias(a)
-				return nil
-			}
-		}
+	m, err := yaml.Marshal(alias)
+	if err != nil {
+		return err
 	}
-	return errors.New("invalid type")
+
+	run := Run(m)
+	r = &run
+	return nil
 }
 
-type alias []string
+func (r Run) Parse() func(cmd *cobra.Command, args []string) error {
+	switch r.Type() {
+	case "macro":
+		return r.parseMacro()
+	case "shebang":
+		return r.parseShebang()
+	case "alias": // legacy
+		return r.parseAlias()
+	default:
+		return nil // TODO handle the error somehow (log or give feedback)
+	}
+}
 
-func (a alias) parse() func(cmd *cobra.Command, args []string) error {
+func (r Run) parseAlias() func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
 		context := carapace.NewContext(args...)
 		cmd.Flags().VisitAll(func(f *pflag.Flag) { // VisitAll as Visit() skips changed persistent flags of parent commands
@@ -78,9 +86,12 @@ func (a alias) parse() func(cmd *cobra.Command, args []string) error {
 		})
 
 		mCmd := ""
-		mArgs := a
+		mArgs := make([]string, 0)
+		if err := yaml.Unmarshal([]byte(r), &mArgs); err != nil {
+			return err
+		}
 		if len(mArgs) < 1 {
-			return fmt.Errorf("malformed alias: %#v", mArgs)
+			return fmt.Errorf("malformed alias: %#v", r)
 		}
 
 		mCmd = mArgs[0]
@@ -108,9 +119,7 @@ func (a alias) parse() func(cmd *cobra.Command, args []string) error {
 	}
 }
 
-type macro string
-
-func (m macro) parse() func(cmd *cobra.Command, args []string) error {
+func (r Run) parseMacro() func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
 		context := carapace.NewContext(args...)
 		cmd.Flags().VisitAll(func(f *pflag.Flag) { // VisitAll as Visit() skips changed persistent flags of parent commands
@@ -126,9 +135,9 @@ func (m macro) parse() func(cmd *cobra.Command, args []string) error {
 		mCmd := ""
 		mArgs := make([]string, 0)
 
-		matches := regexp.MustCompile(`^\$(?P<macro>[^(]*)(\((?P<arg>.*)\))?$`).FindStringSubmatch(string(m))
+		matches := regexp.MustCompile(`^\$(?P<macro>[^(]*)(\((?P<arg>.*)\))?$`).FindStringSubmatch(string(r))
 		if matches == nil {
-			return fmt.Errorf("malformed macro: %#v", m)
+			return fmt.Errorf("malformed macro: %#v", r)
 		}
 
 		script, err := context.Envsubst(matches[3])
@@ -192,9 +201,7 @@ func (m macro) parse() func(cmd *cobra.Command, args []string) error {
 	}
 }
 
-type script string
-
-func (s script) parse() func(cmd *cobra.Command, args []string) error {
+func (r Run) parseShebang() func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
 		// TODO currently duplicated in each run type
 		context := carapace.NewContext(args...)
@@ -208,10 +215,10 @@ func (s script) parse() func(cmd *cobra.Command, args []string) error {
 			}
 		})
 
-		sb, _, _ := strings.Cut(string(s), "\n")
-		r := regexp.MustCompile(`^#!(?P<command>[^ ]+)( (?P<arg>.*))?$`)
+		sb, _, _ := strings.Cut(string(r), "\n")
+		re := regexp.MustCompile(`^#!(?P<command>[^ ]+)( (?P<arg>.*))?$`)
 
-		matches := r.FindStringSubmatch(sb)
+		matches := re.FindStringSubmatch(sb)
 		if matches == nil {
 			return errors.New("invalid shebang header") // TODO
 		}
@@ -222,7 +229,7 @@ func (s script) parse() func(cmd *cobra.Command, args []string) error {
 		}
 		defer os.Remove(file.Name())
 
-		os.WriteFile(file.Name(), []byte(s), os.ModePerm) // TODO make only readable by current user
+		os.WriteFile(file.Name(), []byte(r), os.ModePerm) // TODO make only readable by current user
 
 		scriptArgs := make([]string, 0)
 		if matches[3] != "" {
@@ -239,14 +246,4 @@ func (s script) parse() func(cmd *cobra.Command, args []string) error {
 		// TODO support dir potentially modified by `$chdir()` modifier
 		return scriptCmd.Run()
 	}
-}
-
-func Alias(command string, args ...string) run {
-	return run{alias(append([]string{command}, args...))}
-}
-func Macro(s string) run {
-	return run{macro(s)}
-}
-func Script(s string) run {
-	return run{script(s)}
 }
