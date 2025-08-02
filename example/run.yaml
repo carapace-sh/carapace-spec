@@ -9,7 +9,7 @@ commands:
 
   - name: macro ARG
     run: "$(pwd)"
-    # run: "$fish(pwd) ||| $chdir(/tmp)"
+    # TODO: support modifiers -  run: "$fish(pwd) ||| $chdir(/tmp)"
 
   - name: script ARG
     run: |
