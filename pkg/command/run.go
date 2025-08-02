@@ -18,12 +18,20 @@ import (
 
 type Run string
 
-func Alias(s string, args ...string) (Run, error) {
-	m, err := yaml.Marshal(append([]string{s}, args...)) // TODO ensure this is single line style
+func Alias(s ...string) (Run, error) {
+	if len(s) == 0 {
+		return "", errors.New("invalid alias")
+	}
+
+	var alias = struct { // pseudo-struct to enforce `flow` style
+		A []string `yaml:",flow"`
+	}{s}
+
+	m, err := yaml.Marshal(alias)
 	if err != nil {
 		return "", err
 	}
-	return Run(m), nil
+	return Run(m[3:]), nil // cut `a: ` prefix
 }
 
 func (r Run) Type() string { // TODO return custom type
@@ -46,19 +54,14 @@ func (r *Run) UnmarshalYAML(value *yaml.Node) error {
 		return nil
 	}
 
-	var alias struct { // pseudo-struct to enforce `flow`
-		A []string `yaml:",flow"`
-	}
-	if err := value.Decode(&alias.A); err != nil {
+	var alias []string
+	if err := value.Decode(&alias); err != nil {
 		return err
 	}
 
-	m, err := yaml.Marshal(alias)
-	if err != nil {
-		return err
-	}
-	*r = Run(m[3:]) // cut `a: ` prefix
-	return nil
+	var err error
+	*r, err = Alias(alias...)
+	return err
 }
 
 func (r Run) Parse() func(cmd *cobra.Command, args []string) error {
