@@ -14,7 +14,15 @@ commands:
   - name: script ARG
     run: |
       #!/usr/bin/env bash
-      echo "$@"
+      if [[ -n  "$C_FLAG_PREFIX" ]]; then
+        for arg in "$@"; do
+          echo "${C_FLAG_PREFIX}/${arg}"
+        done
+      else
+        echo "$@" | xargs -n1 echo
+      fi
+    flags:
+      -h, --help: show help
     completion:
       positional:
         - [one, two]
