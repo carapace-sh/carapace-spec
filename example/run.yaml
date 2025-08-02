@@ -23,7 +23,7 @@ commands:
         echo "$@" | xargs -n1 echo
       fi
     flags:
-      -h, --help: show help
+      -p, --prefix=: prefix values
     completion:
       positional:
         - [one, two]
