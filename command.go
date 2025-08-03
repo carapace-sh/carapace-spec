@@ -202,7 +202,6 @@ func (c Command) addAliasCompletion(cmd *cobra.Command) error { // TODO add test
 		cmd.DisableFlagParsing = true
 		carapace.Gen(cmd).PositionalAnyCompletion(
 			carapace.ActionCallback(func(context carapace.Context) carapace.Action {
-				// TODO legacy support
 				switch c.Run.Type() {
 				case "alias":
 					var mArgs []string
