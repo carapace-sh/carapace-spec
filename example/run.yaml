@@ -1,29 +1,40 @@
 name: run
 commands:
-  - name: alias ARG
-    # run: "[git, status]"
-    run: [git, status]
+  - name: alias
+    commands:
+      - name: string
+        run: "[git, log]"
 
-  - name: legacy ARG
-    run: "[git, status]"
+      - name: array
+        run: [git, log]
 
-  - name: macro ARG
-    run: "$(ls $@)" # TODO: support modifiers -  run: "$fish(pwd) ||| $chdir(/tmp)"
-    completion:
-      positionalany: ["$files"]
+  - name: script
+    commands:
+      - name: macro
+        run: "$(git log $1)" # TODO: support modifiers -  run: "$fish(pwd) ||| $chdir(/tmp)"        
+        completion:
+          positional:
+            - ["$files"]
 
-  - name: script ARG
-    run: |
-      #!/usr/bin/env bash
-      if [[ -n  "$C_FLAG_PREFIX" ]]; then
-        for arg in "$@"; do
-          echo "${C_FLAG_PREFIX}/${arg}"
-        done
-      else
-        echo "$@" | xargs -n1 echo
-      fi
-    flags:
-      -p, --prefix=: prefix values
-    completion:
-      positional:
-        - [one, two]
+      - name: shebang
+        run: |
+          #!/usr/bin/env bash
+          git log $1
+        completion:
+          positional:
+            - ["$files"]
+      # - name: script ARG
+      #   run: |
+      #     #!/usr/bin/env bash
+      #     if [[ -n  "$C_FLAG_PREFIX" ]]; then
+      #       for arg in "$@"; do
+      #         echo "${C_FLAG_PREFIX}/${arg}"
+      #       done
+      #     else
+      #       echo "$@" | xargs -n1 echo
+      #     fi
+      #   flags:
+      #     -p, --prefix=: prefix values
+      #   completion:
+      #     positional:
+      #       - [one, two]
