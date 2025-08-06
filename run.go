@@ -162,12 +162,13 @@ func (r run) parseMacro() func(cmd *cobra.Command, args []string) error {
 }
 
 type shebang struct {
-	Command string
+	Command string   // interpreter
 	Args    []string // optional single argument
+	Script  string   // script without shebang header for compability
 }
 
 func (r run) parseShebang() (*shebang, error) {
-	firstLine, _, ok := strings.Cut(string(r), "\n")
+	firstLine, script, ok := strings.Cut(string(r), "\n")
 	if !ok {
 		return nil, errors.New("missing shebang header")
 	}
@@ -181,6 +182,7 @@ func (r run) parseShebang() (*shebang, error) {
 	shebang := &shebang{
 		Command: matches[1],
 		Args:    []string{},
+		Script:  script,
 	}
 	if matches[3] != "" {
 		shebang.Args = []string{matches[3]} // optional arg
@@ -214,7 +216,7 @@ func (r run) parseScript() func(cmd *cobra.Command, args []string) error {
 		}
 		defer os.Remove(file.Name())
 
-		os.WriteFile(file.Name(), []byte(r), os.ModePerm) // TODO make only readable by current user
+		os.WriteFile(file.Name(), []byte(shebang.Script), os.ModePerm) // TODO make only readable by current user
 
 		scriptArgs := append(shebang.Args, file.Name())
 		scriptArgs = append(scriptArgs, args...)
