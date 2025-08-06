@@ -221,7 +221,7 @@ func (r run) parseScript() func(cmd *cobra.Command, args []string) error {
 		}
 		defer os.Remove(file.Name())
 
-		os.WriteFile(file.Name(), []byte(shebang.Script), os.ModePerm) // TODO make only readable by current user
+		os.WriteFile(file.Name(), []byte(shebang.Script), 0600) // TODO make only readable by current user
 
 		scriptArgs := append(shebang.Args, file.Name())
 		scriptArgs = append(scriptArgs, args...)
