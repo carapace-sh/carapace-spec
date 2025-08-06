@@ -215,7 +215,7 @@ func (r run) parseScript() func(cmd *cobra.Command, args []string) error {
 			return err
 		}
 
-		file, err := os.CreateTemp(os.TempDir(), "carapace-spec_run")
+		file, err := os.CreateTemp(os.TempDir(), "carapace-spec_run_")
 		if err != nil {
 			return err
 		}
