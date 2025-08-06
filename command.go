@@ -121,7 +121,7 @@ func (c Command) addFlagCompletion(cmd *cobra.Command) error {
 }
 
 func (c Command) addRun(cmd *cobra.Command) error {
-	if cmd.RunE = c.Run.Parse(); cmd.RunE == nil {
+	if cmd.RunE = run(c.Run).Parse(); cmd.RunE == nil {
 		return nil
 	}
 
