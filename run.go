@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/carapace-sh/carapace"
+	shlex "github.com/carapace-sh/carapace-shlex"
 	"github.com/carapace-sh/carapace-spec/pkg/command"
 	"github.com/carapace-sh/carapace/pkg/execlog"
 	"github.com/spf13/cobra"
@@ -163,7 +164,7 @@ func (r run) parseMacro() func(cmd *cobra.Command, args []string) error {
 
 type shebang struct {
 	Command string   // interpreter
-	Args    []string // optional single argument
+	Args    []string // optional arguments (deriving from the standard and allowing more than one)
 	Script  string   // script without shebang header for compability
 }
 
@@ -185,7 +186,11 @@ func (r run) parseShebang() (*shebang, error) {
 		Script:  script,
 	}
 	if matches[3] != "" {
-		shebang.Args = []string{matches[3]} // optional arg
+		tokens, err := shlex.Split(matches[3])
+		if err != nil {
+			return nil, err
+		}
+		shebang.Args = tokens.Words().Strings() // optional args
 	}
 
 	return shebang, nil
