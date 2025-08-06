@@ -93,6 +93,8 @@ func (r run) parseMacro() func(cmd *cobra.Command, args []string) error {
 			}
 		})
 
+		// TODO parse and execute using the core exec macros
+
 		mCmd := ""
 		mArgs := make([]string, 0)
 
