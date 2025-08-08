@@ -96,7 +96,6 @@ func (r run) parseMacro() func(cmd *cobra.Command, args []string) error {
 		// TODO parse and execute using the core exec macros
 
 		mCmd := ""
-		mArgs := make([]string, 0)
 
 		matches := regexp.MustCompile(`^\$(?P<macro>[^(]*)(\((?P<arg>.*)\))?$`).FindStringSubmatch(string(r))
 		if matches == nil {
@@ -122,34 +121,11 @@ func (r run) parseMacro() func(cmd *cobra.Command, args []string) error {
 			return fmt.Errorf("unknown macro: %#v", matches[1])
 		}
 
-		switch mCmd {
-		case "nu", "pwsh":
-			// nu and pwsh handle arguments after `-c` differently (https://github.com/PowerShell/PowerShell/issues/13832)
-
-			suffix := ".nu"
-			if mCmd == "pwsh" {
-				suffix = ".ps1"
-			}
-
-			path, err := os.CreateTemp(os.TempDir(), "carapace-spec_run*"+suffix)
-			if err != nil {
-				return err
-			}
-			defer os.Remove(path.Name())
-
-			if err = os.WriteFile(path.Name(), []byte(script), 0700); err != nil {
-				return err
-			}
-			if err := path.Close(); err != nil {
-				return err
-			}
-			mArgs = append(mArgs, path.Name())
-
-		default:
-			mArgs = append(mArgs, "-c", script, "--")
+		args, err = shellArgs(mCmd, script, args...)
+		if err != nil {
+			return err
 		}
-
-		execCmd := exec.Command(mCmd, append(mArgs, args...)...)
+		execCmd := exec.Command(mCmd, args...)
 		execCmd.Stdin = cmd.InOrStdin()
 		execCmd.Stdout = cmd.OutOrStdout()
 		execCmd.Stderr = cmd.ErrOrStderr()
@@ -237,3 +213,25 @@ func (r run) parseScript() func(cmd *cobra.Command, args []string) error {
 		return scriptCmd.Run()
 	}
 }
+
+// TODO  func runAction(shell, command string) carapace.Action {
+// 	return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
+// 		args, err := shellArgs(shell, command, c.Args...)
+// 		if err != nil {
+// 			return carapace.ActionMessage(err.Error())
+// 		}
+
+// 		execCmd := execlog.Command(shell, args...)
+// 		execCmd.Stdin = os.Stdin
+// 		execCmd.Stdout = os.Stdout
+// 		execCmd.Stderr = os.Stderr
+// 		execCmd.Env = c.Env
+// 		if err := execCmd.Run(); err != nil {
+// 			if exitErr, ok := err.(*exec.ExitError); ok {
+// 				os.Exit(exitErr.ProcessState.ExitCode())
+// 			}
+// 			return carapace.ActionMessage(err.Error())
+// 		}
+// 		return carapace.ActionValues()
+// 	})
+// }
