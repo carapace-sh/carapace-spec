@@ -1,7 +1,6 @@
 package spec
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -10,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/carapace-sh/carapace"
-	shlex "github.com/carapace-sh/carapace-shlex"
+	"github.com/carapace-sh/carapace-spec/internal/shebang"
 	"github.com/carapace-sh/carapace-spec/pkg/command"
 	"github.com/carapace-sh/carapace/pkg/execlog"
 	"github.com/spf13/cobra"
@@ -122,40 +121,6 @@ func (r run) parseMacro() func(cmd *cobra.Command, args []string) error {
 	}
 }
 
-type shebang struct {
-	Command string   // interpreter
-	Args    []string // optional arguments (deriving from the standard and allowing more than one)
-	Script  string   // script without shebang header for compability
-}
-
-func (r run) parseShebang() (*shebang, error) {
-	firstLine, script, ok := strings.Cut(string(r), "\n")
-	if !ok {
-		return nil, errors.New("missing shebang header")
-	}
-
-	re := regexp.MustCompile(`^#!(?P<command>[^ ]+)( (?P<arg>.*))?$`)
-	matches := re.FindStringSubmatch(strings.TrimSpace(firstLine))
-	if matches == nil {
-		return nil, errors.New("invalid shebang header")
-	}
-
-	shebang := &shebang{
-		Command: matches[1],
-		Args:    []string{},
-		Script:  script,
-	}
-	if matches[3] != "" {
-		tokens, err := shlex.Split(matches[3])
-		if err != nil {
-			return nil, err
-		}
-		shebang.Args = tokens.Words().Strings() // optional args
-	}
-
-	return shebang, nil
-}
-
 func (r run) context(cmd *cobra.Command, args []string) carapace.Context {
 	context := carapace.NewContext(args...)
 	cmd.Flags().VisitAll(func(f *pflag.Flag) { // VisitAll as Visit() skips changed persistent flags of parent commands
@@ -172,7 +137,7 @@ func (r run) context(cmd *cobra.Command, args []string) carapace.Context {
 
 func (r run) parseScript() func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
-		shebang, err := r.parseShebang()
+		shebang, err := shebang.Parse(string(r))
 		if err != nil {
 			return err
 		}
