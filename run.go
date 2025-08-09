@@ -26,7 +26,7 @@ func (r run) Parse() func(cmd *cobra.Command, args []string) error {
 		return r.parseMacro()
 	case "script":
 		return r.parseScript()
-	case "alias": // legacy
+	case "alias":
 		return r.parseAlias()
 	default:
 		return nil // TODO handle the error somehow (log or give feedback)
