@@ -172,8 +172,6 @@ func (r run) context(cmd *cobra.Command, args []string) carapace.Context {
 
 func (r run) parseScript() func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
-		context := r.context(cmd, args)
-		// TODO currently duplicated in each run type
 		shebang, err := r.parseShebang()
 		if err != nil {
 			return err
@@ -185,8 +183,9 @@ func (r run) parseScript() func(cmd *cobra.Command, args []string) error {
 		}
 		defer os.Remove(file.Name())
 
-		os.WriteFile(file.Name(), []byte(shebang.Script), 0600) // TODO make only readable by current user
+		os.WriteFile(file.Name(), []byte(shebang.Script), 0600)
 
+		context := r.context(cmd, args)
 		scriptArgs := append(shebang.Args, file.Name())
 		scriptArgs = append(scriptArgs, args...)
 
