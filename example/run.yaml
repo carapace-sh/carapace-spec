@@ -1,0 +1,40 @@
+name: run
+commands:
+  - name: alias
+    commands:
+      - name: string
+        run: "[git, log]"
+
+      - name: array
+        run: [git, log]
+
+  - name: script
+    commands:
+      - name: macro
+        run: "$(git log $1)" # TODO: support modifiers -  run: "$fish(pwd) ||| $chdir(/tmp)"        
+        completion:
+          positional:
+            - ["$files"]
+
+      - name: shebang
+        run: |
+          #!/usr/bin/env bash
+          git log $1
+        completion:
+          positional:
+            - ["$files"]
+      # - name: script ARG
+      #   run: |
+      #     #!/usr/bin/env bash
+      #     if [[ -n  "$C_FLAG_PREFIX" ]]; then
+      #       for arg in "$@"; do
+      #         echo "${C_FLAG_PREFIX}/${arg}"
+      #       done
+      #     else
+      #       echo "$@" | xargs -n1 echo
+      #     fi
+      #   flags:
+      #     -p, --prefix=: prefix values
+      #   completion:
+      #     positional:
+      #       - [one, two]

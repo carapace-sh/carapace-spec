@@ -3,7 +3,6 @@ package spec
 import (
 	"os"
 	"path/filepath"
-	"regexp"
 
 	"github.com/carapace-sh/carapace"
 	"github.com/carapace-sh/carapace-spec/pkg/command"
@@ -122,15 +121,13 @@ func (c Command) addFlagCompletion(cmd *cobra.Command) error {
 }
 
 func (c Command) addRun(cmd *cobra.Command) error {
-	if c.Run == "" {
+	if cmd.RunE = run(c.Run).Parse(); cmd.RunE == nil {
 		return nil
 	}
 
 	if len(c.Flags) == 0 && len(c.PersistentFlags) == 0 {
 		cmd.DisableFlagParsing = true
 	}
-
-	cmd.RunE = run(c.Run).parse()
 	return nil
 }
 
@@ -193,8 +190,8 @@ func (c Command) addSubcommands(cmd *cobra.Command) error {
 	return nil
 }
 
-func (c Command) addAliasCompletion(cmd *cobra.Command) error {
-	if c.Run != "" &&
+func (c Command) addAliasCompletion(cmd *cobra.Command) error { // TODO add tests for alias completion
+	if c.Run != "" && // TODO string/alias check
 		len(c.Flags) == 0 &&
 		len(c.PersistentFlags) == 0 &&
 		len(c.Completion.Positional) == 0 &&
@@ -205,8 +202,8 @@ func (c Command) addAliasCompletion(cmd *cobra.Command) error {
 		cmd.DisableFlagParsing = true
 		carapace.Gen(cmd).PositionalAnyCompletion(
 			carapace.ActionCallback(func(context carapace.Context) carapace.Action {
-				switch {
-				case regexp.MustCompile(`^\[.*\]$`).MatchString(string(c.Run)):
+				switch c.Run.Type() {
+				case "alias":
 					var mArgs []string
 					if err := yaml.Unmarshal([]byte(c.Run), &mArgs); err != nil {
 						return carapace.ActionMessage(err.Error())

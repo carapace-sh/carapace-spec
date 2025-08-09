@@ -11,7 +11,7 @@ type Command struct {
 	Flags           map[string]string `yaml:"flags,omitempty" json:"flags,omitempty" jsonschema_description:"Flags of the command with their description"`
 	PersistentFlags map[string]string `yaml:"persistentflags,omitempty" json:"persistentflags,omitempty" jsonschema_description:"Persistent flags of the command with their description"`
 	ExclusiveFlags  [][]string        `yaml:"exclusiveflags,omitempty" json:"exclusiveflags,omitempty" jsonschema_description:"Flags that are mutually exclusive"`
-	Run             string            `yaml:"run,omitempty" json:"run,omitempty" jsonschema_description:"Command or script to execute in runnable mode"`
+	Run             Run               `yaml:"run,omitempty" json:"run,omitempty" jsonschema:"oneof_type=string;array" jsonschema_description:"Command or script to execute in runnable mode"`
 	Completion      struct {
 		Flag          map[string][]string `yaml:"flag,omitempty" json:"flag,omitempty" jsonschema_description:"Flag completion"`
 		Positional    [][]string          `yaml:"positional,omitempty" json:"positional,omitempty" jsonschema_description:"Positional completion"`
