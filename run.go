@@ -34,28 +34,23 @@ func (r run) Parse() func(cmd *cobra.Command, args []string) error {
 
 func (r run) parseAlias() func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
-		context := r.context(cmd, args)
-
-		mCmd := ""
-		mArgs := make([]string, 0)
-		if err := yaml.Unmarshal([]byte(r), &mArgs); err != nil {
+		alias := make([]string, 0)
+		if err := yaml.Unmarshal([]byte(r), &alias); err != nil {
 			return err
 		}
-		if len(mArgs) < 1 {
+		if len(alias) < 1 {
 			return fmt.Errorf("malformed alias: %#v", r)
 		}
 
-		mCmd = mArgs[0]
-		mArgs = mArgs[1:]
-
+		context := r.context(cmd, args)
 		var err error
-		for index, arg := range mArgs {
-			if mArgs[index], err = context.Envsubst(arg); err != nil {
+		for index, arg := range alias[1:] {
+			if alias[index], err = context.Envsubst(arg); err != nil {
 				return err
 			}
 		}
 
-		execCmd := execlog.Command(mCmd, append(mArgs, args...)...)
+		execCmd := execlog.Command(alias[0], append(alias[1:], args...)...)
 		execCmd.Stdin = cmd.InOrStdin()
 		execCmd.Stdout = cmd.OutOrStdout()
 		execCmd.Stderr = cmd.ErrOrStderr()
