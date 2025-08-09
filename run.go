@@ -35,16 +35,7 @@ func (r run) Parse() func(cmd *cobra.Command, args []string) error {
 
 func (r run) parseAlias() func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
-		context := carapace.NewContext(args...)
-		cmd.Flags().VisitAll(func(f *pflag.Flag) { // VisitAll as Visit() skips changed persistent flags of parent commands
-			if f.Changed {
-				if slice, ok := f.Value.(pflag.SliceValue); ok {
-					context.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), strings.Join(slice.GetSlice(), ","))
-				} else {
-					context.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), f.Value.String())
-				}
-			}
-		})
+		context := r.context(cmd, args)
 
 		mCmd := ""
 		mArgs := make([]string, 0)
@@ -82,16 +73,7 @@ func (r run) parseAlias() func(cmd *cobra.Command, args []string) error {
 
 func (r run) parseMacro() func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
-		context := carapace.NewContext(args...)
-		cmd.Flags().VisitAll(func(f *pflag.Flag) { // VisitAll as Visit() skips changed persistent flags of parent commands
-			if f.Changed {
-				if slice, ok := f.Value.(pflag.SliceValue); ok {
-					context.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), strings.Join(slice.GetSlice(), ","))
-				} else {
-					context.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), f.Value.String())
-				}
-			}
-		})
+		context := r.context(cmd, args)
 
 		// TODO parse and execute using the core exec macros
 
@@ -174,20 +156,24 @@ func (r run) parseShebang() (*shebang, error) {
 	return shebang, nil
 }
 
+func (r run) context(cmd *cobra.Command, args []string) carapace.Context {
+	context := carapace.NewContext(args...)
+	cmd.Flags().VisitAll(func(f *pflag.Flag) { // VisitAll as Visit() skips changed persistent flags of parent commands
+		if f.Changed {
+			if slice, ok := f.Value.(pflag.SliceValue); ok {
+				context.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), strings.Join(slice.GetSlice(), ","))
+			} else {
+				context.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), f.Value.String())
+			}
+		}
+	})
+	return context
+}
+
 func (r run) parseScript() func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
+		context := r.context(cmd, args)
 		// TODO currently duplicated in each run type
-		context := carapace.NewContext(args...)
-		cmd.Flags().VisitAll(func(f *pflag.Flag) { // VisitAll as Visit() skips changed persistent flags of parent commands
-			if f.Changed {
-				if slice, ok := f.Value.(pflag.SliceValue); ok {
-					context.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), strings.Join(slice.GetSlice(), ","))
-				} else {
-					context.Setenv(fmt.Sprintf("C_FLAG_%v", strings.ToUpper(f.Name)), f.Value.String())
-				}
-			}
-		})
-
 		shebang, err := r.parseShebang()
 		if err != nil {
 			return err
