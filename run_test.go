@@ -69,20 +69,20 @@ func TestRunMacro(t *testing.T) {
 	})
 }
 
-func TestRunScript(t *testing.T) {
+func TestRunShebang(t *testing.T) {
 	var command Command
 	if err := yaml.Unmarshal([]byte(runSpec), &command); err != nil {
 		t.Error(err)
 	}
 
 	cmd := command.ToCobra()
-	cmd.SetArgs([]string{"script", "one"})
+	cmd.SetArgs([]string{"script", "shebang", ""})
 	if err := cmd.Execute(); err != nil {
 		t.Error(err)
 	}
 
 	sandboxSpec(t, runSpec)(func(s *sandbox.Sandbox) {
-		s.Run("script", "").
+		s.Run("script", "shebang", "").
 			Expect(carapace.ActionValues("one", "two").
 				Usage("script ARG"))
 	})

@@ -11,30 +11,25 @@ commands:
   - name: script
     commands:
       - name: macro
-        run: "$(git log $1)" # TODO: support modifiers -  run: "$fish(pwd) ||| $chdir(/tmp)"        
+        run: "$(echo \"$1${C_FLAG_SUFFIX:-.suffix}\")" # TODO: support modifiers -  run: "$fish(pwd) ||| $chdir(/tmp)"
+        flags:
+          -s, --suffix=: suffix to add
         completion:
+          flag:
+            suffix: [.backup, .copy]
           positional:
-            - ["$files"]
+            - [one, two]
 
       - name: shebang
         run: |
           #!/usr/bin/env bash
-          git log $1
+          for arg in "$@"; do
+            echo "${arg}${C_FLAG_SUFFIX:-.suffix}"
+          done
+        flags:
+          -s, --suffix=: suffix to add
         completion:
+          flag:
+            suffix: [.backup, .copy]
           positional:
-            - ["$files"]
-      # - name: script ARG
-      #   run: |
-      #     #!/usr/bin/env bash
-      #     if [[ -n  "$C_FLAG_PREFIX" ]]; then
-      #       for arg in "$@"; do
-      #         echo "${C_FLAG_PREFIX}/${arg}"
-      #       done
-      #     else
-      #       echo "$@" | xargs -n1 echo
-      #     fi
-      #   flags:
-      #     -p, --prefix=: prefix values
-      #   completion:
-      #     positional:
-      #       - [one, two]
+            - [one, two]
