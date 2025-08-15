@@ -1,0 +1,35 @@
+name: run
+commands:
+  - name: alias
+    commands:
+      - name: string
+        run: "[git, log]"
+
+      - name: array
+        run: [git, log]
+
+  - name: script
+    commands:
+      - name: macro
+        run: "$(echo \"$1${C_FLAG_SUFFIX:-.suffix}\")" # TODO: support modifiers -  run: "$fish(pwd) ||| $chdir(/tmp)"
+        flags:
+          -s, --suffix=: suffix to add
+        completion:
+          flag:
+            suffix: [.backup, .copy]
+          positional:
+            - [one, two]
+
+      - name: shebang
+        run: |
+          #!/usr/bin/env bash
+          for arg in "$@"; do
+            echo "${arg}${C_FLAG_SUFFIX:-.suffix}"
+          done
+        flags:
+          -s, --suffix=: suffix to add
+        completion:
+          flag:
+            suffix: [.backup, .copy]
+          positional:
+            - [one, two]

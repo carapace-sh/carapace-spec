@@ -44,25 +44,9 @@ func init() {
 
 func shell(shell, command string) carapace.Action {
 	return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
-		if runtime.GOOS == "windows" &&
-			shell != "elvish" &&
-			shell != "nu" &&
-			shell != "pwsh" &&
-			shell != "xonsh" {
-			return carapace.ActionMessage("unsupported shell [%v]: %v", runtime.GOOS, shell)
-		}
-
-		args := []string{"-c"}
-		switch shell {
-		case "nu":
-			args = append(args, fmt.Sprintf("def --wrapped main [...args] { %v }; main %v", command, shlex.Join(c.Args)))
-		case "pwsh":
-			args = append(args, command)
-			args = append(args, c.Args...)
-		default:
-			args = append(args, command)
-			args = append(args, "--")
-			args = append(args, c.Args...)
+		args, err := shellArgs(shell, command, c.Args...)
+		if err != nil {
+			return carapace.ActionMessage(err.Error())
 		}
 		return carapace.ActionExecCommand(shell, args...)(func(output []byte) carapace.Action {
 			lines := strings.Split(string(output), "\n")
@@ -75,5 +59,28 @@ func shell(shell, command string) carapace.Action {
 			return batch.ToA()
 		}).Invoke(c).ToA()
 	})
+}
 
+func shellArgs(shell, command string, arrr ...string) ([]string, error) {
+	if runtime.GOOS == "windows" &&
+		shell != "elvish" &&
+		shell != "nu" &&
+		shell != "pwsh" &&
+		shell != "xonsh" {
+		return nil, fmt.Errorf("unsupported shell [%v]: %v", runtime.GOOS, shell)
+	}
+
+	args := []string{"-c"}
+	switch shell {
+	case "nu":
+		args = append(args, fmt.Sprintf("def --wrapped main [...args] { %v }; main %v", command, shlex.Join(arrr)))
+	case "pwsh":
+		args = append(args, command)
+		args = append(args, arrr...)
+	default:
+		args = append(args, command)
+		args = append(args, "--")
+		args = append(args, arrr...)
+	}
+	return args, nil
 }

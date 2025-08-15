@@ -73,7 +73,7 @@ func MacroI[A, T any](f func(arg A) (*T, error)) Macro[T] {
 					return nil, err
 				}
 				if s == "" {
-					if v, ok := interface{}(arg).(Default[A]); ok {
+					if v, ok := any(arg).(Default[A]); ok {
 						arg = v.Default()
 					}
 				}
@@ -102,7 +102,7 @@ func MacroV[A, T any](f func(args ...A) (*T, error)) Macro[T] {
 	}
 }
 
-func signature(i interface{}) string {
+func signature(i any) string {
 	elem := reflect.ValueOf(i).Elem()
 	switch elem.Kind() {
 	case reflect.Struct:
@@ -110,7 +110,7 @@ func signature(i interface{}) string {
 		if err != nil {
 			return err.Error()
 		}
-		lines := strings.Split(string(out), "\n")
+		lines := strings.Split(string(out), "\n") // TODO enforcing `flow` style by patching struct tags possible?
 		return fmt.Sprintf("{%v}", strings.Join(lines[:len(lines)-1], ", "))
 
 	case reflect.Slice:
