@@ -1,20 +1,42 @@
 # !yaml-language-server: $schema=https://carapace.sh/schemas/command.json
+# ANCHOR: command
 name: command
 commands:
-- name: name [value]
+# ANCHOR_END: command
 
+# ANCHOR: name
+- name: name
+# ANCHOR_END: name
+
+# ANCHOR: usage
+- name: name-usage [-F file | -D dir]... [-f format] profile 
+# ANCHOR_END: usage
+
+
+# ANCHOR: description
 - name: description
   description: with description
+# ANCHOR_END: description
 
+# ANCHOR: group
+- name: group
+  group: with group
+# ANCHOR_END: group
+
+# ANCHOR: aliases
 - name: aliases
   aliases: [a, al]
+# ANCHOR_END: aliases
 
+# ANCHOR: hidden
 - name: hidden
   hidden: true
   completion:
     positional:
     - [p1, positional1]
+# ANCHOR_END: hidden
 
+# ANCHOR: parsing
 - name: parsing
   commands:
   - name: interspersed
@@ -51,14 +73,26 @@ commands:
         string: [s1, s2, s3]
       positional:
       - [p1, positional1]
+# ANCHOR_END: parsing
 
+# ANCHOR: flags
 - name: flags
   flags:
-    --bool: bool flag
-    --string=: string flag
-  completion:
-    flag:
-      string: [s1, s2, s3]
+    -b: bool flag
+    -v=: shorthand with value
+    --repeatable*: longhand repeatable
+    -o, --optarg?: shorthand and longhand with optional argument
+    --hidden&: longhand hidden
+    --required!: longhand required    
+# ANCHOR_END: flags
+
+# ANCHOR: nonposix
+- name: nonposix
+  flags:
+    -np: non-posix shorthand
+    -np, -nonposix:  non-posix shorthand and longhand
+    -np, --nonposix: non-posix shorthand mixed with posix longhand    
+# ANCHOR_END: nonposix
 
 - name: persistentflags
   persistentflags:
@@ -69,6 +103,16 @@ commands:
       string: [s1, s2, s3]
   commands:
   - name: subcommand
+
+# ANCHOR: persistentflags
+- name: persistentflags
+  persistentflags:
+    -p, --persistent: persistent flag
+  commands:
+    - name: child
+      flags:
+        -l, --local: local flag
+# ANCHOR_END: persistentflags
 
 - name: exclusiveflags
   flags:

@@ -7,6 +7,12 @@ Sets flag parsing mode. One of:
 - `disabled` flag parsing disabled
 
 ```yaml
+{{#include ../../../../example/command.yaml:command}}
+{{#include ../../../../example/command.yaml:parsing}}
+```
+
+# TODO remove code and update asciicast
+```yaml
 # yaml-language-server: $schema=https://carapace.sh/schemas/command.json
 name: parsing
 persistentflags:
