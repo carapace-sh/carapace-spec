@@ -83,13 +83,19 @@ func TestCommand(t *testing.T) {
 		s.Run("parsing", "disabled", "--").
 			Expect(carapace.ActionValues())
 
-		s.Run("flags", "--").
-			Expect(carapace.ActionStyledValuesDescribed(
-				"--repeatable", "longhand repeatable", style.Default,
-				"--optarg", "shorthand and longhand with optional argument", style.Yellow,
-				"--required", "longhand required", style.Default,
-			).NoSpace('.').
-				Tag("longhand flags"))
+		s.Run("flags", "-").
+			Expect(carapace.Batch(
+				carapace.ActionStyledValuesDescribed(
+					"-b", "bool flag", style.Default,
+					"-o", "shorthand and longhand with optional argument", style.Yellow,
+					"-v", "shorthand with value", style.Blue,
+				).Tag("shorthand flags"),
+				carapace.ActionStyledValuesDescribed(
+					"--repeatable", "longhand repeatable", style.Default,
+					"--optarg", "shorthand and longhand with optional argument", style.Yellow,
+					"--required", "longhand required", style.Default,
+				).Tag("longhand flags"),
+			).ToA().NoSpace('.'))
 
 		s.Run("persistentflags", "--").
 			Expect(carapace.ActionStyledValuesDescribed(
