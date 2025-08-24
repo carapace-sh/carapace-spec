@@ -114,15 +114,16 @@ commands:
         -l, --local: local flag
 # ANCHOR_END: persistentflags
 
+# ANCHOR: exclusiveflags
 - name: exclusiveflags
   flags:
-    --bool: bool flag
-    --string=: string flag
+    --add: add package
+    --delete: delete package
   exclusiveflags:
-  - [bool, string]
-  completion:
-    flag:
-      string: [s1, s2, s3]
+    - [add, delete]
+# ANCHOR: exclusiveflags
+
+# ANCHOR_END: exclusiveflags
 
 - name: run
   commands:
