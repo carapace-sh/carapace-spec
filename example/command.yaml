@@ -9,9 +9,8 @@ commands:
 # ANCHOR_END: name
 
 # ANCHOR: usage
-- name: name-usage [-F file | -D dir]... [-f format] profile 
+- name: usage [-F file | -D dir]... [-f format] profile 
 # ANCHOR_END: usage
-
 
 # ANCHOR: description
 - name: description
