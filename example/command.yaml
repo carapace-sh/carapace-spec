@@ -20,7 +20,7 @@ commands:
 
 # ANCHOR: group
 - name: group
-  group: with group
+  group: grouped
 # ANCHOR_END: group
 
 # ANCHOR: aliases

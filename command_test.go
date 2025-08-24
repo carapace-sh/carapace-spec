@@ -17,23 +17,29 @@ func TestCommand(t *testing.T) {
 		s.Run("name").
 			Expect(carapace.ActionValues(
 				"name",
-			).Tag("commands"))
+			).Tag("other commands"))
 
-		s.Run("name", "").
+		s.Run("usage", "").
 			Expect(carapace.ActionValues().
-				Usage("name [value]"))
+				Usage("usage [-F file | -D dir]... [-f format] profile").
+				Tag("other commands"))
 
 		s.Run("description").
 			Expect(carapace.ActionValuesDescribed(
 				"description", "with description",
-			).Tag("commands"))
+			).Tag("other commands"))
+
+		s.Run("group").
+			Expect(carapace.ActionStyledValues(
+				"group", style.Blue,
+			).Tag("grouped commands"))
 
 		s.Run("a").
 			Expect(carapace.ActionValues(
 				"a",
 				"al",
 				"aliases",
-			).Tag("commands"))
+			).Tag("other commands"))
 
 		s.Run("hidden").
 			Expect(carapace.ActionValues())
@@ -46,21 +52,26 @@ func TestCommand(t *testing.T) {
 
 		s.Run("parsing", "interspersed", "--bool", "").
 			Expect(carapace.ActionValues(
-				"p1",
-				"positional1",
+				"one",
+				"two",
+				"three",
 			))
 
-		s.Run("parsing", "interspersed", "--bool", "p1", "--").
+		s.Run("parsing", "interspersed", "--bool", "one", "--").
 			Expect(carapace.ActionStyledValuesDescribed(
 				"--string", "string flag", style.Blue,
 			).NoSpace('.').
 				Tag("longhand flags"))
 
-		s.Run("parsing", "interspersed", "--bool", "p1", "--string", "").
+		s.Run("parsing", "interspersed", "--bool", "one", "--string", "").
+			Expect(carapace.ActionValues().
+				Usage("string flag"))
+
+		s.Run("parsing", "interspersed", "--bool", "one", "--string", "", "").
 			Expect(carapace.ActionValues(
-				"s1",
-				"s2",
-				"s3",
+				"one",
+				"two",
+				"three",
 			).Usage("string flag"))
 
 		s.Run("parsing", "interspersed", "--bool", "p1", "--string", "s1", "--", "").
