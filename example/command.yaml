@@ -1,4 +1,5 @@
-# !yaml-language-server: $schema=https://carapace.sh/schemas/command.json
+# yaml-language-server: $schema=https://carapace.sh/schemas/command.json
+# 
 # ANCHOR: command
 name: command
 commands:
@@ -37,41 +38,28 @@ commands:
 
 # ANCHOR: parsing
 - name: parsing
+  persistentflags:
+    --bool: bool flag
+    --string=: string flag
   commands:
   - name: interspersed
     parsing: interspersed
-    flags:
-      --bool: bool flag
-      --string=: string flag
     completion:
-      flag:
-        string: [s1, s2, s3]
-      positional:
-      - [p1, positional1]
-      dash:
-      - [d1, dash1]
-  
+      positionalany: [one, two, three]
   - name: non-interspersed
     parsing: non-interspersed
     flags:
       --bool: bool flag
       --string=: string flag
     completion:
-      flag:
-        string: [s1, s2, s3]
-      positional:
-      - [p1, positional1]
-
+      positionalany: [one, two, three]
   - name: disabled
     parsing: disabled
     flags:
       --bool: bool flag
       --string=: string flag
     completion:
-      flag:
-        string: [s1, s2, s3]
-      positional:
-      - [p1, positional1]
+      positionalany: [one, two, three]
 # ANCHOR_END: parsing
 
 # ANCHOR: flags
@@ -88,9 +76,9 @@ commands:
 # ANCHOR: nonposix
 - name: nonposix
   flags:
-    -np: non-posix shorthand
-    -np, -nonposix:  non-posix shorthand and longhand
-    -np, --nonposix: non-posix shorthand mixed with posix longhand    
+    -single: non-posix shorthand
+    -short, -long:  non-posix shorthand and longhand
+    -mixed, --mixed: non-posix shorthand mixed with posix longhand    
 # ANCHOR_END: nonposix
 
 - name: persistentflags

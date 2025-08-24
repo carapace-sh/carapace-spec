@@ -1,13 +1,12 @@
-# !yaml-language-server: $schema=https://carapace.sh/schemas/command.json
+# yaml-language-server: $schema=https://carapace.sh/schemas/command.json
 name: nonposix
-description:
 flags:
   -opt, -optarg?: both nonposix
   -styled=: nonposix shorthand
   -mx, --mixed*: mixed repeatable
 completion:
   flag:
-    optarg: [1, 2, 3]
+    optarg: [o1, o2, o3]
     styled:
       - "green\t\tgreen"
       - "red\t\tred"

@@ -1,6 +1,5 @@
-# !yaml-language-server: $schema=https://carapace.sh/schemas/command.json
+# yaml-language-server: $schema=https://carapace.sh/schemas/command.json
 name: pkill
-description:
 flags:
   --signal=: signal to send (either number or name)
   -q, --queue=: integer value to be sent with the signal
