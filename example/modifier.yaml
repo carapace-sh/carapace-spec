@@ -1,4 +1,4 @@
-# !yaml-language-server: $schema=https://carapace.sh/schemas/command.json
+# yaml-language-server: $schema=https://carapace.sh/schemas/command.json
 name: modifier
 commands:
 - name: generic

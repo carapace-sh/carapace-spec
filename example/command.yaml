@@ -1,95 +1,95 @@
-# !yaml-language-server: $schema=https://carapace.sh/schemas/command.json
+# yaml-language-server: $schema=https://carapace.sh/schemas/command.json
+# 
+# ANCHOR: command
 name: command
 commands:
-- name: name [value]
+# ANCHOR_END: command
 
+# ANCHOR: name
+- name: name
+# ANCHOR_END: name
+
+# ANCHOR: usage
+- name: usage [-F file | -D dir]... [-f format] profile
+# ANCHOR_END: usage
+
+# ANCHOR: description
 - name: description
   description: with description
+# ANCHOR_END: description
 
+# ANCHOR: group
+- name: group
+  group: grouped
+# ANCHOR_END: group
+
+# ANCHOR: aliases
 - name: aliases
   aliases: [a, al]
+# ANCHOR_END: aliases
 
+# ANCHOR: hidden
 - name: hidden
   hidden: true
   completion:
     positional:
     - [p1, positional1]
+# ANCHOR_END: hidden
 
+# ANCHOR: parsing
 - name: parsing
-  commands:
-  - name: interspersed
-    parsing: interspersed
-    flags:
-      --bool: bool flag
-      --string=: string flag
-    completion:
-      flag:
-        string: [s1, s2, s3]
-      positional:
-      - [p1, positional1]
-      dash:
-      - [d1, dash1]
-  
-  - name: non-interspersed
-    parsing: non-interspersed
-    flags:
-      --bool: bool flag
-      --string=: string flag
-    completion:
-      flag:
-        string: [s1, s2, s3]
-      positional:
-      - [p1, positional1]
-
-  - name: disabled
-    parsing: disabled
-    flags:
-      --bool: bool flag
-      --string=: string flag
-    completion:
-      flag:
-        string: [s1, s2, s3]
-      positional:
-      - [p1, positional1]
-
-- name: flags
-  flags:
-    --bool: bool flag
-    --string=: string flag
-  completion:
-    flag:
-      string: [s1, s2, s3]
-
-- name: persistentflags
   persistentflags:
     --bool: bool flag
     --string=: string flag
-  completion:
-    flag:
-      string: [s1, s2, s3]
   commands:
-  - name: subcommand
+  - name: interspersed
+    parsing: interspersed
+    completion:
+      positionalany: [one, two, three]
+  - name: non-interspersed
+    parsing: non-interspersed
+    completion:
+      positionalany: [one, two, three]
+  - name: disabled
+    parsing: disabled
+    completion:
+      positionalany: [one, two, three]
+# ANCHOR_END: parsing
 
+# ANCHOR: flags
+- name: flags
+  flags:
+    -b: bool flag
+    -v=: shorthand with value
+    --repeatable*: longhand repeatable
+    -o, --optarg?: shorthand and longhand with optional argument
+    --hidden&: longhand hidden
+    --required!: longhand required
+# ANCHOR_END: flags
+
+# ANCHOR: nonposix
+- name: nonposix
+  flags:
+    -single: non-posix shorthand
+    -short, -long:  non-posix shorthand and longhand
+    -mixed, --mixed: non-posix shorthand mixed with posix longhand
+# ANCHOR_END: nonposix
+
+# ANCHOR: persistentflags
+- name: persistentflags
+  persistentflags:
+    -p, --persistent: persistent flag
+  commands:
+    - name: subcommand
+      flags:
+        -l, --local: local flag
+# ANCHOR_END: persistentflags
+
+# ANCHOR: exclusiveflags
 - name: exclusiveflags
   flags:
-    --bool: bool flag
-    --string=: string flag
+    --add: add package
+    --delete: delete package
   exclusiveflags:
-  - [bool, string]
-  completion:
-    flag:
-      string: [s1, s2, s3]
-
-- name: run
-  commands:
-  - name: alias
-    run: "[git, log]"
-  - name: shell
-    run: "$(git log --color=${C_FLAG_COLOR:-auto} $@)"
-    flags:
-      --color?: colored diff
-    completion:
-      flag:
-        color: [always, auto, never]
-      positional:
-      -  [master]
+    - [add, delete]
+# ANCHOR: exclusiveflags
