@@ -97,19 +97,37 @@ func TestCommand(t *testing.T) {
 				).Tag("longhand flags"),
 			).ToA().NoSpace('.'))
 
-		s.Run("persistentflags", "--").
-			Expect(carapace.ActionStyledValuesDescribed(
-				"--bool", "bool flag", style.Default,
-				"--string", "string flag", style.Blue,
-			).NoSpace('.').
-				Tag("longhand flags"))
+		s.Run("persistentflags", "-").
+			Expect(carapace.Batch(
+				carapace.ActionStyledValuesDescribed(
+					"-p", "persistent flag", style.Default,
+				).Tag("shorthand flags"),
+				carapace.ActionStyledValuesDescribed(
+					"--persistent", "persistent flag", style.Default,
+				).Tag("longhand flags"),
+			).ToA().NoSpace('.'))
 
-		s.Run("persistentflags", "subcommand", "--").
-			Expect(carapace.ActionStyledValuesDescribed(
-				"--bool", "bool flag", style.Default,
-				"--string", "string flag", style.Blue,
-			).NoSpace('.').
-				Tag("longhand flags"))
+		s.Run("persistentflags", "subcommand", "-").
+			Expect(carapace.Batch(
+				carapace.ActionStyledValuesDescribed(
+					"-l", "local flag", style.Default,
+					"-p", "persistent flag", style.Default,
+				).Tag("shorthand flags"),
+				carapace.ActionStyledValuesDescribed(
+					"--local", "local flag", style.Default,
+					"--persistent", "persistent flag", style.Default,
+				).Tag("longhand flags"),
+			).ToA().NoSpace('.'))
+
+		s.Run("persistentflags", "-p", "subcommand", "-").
+			Expect(carapace.Batch(
+				carapace.ActionStyledValuesDescribed(
+					"-l", "local flag", style.Default,
+				).Tag("shorthand flags"),
+				carapace.ActionStyledValuesDescribed(
+					"--local", "local flag", style.Default,
+				).Tag("longhand flags"),
+			).ToA().NoSpace('.'))
 
 		s.Run("persistentflags", "--bool", "subcommand", "--").
 			Expect(carapace.ActionStyledValuesDescribed(

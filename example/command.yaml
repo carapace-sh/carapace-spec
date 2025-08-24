@@ -80,7 +80,7 @@ commands:
   persistentflags:
     -p, --persistent: persistent flag
   commands:
-    - name: child
+    - name: subcommand
       flags:
         -l, --local: local flag
 # ANCHOR_END: persistentflags
