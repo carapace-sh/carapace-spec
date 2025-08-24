@@ -11,41 +11,25 @@ Core macros provided by [carapace-spec](https://github.com/carapace-sh/carapace-
 
 ## exec
 
-[`$(<command>)`](https://carapace-sh.github.io/carapace/carapace/defaultActions/actionExecCommand.html) executes given command in a `sh` / `pwsh` shell.
+[Executes](https://carapace-sh.github.io/carapace/carapace/defaultActions/actionExecCommand.html) given command in a shell.
 
 ```yaml
-["$(echo -e 'a\nb\nc')"]
+["$(echo one two three)"]
 ```
+- `$(<command>)` (`sh` on unix and `cmd` on windows)
+- `$bash(<command>)`
+- `$cmd(<command>)`
+- `$elvish(<command>)`
+- `$fish(<command>)`
+- `$ion(<command>)`
+- `$nu(<command>)`
+- `$osh(<command>)`
+- `$pwsh(<command>)`
+- `$sh(<command>)`
+- `$xonsh(<command>)`
+- `$zsh(<command>)`
 
-Any arguments or options or flags already parsed by carapace will be included in the executed command's environment variables, prefixed with `C_`
-
-For example, with a spec like 
-```yaml
-# yaml-language-server: $schema=https://carapace.sh/schemas/command.json
-name: context
-persistentflags:
-  -p, --persistent: persistent flag
-commands:
-  - name: sub
-    flags:
-      -s, --string=: string flag
-      -b, --bool: bool flag
-      --custom=: custom flag
-    completion:
-      flag:
-        custom: ["$(env)"]
-```
-Typing `context sub --custom ` and hitting the **TAB** key will execute the unix `env` command and return all environment variables as completion options.
-Typing `context --persistent sub --string one -b arg1 arg2 --custom C_` and hitting **TAB** will produce the following terminal completion options:
-```console
-C_ARG0=arg1                                                                                                                              
-C_ARG1=arg2                                                                                                                              
-C_FLAG_BOOL=true                                                                                                                         
-C_FLAG_STRING=one                                                                                                                        
-C_VALUE=C_
-```
-
-Every variable listed in [Variables](https://carapace-sh.github.io/carapace-spec/carapace-spec/variables.html) which has a value will be included in the executed command's environment
+> Environment contains [Variables](../variables.md) of parsed flags and arguments.
 
 ## executables
 

@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -16,7 +15,7 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:  "carapace-spec",
+	Use:  "carapace-spec spec [arg]...",
 	Long: "define simple completions using a spec file",
 	Example: `  Spec completion:
     bash:       source <(carapace-spec example.yaml)
@@ -35,39 +34,15 @@ var rootCmd = &cobra.Command{
 		DisableDefaultCmd: true,
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		switch args[0] {
-		case "-h", "--help":
-			cmd.Help()
-		case "-v", "--version":
-			cmd.Println("carapace-spec " + cmd.Version)
-		case "--codegen":
-			if len(args) < 2 {
-				return errors.New("flag needs an argument: --codegen")
-			}
-			command, err := loadSpec(args[1])
-			if err != nil {
-				return err
-			}
-			command.Codegen()
-		case "--run":
-			command, err := loadSpec(args[1])
-			if err != nil {
-				return err
-			}
-			cobraCmd := command.ToCobra()
-			cobraCmd.SetArgs(args[2:])
-			cobraCmd.Execute()
-		default:
-			abs, err := filepath.Abs(args[0])
-			if err != nil {
-				return err
-			}
-			specCmd, err := loadSpec(abs)
-			if err != nil {
-				return err
-			}
-			bridgeCompletion(specCmd.ToCobra(), abs, args[1:]...)
+		abs, err := filepath.Abs(args[0])
+		if err != nil {
+			return err
 		}
+		specCmd, err := loadSpec(abs)
+		if err != nil {
+			return err
+		}
+		bridgeCompletion(specCmd.ToCobra(), abs, args[1:]...)
 		return nil
 	},
 }
@@ -95,8 +70,7 @@ func Execute(version string) error {
 	return rootCmd.Execute()
 }
 func init() {
-	rootCmd.Flags().Bool("codegen", false, "generate code for spec file")
-	rootCmd.Flags().Bool("run", false, "run with given args")
+	rootCmd.Flags().SetInterspersed(false)
 
 	carapace.Gen(rootCmd).PositionalCompletion(
 		carapace.ActionFiles(".yaml"),
@@ -104,37 +78,9 @@ func init() {
 
 	carapace.Gen(rootCmd).PositionalAnyCompletion(
 		carapace.ActionCallback(func(c carapace.Context) carapace.Action {
-			switch {
-			case c.Args[0] == "--run":
-				if len(c.Args) > 1 {
-					path := c.Args[1]
-					c.Args = c.Args[2:]
-					return spec.ActionSpec(path).Invoke(c).ToA()
-				}
-				return carapace.ActionFiles(".yaml")
-
-			case c.Args[0] == "--codegen" && len(c.Args) == 1:
-				return carapace.ActionFiles(".yaml")
-
-			case !strings.HasPrefix(c.Args[0], "-"):
-				return spec.ActionSpec(c.Args[0]).Shift(1)
-
-			default:
-				return carapace.ActionValues()
-			}
+			return spec.ActionSpec(c.Args[0]).Shift(1)
 		}),
 	)
-
-	carapace.Gen(rootCmd).PreRun(func(cmd *cobra.Command, args []string) {
-		switch len(args) {
-		case 0, 1:
-			cmd.DisableFlagParsing = false
-
-		default:
-			cmd.Flags().Parse(args[:1]) // TODO unnecessary
-		}
-
-	})
 
 	spec.AddMacro("Spec", spec.MacroI(spec.ActionSpec))
 	spec.Register(rootCmd)
@@ -168,7 +114,7 @@ func bridgeCompletion(cmd *cobra.Command, spec string, args ...string) {
 	}
 
 	executableName := filepath.Base(executable)
-	patched := strings.Replace(string(out), fmt.Sprintf("%v _carapace", executableName), fmt.Sprintf("%v '%v'", executableName, spec), -1)    // general callback
-	patched = strings.Replace(patched, fmt.Sprintf("'%v', '_carapace'", executableName), fmt.Sprintf("'%v', '%v'", executableName, spec), -1) // xonsh callback
+	patched := strings.ReplaceAll(string(out), fmt.Sprintf("%v _carapace", executableName), fmt.Sprintf("%v '%v'", executableName, spec))    // general callback
+	patched = strings.ReplaceAll(patched, fmt.Sprintf("'%v', '_carapace'", executableName), fmt.Sprintf("'%v', '%v'", executableName, spec)) // xonsh callback
 	fmt.Print(patched)
 }

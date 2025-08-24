@@ -26,11 +26,12 @@ func init() {
 
 	addCoreMacro("", MacroI(func(s string) carapace.Action {
 		if runtime.GOOS == "windows" {
-			return shell("pwsh", s)
+			return shell("cmd", s)
 		}
 		return shell("sh", s)
 	}))
 	addCoreMacro("bash", MacroI(func(s string) carapace.Action { return shell("bash", s) }))
+	addCoreMacro("cmd", MacroI(func(s string) carapace.Action { return shell("cmd", s) }))
 	addCoreMacro("elvish", MacroI(func(s string) carapace.Action { return shell("elvish", s) }))
 	addCoreMacro("fish", MacroI(func(s string) carapace.Action { return shell("fish", s) }))
 	addCoreMacro("ion", MacroI(func(s string) carapace.Action { return shell("ion", s) }))
@@ -44,30 +45,17 @@ func init() {
 
 func shell(shell, command string) carapace.Action {
 	return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
-		if runtime.GOOS == "windows" &&
-			shell != "elvish" &&
-			shell != "nu" &&
-			shell != "pwsh" &&
-			shell != "xonsh" {
-			return carapace.ActionMessage("unsupported shell [%v]: %v", runtime.GOOS, shell)
-		}
-
-		args := []string{"-c"}
-		switch shell {
-		case "nu":
-			args = append(args, fmt.Sprintf("def --wrapped main [...args] { %v }; main %v", command, shlex.Join(c.Args)))
-		case "pwsh":
-			args = append(args, command)
-			args = append(args, c.Args...)
-		default:
-			args = append(args, command)
-			args = append(args, "--")
-			args = append(args, c.Args...)
+		args, err := shellArgs(shell, command, c.Args...)
+		if err != nil {
+			return carapace.ActionMessage(err.Error())
 		}
 		return carapace.ActionExecCommand(shell, args...)(func(output []byte) carapace.Action {
 			lines := strings.Split(string(output), "\n")
 			batch := carapace.Batch()
 			for _, line := range lines {
+				if shell == "cmd" && runtime.GOOS != "windows" {
+					line = strings.TrimSuffix(line, "\r") // TODO wine workaround for local tests (remove if this causes issues)
+				}
 				if line != "" {
 					batch = append(batch, parseValue(line))
 				}
@@ -75,5 +63,33 @@ func shell(shell, command string) carapace.Action {
 			return batch.ToA()
 		}).Invoke(c).ToA()
 	})
+}
 
+func shellArgs(shell, command string, arguments ...string) ([]string, error) {
+	if runtime.GOOS == "windows" &&
+		shell != "cmd" &&
+		shell != "elvish" &&
+		shell != "nu" &&
+		shell != "pwsh" &&
+		shell != "xonsh" {
+		return nil, fmt.Errorf("unsupported shell [%v]: %v", runtime.GOOS, shell)
+	}
+
+	args := []string{"-c"}
+	switch shell {
+	case "cmd":
+		args[0] = "/c"
+		args = append(args, command)
+		args = append(args, arguments...)
+	case "nu":
+		args = append(args, fmt.Sprintf("def --wrapped main [...args] { %v }; main %v", command, shlex.Join(arguments)))
+	case "pwsh":
+		args = append(args, command)
+		args = append(args, arguments...)
+	default:
+		args = append(args, command)
+		args = append(args, "--")
+		args = append(args, arguments...)
+	}
+	return args, nil
 }

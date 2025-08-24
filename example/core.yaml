@@ -1,23 +1,61 @@
 name: core
-flags:
-  --bash=: bash command
-  --elvish=: elvish command
-  --fish=: fish command
-  --ion=: ion command
-  --nu=: nu command
-  --osh=: osh command
-  --pwsh=: pwsh command
-  --sh=: sh command
-  --xonsh=: xonsh command
-  --zsh=: zsh command
-completion:
-  flag:
-    bash: ["$bash(echo -e 'one\\ntwo')"]
-    elvish: ["$elvish(echo \"one\\ntwo\")"]
-    fish: ["$fish(echo -e 'one\\ntwo')"]
-    nu: ["$nu(echo \"one\\ntwo\")"]
-    osh: ["$osh(echo -e 'one\\ntwo')"]
-    pwsh: ["$pwsh(echo one`ntwo)"]
-    sh: ["$sh(echo one; echo two)"]
-    xonsh: ["$xonsh(echo -e 'one\\ntwo')"]
-    zsh: ["$zsh(echo -e 'one\\ntwo')"]
+commands:
+  - name: bash
+    run: "$bash(echo -e 'one\\ntwo')"
+    completion:
+      positional:
+        - ["$bash(echo -e 'one\\ntwo')"]
+
+  - name: cmd
+    run: "$cmd(echo one&echo two)"
+    completion:
+      positional:
+        - ["$cmd(echo one&echo two)"]
+
+  - name: elvish
+    run: "$elvish(echo \"one\\ntwo\")"
+    completion:
+      positional:
+        - ["$elvish(echo \"one\\ntwo\")"]
+
+  - name: fish
+    run: "$fish(echo -e 'one\\ntwo')"
+    completion:
+      positional:
+        - ["$fish(echo -e 'one\\ntwo')"]
+
+  - name: nu
+    run: "$nu(echo \"one\\ntwo\")"
+    completion:
+      positional:
+        - ["$nu(echo \"one\\ntwo\")"]
+
+  - name: osh
+    run: "$osh(echo -e 'one\\ntwo')"
+    completion:
+      positional:
+        - ["$osh(echo -e 'one\\ntwo')"]
+
+  - name: pwsh
+    run: "$pwsh(echo one`ntwo)"
+    completion:
+      positional:
+        - ["$pwsh(echo one`ntwo)"]
+
+  - name: sh
+    run: "$sh(echo one; echo two)"
+    completion:
+      positional:
+        - ["$sh(echo one; echo two)"]
+
+  - name: xonsh
+    run: "$xonsh(echo -e 'one\\ntwo')"
+    completion:
+      positional:
+        - ["$xonsh(echo -e 'one\\ntwo')"]
+
+  - name: zsh
+    run: "$zsh(echo -e 'one\\ntwo')"
+    completion:
+      positional:
+        - ["$zsh(echo -e 'one\\ntwo')"]

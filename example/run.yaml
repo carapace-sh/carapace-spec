@@ -1,0 +1,32 @@
+name: run
+commands:
+  - name: alias
+    commands:
+      - name: string
+        run: "[tail, --lines, '${NUM:-1}']"
+
+      - name: array
+        run: [tail, --lines, '${NUM:-1}']
+
+  - name: script
+    commands:
+      - name: macro
+        run: "$(tail -n${C_FLAG_LINES:-1} $@) ||| $chdir($tempdir)"
+        flags:
+          -n, --lines=: output the last NUM lines
+        completion:
+          positionalany: ["$files ||| $chdir($tempdir)"]
+
+      - name: shebang
+        run: |
+          #!/usr/bin/env bash -x
+          for arg in "$@"; do
+            echo "${arg}${C_FLAG_SUFFIX:-.suffix}"
+          done
+        flags:
+          -s, --suffix=: suffix to add
+        completion:
+          flag:
+            suffix: [.backup, .copy]
+          positional:
+            - [one, two]
