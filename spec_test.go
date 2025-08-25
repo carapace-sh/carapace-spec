@@ -48,9 +48,9 @@ func TestNonposix(t *testing.T) {
 
 		s.Run("-opt=").
 			Expect(carapace.ActionValues(
-				"1",
-				"2",
-				"3",
+				"o1",
+				"o2",
+				"o3",
 			).Prefix("-opt=").
 				Usage("both nonposix"))
 	})
