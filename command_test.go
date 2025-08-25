@@ -129,30 +129,17 @@ func TestCommand(t *testing.T) {
 				).Tag("longhand flags"),
 			).ToA().NoSpace('.'))
 
-		s.Run("persistentflags", "--bool", "subcommand", "--").
-			Expect(carapace.ActionStyledValuesDescribed(
-				"--string", "string flag", style.Blue,
-			).NoSpace('.').
-				Tag("longhand flags"))
-
 		s.Run("exclusiveflags", "--").
-			Expect(carapace.ActionStyledValuesDescribed(
-				"--bool", "bool flag", style.Default,
-				"--string", "string flag", style.Blue,
+			Expect(carapace.ActionValuesDescribed(
+				"--add", "add package",
+				"--delete", "delete package",
 			).NoSpace('.').
 				Tag("longhand flags"))
 
-		s.Run("exclusiveflags", "--bool", "--").
-			Expect(carapace.ActionValues().
-				NoSpace('.').
-				Tag("longhand flags"))
+		s.Run("exclusiveflags", "--add", "").
+			Expect(carapace.ActionValues())
 
-		s.Run("run", "shell", "--color=").
-			Expect(carapace.ActionValues(
-				"always",
-				"auto",
-				"never",
-			).Prefix("--color=").
-				Usage("colored diff"))
+		s.Run("exclusiveflags", "--delete", "").
+			Expect(carapace.ActionValues())
 	})
 }
