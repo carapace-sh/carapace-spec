@@ -3,16 +3,16 @@
 Flags are defined as a map of name and description.
 
 ```yaml
-flags:
-  -b: bool flag
-  -v=: shorthand with value
-  --repeatable*: longhand repeatable
-  -o, --optarg?: shorthand and longhand with optional argument
-  --hidden&: longhand hidden
-  --required!: longhand required
+{{#include ../../../../example/command.yaml:command}}
+{{#include ../../../../example/command.yaml:flags}}
 ```
 
+![](./flags.cast)
+
 ## Modifiers:
+
+Flags can have `0..n` modifier suffixes.
+
 - `=` flag takes an argument
 - `*` flag is repeatable
 - `?` flag takes an optional argument
@@ -24,7 +24,8 @@ flags:
 With [carapace-pflag](https://github.com/carapace-sh/carapace-pflag) non-posix flags possible as well:
 
 ```yaml
-  -np: non-posix shorthand
-  -np, -nonposix:  non-posix shorthand and longhand
-  -np, --nonposix: non-posix shorthand mixed with posix longhand
+{{#include ../../../../example/command.yaml:command}}
+{{#include ../../../../example/command.yaml:nonposix}}
 ```
+
+![](./nonposix.cast)

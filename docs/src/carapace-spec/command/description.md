@@ -3,5 +3,8 @@
 Description of the command.
 
 ```yaml
-description: example description
+{{#include ../../../../example/command.yaml:command}}
+{{#include ../../../../example/command.yaml:description}}
 ```
+
+![](./description.cast)

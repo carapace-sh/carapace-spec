@@ -3,5 +3,8 @@
 Aliases of the command.
 
 ```yaml
-aliases: [l, ls]
+{{#include ../../../../example/command.yaml:command}}
+{{#include ../../../../example/command.yaml:aliases}}
 ```
+
+![](./aliases.cast)
