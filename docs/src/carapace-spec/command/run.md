@@ -5,3 +5,5 @@ Command to be executed.
 ```yaml
 {{#include ../../../../example/run.yaml}}
 ```
+
+![](./run.cast)
