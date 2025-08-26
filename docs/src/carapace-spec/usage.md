@@ -43,7 +43,7 @@ carapace-spec example/pkill.yaml | Out-String | Invoke-Expression
 ```
 ![](./usage/powershell.png)
 
-# Tcsh
+## Tcsh
 ```sh
 ## ~/.tcshrc
 eval `carapace-spec example/pkill.yaml`

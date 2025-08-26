@@ -92,4 +92,43 @@ commands:
     --delete: delete package
   exclusiveflags:
     - [add, delete]
-# ANCHOR: exclusiveflags
+# ANCHOR_END: exclusiveflags
+
+# ANCHOR: completion
+- name: completion
+  commands:
+# ANCHOR_END: completion
+# ANCHOR: completion_flags
+    - name: flag
+      flags:
+        -e?: executables
+        -f, --file=: file
+      completion:
+        flag:
+          e: ["$executables"]
+          file: ["$files"]
+# ANCHOR_END: completion_flags
+# ANCHOR: completion_positional
+    - name: positional
+      completion:
+        positional:
+          - [pos1, positional1]
+          - [pos2, positional2]
+# ANCHOR_END: completion_positional
+# ANCHOR: completion_positionalany
+    - name: positionalany
+      completion:
+        positionalany: [posany, positionalany]
+# ANCHOR_END: completion_positionalany
+# ANCHOR: completion_dash
+    - name: dash
+      completion:
+        dash:
+          - [d1, dash1]
+          - [d2, dash2]
+# ANCHOR_END: completion_dash
+# ANCHOR: completion_dashany
+    - name: dashany
+      completion:
+        dashany: [dany, dashany]
+# ANCHOR_END: completion_dashany

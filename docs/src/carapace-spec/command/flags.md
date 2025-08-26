@@ -1,6 +1,6 @@
 # Flags
 
-Flags are defined as a map of name and description.
+Flags of the command.
 
 ```yaml
 {{#include ../../../../example/command.yaml:command}}
@@ -21,7 +21,7 @@ Flags can have `0..n` modifier suffixes.
 
 ## Non-posix
 
-With [carapace-pflag](https://github.com/carapace-sh/carapace-pflag) non-posix flags possible as well:
+Additional formats when built with [carapace-pflag](https://github.com/carapace-sh/carapace-pflag).
 
 ```yaml
 {{#include ../../../../example/command.yaml:command}}
