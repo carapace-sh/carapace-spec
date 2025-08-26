@@ -12,7 +12,7 @@
     - [PersistentFlags](./carapace-spec/command/persistentFlags.md)
     - [ExclusiveFlags](./carapace-spec/command/exclusiveFlags.md)
     - [Completion](./carapace-spec/command/completion.md)
-      - [Flags](./carapace-spec/command/completion/flags.md)
+      - [Flag](./carapace-spec/command/completion/flag.md)
       - [Positional](./carapace-spec/command/completion/positional.md)
       - [PositionalAny](./carapace-spec/command/completion/positionalAny.md)
       - [Dash](./carapace-spec/command/completion/dash.md)

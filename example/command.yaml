@@ -98,7 +98,7 @@ commands:
 - name: completion
   commands:
 # ANCHOR_END: completion
-# ANCHOR: completion_flags
+# ANCHOR: completion_flag
     - name: flag
       flags:
         -e?: executables
@@ -107,7 +107,7 @@ commands:
         flag:
           e: ["$executables"]
           file: ["$files"]
-# ANCHOR_END: completion_flags
+# ANCHOR_END: completion_flag
 # ANCHOR: completion_positional
     - name: positional
       completion:
