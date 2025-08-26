@@ -1,82 +1,82 @@
 # yaml-language-server: $schema=https://carapace.sh/schemas/command.json
 name: modifier
 commands:
-- name: generic
-  flags:
-    --chdir=: "$chdir"
-    --filter=: "$filter"
-    --filterargs=: "$filterargs"
-    --list=: "$list"
-    --multiparts=: "$multiparts"
-    --nospace=: "$nospace"
-    --prefix=: "$prefix"
-    --retain=: "$retain"
-    --shift=: "$shift"
-    --split=: "$split"
-    --splitp=: "$splitp"
-    --style=: "$style"
-    --suffix=: "$suffix"
-    --suppress=: "$suppress"
-    --tag=: "$tag"
-    --uniquelist=: "$uniquelist"
-    --usage=: "$usage"
-  completion:
-    flag:
-      chdir: ["$files", "$chdir(/tmp)"]
-      filter: ["one", "two", "three", "$filter([two])"]
-      filterargs: ["$files", "$filterargs"]
-      list: ["one", "two", "three", "$list(,)"]
-      multiparts: ["one/two/three", "$multiparts([/])"]
-      nospace: ["one", "two/", "three,", "$nospace(/,)"]
-      prefix: ["$files", "$prefix(file://)"]
-      retain: ["one", "two", "three", "$retain([two])"]
-      shift: ["one", "two", "three", "$filterargs", "$shift(1)"]
-      split: ["one", "two", "three", "$filterargs", "$split"]
-      splitp: ["one", "two", "three", "$filterargs", "$splitp"]
-      style: ["one", "two", "three", "$style(underlined)"]
-      suffix: ["apple", "melon", "orange", "$suffix(juice)"]
-      suppress: ["$message(fail)", "$suppress(fail)"]
-      tag: ["one", "two", "three", "$tag(numbers)"]
-      uniquelist: ["one", "two", "three", "$uniquelist(,)"]
-      usage: ["$usage(custom)"]
-    positionalany: ["one", "two", "three", "$filterargs"]  
+  - name: generic
+    flags:
+      --chdir=: "$chdir"
+      --filter=: "$filter"
+      --filterargs=: "$filterargs"
+      --list=: "$list"
+      --multiparts=: "$multiparts"
+      --nospace=: "$nospace"
+      --prefix=: "$prefix"
+      --retain=: "$retain"
+      --shift=: "$shift"
+      --split=: "$split"
+      --splitp=: "$splitp"
+      --style=: "$style"
+      --suffix=: "$suffix"
+      --suppress=: "$suppress"
+      --tag=: "$tag"
+      --uniquelist=: "$uniquelist"
+      --usage=: "$usage"
+    completion:
+      flag:
+        chdir: ["$files", "$chdir(/tmp)"]
+        filter: ["one", "two", "three", "$filter([two])"]
+        filterargs: ["$files", "$filterargs"]
+        list: ["one", "two", "three", "$list(,)"]
+        multiparts: ["one/two/three", "$multiparts([/])"]
+        nospace: ["one", "two/", "three,", "$nospace(/,)"]
+        prefix: ["$files", "$prefix(file://)"]
+        retain: ["one", "two", "three", "$retain([two])"]
+        shift: ["one", "two", "three", "$filterargs", "$shift(1)"]
+        split: ["one", "two", "three", "$filterargs", "$split"]
+        splitp: ["one", "two", "three", "$filterargs", "$splitp"]
+        style: ["one", "two", "three", "$style(underlined)"]
+        suffix: ["apple", "melon", "orange", "$suffix(juice)"]
+        suppress: ["$message(fail)", "$suppress(fail)"]
+        tag: ["one", "two", "three", "$tag(numbers)"]
+        uniquelist: ["one", "two", "three", "$uniquelist(,)"]
+        usage: ["$usage(custom)"]
+      positionalany: ["one", "two", "three", "$filterargs"]
 
-- name: specific
-  flags:
-    --chdir=: "$chdir"
-    --filter=: "$filter"
-    --filterargs=: "$filterargs"
-    --list=: "$list"
-    --multiparts=: "$multiparts"
-    --nospace=: "$nospace"
-    --prefix=: "$prefix"
-    --retain=: "$retain"
-    --shift=: "$shift"
-    --split=: "$split"
-    --splitp=: "$splitp"
-    --style=: "$style"
-    --suffix=: "$suffix"
-    --suppress=: "$suppress"
-    --tag=: "$tag"
-    --uniquelist=: "$uniquelist"
-    --usage=: "$usage"
-  completion:
-    flag:
-      chdir: ["$files ||| $chdir(/tmp)"]
-      filter: ["$(printf '%s\\n' one two three) ||| $filter([two])"]
-      filterargs: ["$files ||| $filterargs"]
-      list: ["$(printf '%s\\n' one two three) ||| $list(,)"]
-      multiparts: ["one/two/three ||| $multiparts([/])"]
-      nospace: ["$(printf '%s\\n' one two/ three,) ||| $nospace(/,)"]
-      prefix: ["$files ||| $prefix(file://)"]
-      retain: ["$(printf '%s\\n' one two three) ||| $retain([two])"]
-      shift: ["$(printf '%s\\n' one two three) ||| $filterargs ||| $shift(1)"]
-      split: ["$(printf '%s\\n' one two three) ||| $filterargs ||| $split"]
-      splitp: ["$(printf '%s\\n' one two three) ||| $filterargs ||| $splitp"]
-      style: ["$(printf '%s\\n' one two three) ||| $style(underlined)"]
-      suffix: ["$(printf '%s\\n' apple melon orange) ||| $suffix(juice)"]
-      suppress: ["$message(fail) ||| $suppress(fail)"]
-      tag: ["$(printf '%s\\n' one two three) ||| $tag(numbers)"]
-      uniquelist: ["$(printf '%s\\n' one two three) ||| $uniquelist(,)"]
-      usage: ["$(echo) ||| $usage(custom)"]
-    positionalany: ["$(printf '%s\\n' one two three) ||| $filterargs"]
+  - name: specific
+    flags:
+      --chdir=: "$chdir"
+      --filter=: "$filter"
+      --filterargs=: "$filterargs"
+      --list=: "$list"
+      --multiparts=: "$multiparts"
+      --nospace=: "$nospace"
+      --prefix=: "$prefix"
+      --retain=: "$retain"
+      --shift=: "$shift"
+      --split=: "$split"
+      --splitp=: "$splitp"
+      --style=: "$style"
+      --suffix=: "$suffix"
+      --suppress=: "$suppress"
+      --tag=: "$tag"
+      --uniquelist=: "$uniquelist"
+      --usage=: "$usage"
+    completion:
+      flag:
+        chdir: ["$files ||| $chdir(/tmp)"]
+        filter: ["$(printf '%s\\n' one two three) ||| $filter([two])"]
+        filterargs: ["$files ||| $filterargs"]
+        list: ["$(printf '%s\\n' one two three) ||| $list(,)"]
+        multiparts: ["one/two/three ||| $multiparts([/])"]
+        nospace: ["$(printf '%s\\n' one two/ three,) ||| $nospace(/,)"]
+        prefix: ["$files ||| $prefix(file://)"]
+        retain: ["$(printf '%s\\n' one two three) ||| $retain([two])"]
+        shift: ["$(printf '%s\\n' one two three) ||| $filterargs ||| $shift(1)"]
+        split: ["$(printf '%s\\n' one two three) ||| $filterargs ||| $split"]
+        splitp: ["$(printf '%s\\n' one two three) ||| $filterargs ||| $splitp"]
+        style: ["$(printf '%s\\n' one two three) ||| $style(underlined)"]
+        suffix: ["$(printf '%s\\n' apple melon orange) ||| $suffix(juice)"]
+        suppress: ["$message(fail) ||| $suppress(fail)"]
+        tag: ["$(printf '%s\\n' one two three) ||| $tag(numbers)"]
+        uniquelist: ["$(printf '%s\\n' one two three) ||| $uniquelist(,)"]
+        usage: ["$(echo) ||| $usage(custom)"]
+      positionalany: ["$(printf '%s\\n' one two three) ||| $filterargs"]
