@@ -132,3 +132,10 @@ commands:
       completion:
         dashany: [dany, dashany]
 # ANCHOR_END: completion_dashany
+
+# ANCHOR: commands
+- name: subcommand
+  commands:
+    - name: subsubcommand1
+    - name: subsubcommand2
+# ANCHOR_END: commands
