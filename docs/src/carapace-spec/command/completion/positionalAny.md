@@ -1,12 +1,11 @@
 # PositionalAny
 
-Define [positional any completion](https://carapace-sh.github.io/carapace/carapace/gen/positionalCompletion.html).
+Define [PositionalAnyCompletion](https://carapace-sh.github.io/carapace/carapace/gen/positionalAnyCompletion.html).
 
 ```yaml
-# yaml-language-server: $schema=https://carapace.sh/schemas/command.json
-name: positionalany
-completion:
-  positionalany: [one, two, three]
+{{#include ../../../../../example/command.yaml:command}}
+{{#include ../../../../../example/command.yaml:completion}}
+{{#include ../../../../../example/command.yaml:completion_positionalany}}
 ```
 
 ![](positionalany.cast)

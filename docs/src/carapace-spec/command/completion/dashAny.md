@@ -1,12 +1,11 @@
 # DashAny
 
-Define [dash any completion](https://carapace-sh.github.io/carapace/carapace/gen/dashAnyCompletion.html).
+Define [DashAnyCompletion](https://carapace-sh.github.io/carapace/carapace/gen/dashAnyCompletion.html).
 
 ```yaml
-# yaml-language-server: $schema=https://carapace.sh/schemas/command.json
-name: dashany
-completion:
-  dashany: [one, two, three]
+{{#include ../../../../../example/command.yaml:command}}
+{{#include ../../../../../example/command.yaml:completion}}
+{{#include ../../../../../example/command.yaml:completion_dashany}}
 ```
 
 ![](dashany.cast)
