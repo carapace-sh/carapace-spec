@@ -7,7 +7,7 @@ commands:
         run: "[tail, --lines, '${NUM:-1}']"
 
       - name: array
-        run: [tail, --lines, '${NUM:-1}']
+        run: [tail, --lines, "${NUM:-1}"]
 
   - name: script
     commands:

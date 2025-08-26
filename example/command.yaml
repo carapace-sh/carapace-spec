@@ -1,141 +1,141 @@
 # yaml-language-server: $schema=https://carapace.sh/schemas/command.json
-# 
+#
 # ANCHOR: command
 name: command
 commands:
-# ANCHOR_END: command
+  # ANCHOR_END: command
 
-# ANCHOR: name
-- name: name
-# ANCHOR_END: name
+  # ANCHOR: name
+  - name: name
+  # ANCHOR_END: name
 
-# ANCHOR: usage
-- name: usage [-F file | -D dir]... [-f format] profile
-# ANCHOR_END: usage
+  # ANCHOR: usage
+  - name: usage [-F file | -D dir]... [-f format] profile
+  # ANCHOR_END: usage
 
-# ANCHOR: description
-- name: description
-  description: with description
-# ANCHOR_END: description
+  # ANCHOR: description
+  - name: description
+    description: with description
+  # ANCHOR_END: description
 
-# ANCHOR: group
-- name: group
-  group: grouped
-# ANCHOR_END: group
+  # ANCHOR: group
+  - name: group
+    group: grouped
+  # ANCHOR_END: group
 
-# ANCHOR: aliases
-- name: aliases
-  aliases: [a, al]
-# ANCHOR_END: aliases
+  # ANCHOR: aliases
+  - name: aliases
+    aliases: [a, al]
+  # ANCHOR_END: aliases
 
-# ANCHOR: hidden
-- name: hidden
-  hidden: true
-  completion:
-    positional:
-    - [p1, positional1]
-# ANCHOR_END: hidden
-
-# ANCHOR: parsing
-- name: parsing
-  persistentflags:
-    --bool: bool flag
-    --string=: string flag
-  commands:
-  - name: interspersed
-    parsing: interspersed
+  # ANCHOR: hidden
+  - name: hidden
+    hidden: true
     completion:
-      positionalany: [one, two, three]
-  - name: non-interspersed
-    parsing: non-interspersed
-    completion:
-      positionalany: [one, two, three]
-  - name: disabled
-    parsing: disabled
-    completion:
-      positionalany: [one, two, three]
-# ANCHOR_END: parsing
+      positional:
+        - [p1, positional1]
+  # ANCHOR_END: hidden
 
-# ANCHOR: flags
-- name: flags
-  flags:
-    -b: bool flag
-    -v=: shorthand with value
-    --repeatable*: longhand repeatable
-    -o, --optarg?: shorthand and longhand with optional argument
-    --hidden&: longhand hidden
-    --required!: longhand required
-# ANCHOR_END: flags
+  # ANCHOR: parsing
+  - name: parsing
+    persistentflags:
+      --bool: bool flag
+      --string=: string flag
+    commands:
+      - name: interspersed
+        parsing: interspersed
+        completion:
+          positionalany: [one, two, three]
+      - name: non-interspersed
+        parsing: non-interspersed
+        completion:
+          positionalany: [one, two, three]
+      - name: disabled
+        parsing: disabled
+        completion:
+          positionalany: [one, two, three]
+  # ANCHOR_END: parsing
 
-# ANCHOR: nonposix
-- name: nonposix
-  flags:
-    -single: non-posix shorthand
-    -short, -long:  non-posix shorthand and longhand
-    -mixed, --mixed: non-posix shorthand mixed with posix longhand
-# ANCHOR_END: nonposix
+  # ANCHOR: flags
+  - name: flags
+    flags:
+      -b: bool flag
+      -v=: shorthand with value
+      --repeatable*: longhand repeatable
+      -o, --optarg?: shorthand and longhand with optional argument
+      --hidden&: longhand hidden
+      --required!: longhand required
+  # ANCHOR_END: flags
 
-# ANCHOR: persistentflags
-- name: persistentflags
-  persistentflags:
-    -p, --persistent: persistent flag
-  commands:
-    - name: subcommand
-      flags:
-        -l, --local: local flag
-# ANCHOR_END: persistentflags
+  # ANCHOR: nonposix
+  - name: nonposix
+    flags:
+      -single: non-posix shorthand
+      -short, -long: non-posix shorthand and longhand
+      -mixed, --mixed: non-posix shorthand mixed with posix longhand
+  # ANCHOR_END: nonposix
 
-# ANCHOR: exclusiveflags
-- name: exclusiveflags
-  flags:
-    --add: add package
-    --delete: delete package
-  exclusiveflags:
-    - [add, delete]
-# ANCHOR_END: exclusiveflags
+  # ANCHOR: persistentflags
+  - name: persistentflags
+    persistentflags:
+      -p, --persistent: persistent flag
+    commands:
+      - name: subcommand
+        flags:
+          -l, --local: local flag
+  # ANCHOR_END: persistentflags
 
-# ANCHOR: completion
-- name: completion
-  commands:
-# ANCHOR_END: completion
-# ANCHOR: completion_flag
-    - name: flag
-      flags:
-        -e?: executables
-        -f, --file=: file
-      completion:
-        flag:
-          e: ["$executables"]
-          file: ["$files"]
-# ANCHOR_END: completion_flag
-# ANCHOR: completion_positional
-    - name: positional
-      completion:
-        positional:
-          - [pos1, positional1]
-          - [pos2, positional2]
-# ANCHOR_END: completion_positional
-# ANCHOR: completion_positionalany
-    - name: positionalany
-      completion:
-        positionalany: [posany, positionalany]
-# ANCHOR_END: completion_positionalany
-# ANCHOR: completion_dash
-    - name: dash
-      completion:
-        dash:
-          - [d1, dash1]
-          - [d2, dash2]
-# ANCHOR_END: completion_dash
-# ANCHOR: completion_dashany
-    - name: dashany
-      completion:
-        dashany: [dany, dashany]
-# ANCHOR_END: completion_dashany
+  # ANCHOR: exclusiveflags
+  - name: exclusiveflags
+    flags:
+      --add: add package
+      --delete: delete package
+    exclusiveflags:
+      - [add, delete]
+  # ANCHOR_END: exclusiveflags
 
-# ANCHOR: commands
-- name: subcommand
-  commands:
-    - name: subsubcommand1
-    - name: subsubcommand2
+  # ANCHOR: completion
+  - name: completion
+    commands:
+      # ANCHOR_END: completion
+      # ANCHOR: completion_flag
+      - name: flag
+        flags:
+          -e?: executables
+          -f, --file=: file
+        completion:
+          flag:
+            e: ["$executables"]
+            file: ["$files"]
+      # ANCHOR_END: completion_flag
+      # ANCHOR: completion_positional
+      - name: positional
+        completion:
+          positional:
+            - [pos1, positional1]
+            - [pos2, positional2]
+      # ANCHOR_END: completion_positional
+      # ANCHOR: completion_positionalany
+      - name: positionalany
+        completion:
+          positionalany: [posany, positionalany]
+      # ANCHOR_END: completion_positionalany
+      # ANCHOR: completion_dash
+      - name: dash
+        completion:
+          dash:
+            - [d1, dash1]
+            - [d2, dash2]
+      # ANCHOR_END: completion_dash
+      # ANCHOR: completion_dashany
+      - name: dashany
+        completion:
+          dashany: [dany, dashany]
+  # ANCHOR_END: completion_dashany
+
+  # ANCHOR: commands
+  - name: subcommand
+    commands:
+      - name: subsubcommand1
+      - name: subsubcommand2
 # ANCHOR_END: commands
