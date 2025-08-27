@@ -138,7 +138,7 @@ func (r run) parseScript() func(cmd *cobra.Command, args []string) error {
 			shebang.Args = append(shebang.Args, "/c")
 		case "pwsh":
 			pattern += ".ps1"
-			shebang.Args = append(shebang.Args, "--file")
+			shebang.Args = append(shebang.Args, "-f")
 		}
 
 		file, err := os.CreateTemp(os.TempDir(), pattern)
@@ -147,7 +147,9 @@ func (r run) parseScript() func(cmd *cobra.Command, args []string) error {
 		}
 		defer os.Remove(file.Name())
 
-		os.WriteFile(file.Name(), []byte(shebang.Script), 0600)
+		if err := os.WriteFile(file.Name(), []byte(shebang.Script), 0600); err != nil {
+			return err
+		}
 
 		context := r.context(cmd, args)
 		scriptArgs := append(shebang.Args, file.Name())
