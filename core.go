@@ -53,8 +53,9 @@ func shell(shell, command string) carapace.Action {
 			lines := strings.Split(string(output), "\n")
 			batch := carapace.Batch()
 			for _, line := range lines {
-				if shell == "cmd" && runtime.GOOS != "windows" {
-					line = strings.TrimSuffix(line, "\r") // TODO wine workaround for local tests (remove if this causes issues)
+				switch shell {
+				case "cmd", "pwsh":
+					line = strings.TrimSuffix(line, "\r")
 				}
 				if line != "" {
 					batch = append(batch, parseValue(line))
