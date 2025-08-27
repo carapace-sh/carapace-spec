@@ -150,6 +150,7 @@ func (r run) parseScript() func(cmd *cobra.Command, args []string) error {
 		if err := os.WriteFile(file.Name(), []byte(shebang.Script), 0600); err != nil {
 			return err
 		}
+		file.Close() // release lock
 
 		context := r.context(cmd, args)
 		scriptArgs := append(shebang.Args, file.Name())
