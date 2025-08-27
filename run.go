@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 	"strings"
 
@@ -130,7 +131,17 @@ func (r run) parseScript() func(cmd *cobra.Command, args []string) error {
 			return err
 		}
 
-		file, err := os.CreateTemp(os.TempDir(), "carapace-spec_run_")
+		pattern := "carapace-spec_run_*"
+		switch strings.TrimSuffix(filepath.Base(shebang.Command), ".exe") {
+		case "cmd":
+			pattern += ".cmd"
+			shebang.Args = append(shebang.Args, "/c")
+		case "pwsh":
+			pattern += ".ps1"
+			shebang.Args = append(shebang.Args, "--file")
+		}
+
+		file, err := os.CreateTemp(os.TempDir(), pattern)
 		if err != nil {
 			return err
 		}
