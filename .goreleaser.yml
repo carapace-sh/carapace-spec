@@ -25,16 +25,16 @@ builds:
       - "386"
     main: ./cmd/carapace-spec
     binary: carapace-spec
-    gobinary: go-termux
+    tool: go-termux
 archives:
   - id: default
-    builds:
+    ids:
      - default
     format_overrides:
       - goos: windows
-        format: zip
+        formats: [zip]
   - id: termux
-    builds:
+    ids:
       - termux
     name_template: '{{ .Binary }}_{{ .Version }}_termux_{{ .Arch }}{{ with .Arm }}v{{ . }}{{ end }}{{ with .Mips }}_{{ . }}{{ end }}{{ if not (eq .Amd64 "v1") }}{{ .Amd64 }}{{ end }}'
 
