@@ -21,7 +21,6 @@ Core macros provided by [carapace-spec](https://github.com/carapace-sh/carapace-
 - `$cmd(<command>)`
 - `$elvish(<command>)`
 - `$fish(<command>)`
-- `$ion(<command>)`
 - `$nu(<command>)`
 - `$osh(<command>)`
 - `$pwsh(<command>)`
