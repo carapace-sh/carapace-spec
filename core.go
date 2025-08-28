@@ -34,7 +34,7 @@ func init() {
 	addCoreMacro("cmd", MacroI(func(s string) carapace.Action { return shell("cmd", s) }))
 	addCoreMacro("elvish", MacroI(func(s string) carapace.Action { return shell("elvish", s) }))
 	addCoreMacro("fish", MacroI(func(s string) carapace.Action { return shell("fish", s) }))
-	addCoreMacro("ion", MacroI(func(s string) carapace.Action { return shell("ion", s) }))
+	// addCoreMacro("ion", MacroI(func(s string) carapace.Action { return shell("ion", s) }))
 	addCoreMacro("nu", MacroI(func(s string) carapace.Action { return shell("nu", s) }))
 	addCoreMacro("osh", MacroI(func(s string) carapace.Action { return shell("osh", s) }))
 	addCoreMacro("pwsh", MacroI(func(s string) carapace.Action { return shell("pwsh", s) }))
