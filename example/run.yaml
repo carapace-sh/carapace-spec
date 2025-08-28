@@ -29,5 +29,4 @@ commands:
         completion:
           flag:
             suffix: [.backup, .copy]
-          positional:
-            - [one, two]
+          positionalany: [one, two]
