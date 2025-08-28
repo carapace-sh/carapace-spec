@@ -22,7 +22,7 @@ commands:
         run: |
           #!/usr/bin/env bash -x
           for arg in "$@"; do
-            echo "${arg}${C_FLAG_SUFFIX:-.suffix}"
+            echo "${!arg}${C_FLAG_SUFFIX:-.suffix}"
           done
         flags:
           -s, --suffix=: suffix to add

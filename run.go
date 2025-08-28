@@ -126,7 +126,13 @@ func (r run) context(cmd *cobra.Command, args []string) carapace.Context {
 
 func (r run) parseScript() func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
-		shebang, err := shebang.Parse(string(r))
+		context := r.context(cmd, args)
+		substituted, err := context.Envsubst(string(r))
+		if err != nil {
+			return err
+		}
+
+		shebang, err := shebang.Parse(substituted)
 		if err != nil {
 			return err
 		}
@@ -152,7 +158,6 @@ func (r run) parseScript() func(cmd *cobra.Command, args []string) error {
 		}
 		file.Close() // release lock
 
-		context := r.context(cmd, args)
 		scriptArgs := append(shebang.Args, file.Name())
 		scriptArgs = append(scriptArgs, args...)
 
@@ -168,7 +173,12 @@ func (r run) parseScript() func(cmd *cobra.Command, args []string) error {
 
 func runAction(cmd *cobra.Command, shell, command string) carapace.Action {
 	return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
-		args, err := shellArgs(shell, command, c.Args...) // c.Args contains all args here (as they can be empty)
+		substituted, err := c.Envsubst(command)
+		if err != nil {
+			return carapace.ActionMessage(err.Error())
+		}
+
+		args, err := shellArgs(shell, substituted, c.Args...) // c.Args contains all args here (as they can be empty)
 		if err != nil {
 			return carapace.ActionMessage(err.Error())
 		}
