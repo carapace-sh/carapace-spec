@@ -40,7 +40,7 @@ archives:
 
 brews:
   -
-    description: "define simple completions using a spec file"
+    description: "A multi-shell completion spec"
     homepage: "https://github.com/rsteube/carapace-spec"
     license: "MIT"
     repository:
@@ -51,7 +51,7 @@ brews:
 
 scoops:
   -
-    description: "define simple completions using a spec file"
+    description: "A multi-shell completion spec"
     homepage: "https://github.com/rsteube/carapace-spec"
     license: "MIT"
     repository:
@@ -62,7 +62,7 @@ scoops:
 
 aurs:
   -
-    description: "define simple completions using a spec file"
+    description: "A multi-shell completion spec"
     homepage: "https://github.com/rsteube/carapace-spec"
     license: "MIT"
     maintainers:
@@ -72,7 +72,7 @@ aurs:
 
 nfpms:
   -
-    description: "define simple completions using a spec file"
+    description: "A multi-shell completion spec"
     homepage: "https://github.com/rsteube/carapace-spec"
     license: "MIT"
     maintainer: rsteube <rsteube@users.noreply.github.com>
