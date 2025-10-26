@@ -112,19 +112,19 @@ func codegen(cmd *cobra.Command, tmpDir string) error {
 
 		switch (pflagfork.Flag{Flag: f}).Mode() {
 		case pflagfork.ShorthandOnly:
-			fmt.Fprintf(out, `	%vCmd.%vFlags().%vS("%v", "%v", %v, "%v")`+"\n", cmdVarName(cmd), persistentPrefix, flagType(f), f.Name, f.Shorthand, flagValue(f), formatUsage(f.Usage))
+			fmt.Fprintf(out, `	%vCmd.%vFlags().%vS("%v", "%v", %v, %v)`+"\n", cmdVarName(cmd), persistentPrefix, flagType(f), f.Name, f.Shorthand, flagValue(f), formatUsage(f.Usage))
 		case pflagfork.NameAsShorthand:
-			fmt.Fprintf(out, `	%vCmd.%vFlags().%vN("%v", "%v", %v, "%v")`+"\n", cmdVarName(cmd), persistentPrefix, flagType(f), f.Name, f.Shorthand, flagValue(f), formatUsage(f.Usage))
+			fmt.Fprintf(out, `	%vCmd.%vFlags().%vN("%v", "%v", %v, %v)`+"\n", cmdVarName(cmd), persistentPrefix, flagType(f), f.Name, f.Shorthand, flagValue(f), formatUsage(f.Usage))
 		case pflagfork.Default:
 			switch {
 			case f.Shorthand != "" && f.Value.Type() == "count":
-				fmt.Fprintf(out, `	%vCmd.%vFlags().%vP("%v", "%v", "%v")`+"\n", cmdVarName(cmd), persistentPrefix, flagType(f), f.Name, f.Shorthand, formatUsage(f.Usage))
+				fmt.Fprintf(out, `	%vCmd.%vFlags().%vP("%v", "%v", %v)`+"\n", cmdVarName(cmd), persistentPrefix, flagType(f), f.Name, f.Shorthand, formatUsage(f.Usage))
 			case f.Shorthand != "" && f.Value.Type() != "count":
-				fmt.Fprintf(out, `	%vCmd.%vFlags().%vP("%v", "%v", %v, "%v")`+"\n", cmdVarName(cmd), persistentPrefix, flagType(f), f.Name, f.Shorthand, flagValue(f), formatUsage(f.Usage))
+				fmt.Fprintf(out, `	%vCmd.%vFlags().%vP("%v", "%v", %v, %v)`+"\n", cmdVarName(cmd), persistentPrefix, flagType(f), f.Name, f.Shorthand, flagValue(f), formatUsage(f.Usage))
 			case f.Value.Type() == "count":
-				fmt.Fprintf(out, `	%vCmd.%vFlags().%v("%v", "%v")`+"\n", cmdVarName(cmd), persistentPrefix, flagType(f), f.Name, formatUsage(f.Usage))
+				fmt.Fprintf(out, `	%vCmd.%vFlags().%v("%v", %v)`+"\n", cmdVarName(cmd), persistentPrefix, flagType(f), f.Name, formatUsage(f.Usage))
 			default:
-				fmt.Fprintf(out, `	%vCmd.%vFlags().%v("%v", %v, "%v")`+"\n", cmdVarName(cmd), persistentPrefix, flagType(f), f.Name, flagValue(f), formatUsage(f.Usage))
+				fmt.Fprintf(out, `	%vCmd.%vFlags().%v("%v", %v, %v)`+"\n", cmdVarName(cmd), persistentPrefix, flagType(f), f.Name, flagValue(f), formatUsage(f.Usage))
 			}
 		}
 	})
@@ -179,7 +179,7 @@ func codegen(cmd *cobra.Command, tmpDir string) error {
 }
 
 func formatUsage(usage string) string {
-	return strings.Replace(strings.Split(usage, "\n")[0], `"`, `\"`, -1)
+	return fmt.Sprintf("%q", strings.Split(usage, "\n")[0])
 }
 
 func cmdVarName(cmd *cobra.Command) string {
