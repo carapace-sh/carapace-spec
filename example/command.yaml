@@ -74,6 +74,18 @@ commands:
       -short, -long: non-posix shorthand and longhand
       -mixed, --mixed: non-posix shorthand mixed with posix longhand
   # ANCHOR_END: nonposix
+  # 
+  # ANCHOR: extended
+  - name: extended
+    flags:
+      --nargs-two=: {description: consumes two arguments, nargs: 2}
+      --nargs-any=: {description: consumes multiple arguments, nargs: -1}
+  # ANCHOR_END: extended
+    completion:
+      flag:        
+        nargs-two: [one, two, three]
+        nargs-any: [one, two, three]
+      positionalany: [pAny, positionalAny]
 
   # ANCHOR: persistentflags
   - name: persistentflags

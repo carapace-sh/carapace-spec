@@ -141,5 +141,38 @@ func TestCommand(t *testing.T) {
 
 		s.Run("exclusiveflags", "--delete", "").
 			Expect(carapace.ActionValues())
+
+		s.Run("extended", "--nargs-two", "").
+			Expect(carapace.ActionValues("one", "two", "three").
+				Usage("consumes two arguments"))
+
+		s.Run("extended", "--nargs-two", "").
+			Expect(carapace.ActionValues("one", "two", "three").
+				Usage("consumes two arguments"))
+
+		s.Run("extended", "--nargs-two", "one", "").
+			Expect(carapace.ActionValues("one", "two", "three").
+				Usage("consumes two arguments"))
+
+		s.Run("extended", "--nargs-two", "one", "two", "").
+			Expect(carapace.ActionValues("pAny", "positionalAny"))
+
+		s.Run("extended", "--nargs-any", "").
+			Expect(carapace.ActionValues("one", "two", "three").
+				Usage("consumes multiple arguments"))
+
+		s.Run("extended", "--nargs-any", "one", "").
+			Expect(carapace.ActionValues("one", "two", "three").
+				Usage("consumes multiple arguments"))
+
+		s.Run("extended", "--nargs-any", "one", "-").
+			Expect(carapace.ActionStyledValuesDescribed(
+				"--nargs-two", "consumes two arguments", style.Carapace.FlagMultiArg,
+			).NoSpace('.').
+				Tag("longhand flags"))
+
+		s.Run("extended", "--nargs-any", "one", "two", "three", "").
+			Expect(carapace.ActionValues("one", "two", "three").
+				Usage("consumes multiple arguments"))
 	})
 }

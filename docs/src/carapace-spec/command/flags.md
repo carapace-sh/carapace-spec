@@ -29,3 +29,14 @@ Additional formats when built with [carapace-pflag](https://github.com/carapace-
 ```
 
 ![](./nonposix.cast)
+
+## Extended
+
+There's also an extended notations for less common use cases.
+
+```yaml
+{{#include ../../../../example/command.yaml:command}}
+{{#include ../../../../example/command.yaml:extended}}
+```
+
+- `nargs` amount of arguments consumed
