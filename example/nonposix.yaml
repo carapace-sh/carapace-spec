@@ -4,8 +4,12 @@ flags:
   -opt, -optarg?: both nonposix
   -styled=: nonposix shorthand
   -mx, --mixed*: mixed repeatable
+  --nargs-two={2}: consumes two arguments
+  --nargs-multiple={-1}: consumes multiple arguments
 completion:
   flag:
+    targs-two: [t1, t2, t3]
+    nargs-multiple: [m1, m2, m3]
     optarg: [o1, o2, o3]
     styled:
       - "green\t\tgreen"
