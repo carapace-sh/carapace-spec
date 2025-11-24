@@ -3,6 +3,7 @@ package spec
 import (
 	"fmt"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/spf13/pflag"
@@ -18,10 +19,11 @@ type flag struct {
 	nameAsShorthand bool
 	hidden          bool
 	required        bool
+	nargs           int
 }
 
 func parseFlag(s, usage string) (*flag, error) {
-	r := regexp.MustCompile(`^(?P<shorthand>-[^-][^ =*?&!]*)?(, )?(?P<longhand>-[-]?[^ =*?&!]*)?(?P<modifier>[=*?&!]*)$`)
+	r := regexp.MustCompile(`^(?P<shorthand>-[^-][^ =*?&!]*)?(, )?(?P<longhand>-[-]?[^ =*?&!]*)?(?P<modifier>[=*?&!]*)({(?P<nargs>-?\d+)})?$`)
 	if !r.MatchString(s) {
 		return nil, fmt.Errorf("flag syntax invalid: %v", s)
 	}
@@ -38,6 +40,12 @@ func parseFlag(s, usage string) (*flag, error) {
 	f.value = f.optarg || strings.Contains(matches["modifier"], "=")
 	f.hidden = strings.Contains(matches["modifier"], "&")
 	f.required = strings.Contains(matches["modifier"], "!")
+	if matches["nargs"] != "" {
+		var err error
+		if f.nargs, err = strconv.Atoi(matches["nargs"]); err != nil {
+			return nil, err
+		}
+	}
 
 	if f.longhand == "" && f.shorthand == "" {
 		return nil, fmt.Errorf("malformed flag: '%v'", s)
@@ -52,6 +60,9 @@ func (f flag) addTo(fset *pflag.FlagSet) error {
 	}
 	if f.longhand == "" && !fs.IsFork() {
 		return fmt.Errorf("shorthand-only only supported with carapace-sh/carapace-pflag: %v", f.shorthand)
+	}
+	if f.nargs != 0 && !fs.IsFork() {
+		return fmt.Errorf("nargs only supported with carapace-sh/carapace-pflag: %v", f.shorthand)
 	}
 
 	if f.longhand != "" && f.shorthand != "" {
@@ -140,6 +151,11 @@ func (f flag) addTo(fset *pflag.FlagSet) error {
 
 	if f.hidden {
 		fs.Lookup(f.longhand).Hidden = f.hidden
+	}
+
+	if f.nargs != 0 {
+		// TODO nargs only exists in fork
+		fs.Lookup(f.longhand).Nargs = f.nargs
 	}
 
 	return nil
