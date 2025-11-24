@@ -1,5 +1,7 @@
 package command
 
+import "fmt"
+
 type Flag struct {
 	Longhand   string
 	Shorthand  string
@@ -10,6 +12,7 @@ type Flag struct {
 	Hidden     bool
 	Required   bool
 	Persistent bool
+	Nargs      int
 }
 
 func (f Flag) format() string {
@@ -43,6 +46,10 @@ func (f Flag) format() string {
 
 	if f.Hidden {
 		s += "&"
+	}
+
+	if f.Nargs != 0 {
+		s += fmt.Sprintf("{%v}", f.Nargs)
 	}
 
 	return s
