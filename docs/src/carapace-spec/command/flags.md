@@ -7,7 +7,7 @@ Flags of the command.
 {{#include ../../../../example/command.yaml:flags}}
 ```
 
-![](./flags.cast)
+![](./flags/flags.cast)
 
 ## Modifiers:
 
@@ -28,15 +28,17 @@ Additional formats when built with [carapace-pflag](https://github.com/carapace-
 {{#include ../../../../example/command.yaml:nonposix}}
 ```
 
-![](./nonposix.cast)
+![](./flags/nonposix.cast)
 
 ## Extended
 
 There's also an extended notations for less common use cases.
+
+- `nargs` amount of arguments consumed
 
 ```yaml
 {{#include ../../../../example/command.yaml:command}}
 {{#include ../../../../example/command.yaml:extended}}
 ```
 
-- `nargs` amount of arguments consumed
+![](./flags/extended.cast)
