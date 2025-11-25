@@ -32,14 +32,19 @@ func (f Flag) format() string {
 	var s string
 
 	if f.Shorthand != "" {
-		s += f.Shorthand
+		s += "-" + f.Shorthand
 		if f.Longhand != "" {
 			s += ", "
 		}
 	}
 
 	if f.Longhand != "" {
-		s += f.Longhand
+		switch {
+		case f.NameAsShorthand:
+			s += "-" + f.Shorthand
+		default:
+			s += "--" + f.Longhand
+		}
 	}
 
 	switch {
