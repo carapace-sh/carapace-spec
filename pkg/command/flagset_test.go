@@ -12,6 +12,8 @@ func TestFlagSet(t *testing.T) {
 		"string": Flag{
 			Longhand:    "--string",
 			Description: "some string flag",
+			Required:    true,
+			Repeatable:  true,
 		},
 		"complex": Flag{
 			Longhand:    "--complex",
@@ -27,4 +29,12 @@ func TestFlagSet(t *testing.T) {
 		t.Error(err)
 	}
 	fmt.Println(string(m))
+
+	var actual FlagSet
+	if err := yaml.Unmarshal(m, &actual); err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println("====")
+	fmt.Printf("%#v", actual)
 }

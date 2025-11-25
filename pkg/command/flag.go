@@ -60,7 +60,7 @@ func (f Flag) format() string {
 	return s
 }
 
-func parseFlag(s, usage string) (*Flag, error) {
+func parseFlag(s, description string) (*Flag, error) {
 	r := regexp.MustCompile(`^(?P<shorthand>-[^-][^ =*?&!]*)?(, )?(?P<longhand>-[-]?[^ =*?&!]*)?(?P<modifier>[=*?&!]*)$`)
 	if !r.MatchString(s) {
 		return nil, fmt.Errorf("flag syntax invalid: %v", s)
@@ -72,7 +72,7 @@ func parseFlag(s, usage string) (*Flag, error) {
 	f.Longhand = strings.TrimLeft(matches["longhand"], "-")
 	f.Shorthand = strings.TrimPrefix(matches["shorthand"], "-")
 	f.NameAsShorthand = (matches["longhand"] != "" && !strings.HasPrefix(matches["longhand"], "--"))
-	// f.usage = usage // TODO not relevant here
+	f.Description = description // TODO not relevant here
 	f.Slice = strings.Contains(matches["modifier"], "*")
 	f.Optarg = strings.Contains(matches["modifier"], "?")
 	f.Value = f.Optarg || strings.Contains(matches["modifier"], "=")

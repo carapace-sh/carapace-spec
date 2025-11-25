@@ -34,10 +34,30 @@ func (fs *FlagSet) UnmarshalYAML(value *yaml.Node) error {
 		return err
 	}
 
-	// TODO
-	// flagSet := make(FlagSet)
-	// for k, v := range m {
+	flagSet := make(FlagSet)
+	for k, v := range m {
+		switch v := v.(type) {
+		case string:
+			f, err := parseFlag(k, v)
+			if err != nil {
+				return err
+			}
+			flagSet[f.format()] = *f // TODO ref?
 
-	// }
+		case map[string]any:
+			f, err := parseFlag(k, "")
+			if err != nil {
+				return err
+			}
+			f.Description, _ = v["description"].(string)
+			f.Nargs, _ = v["nargs"].(int)
+
+			flagSet[f.format()] = *f // TODO ref?
+
+		default:
+			panic("TODO fail") // TODO:w
+		}
+	}
+	*fs = flagSet
 	return nil
 }
