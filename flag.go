@@ -21,7 +21,7 @@ func addFlagTo(f command.Flag, fset *pflag.FlagSet) error {
 
 	if f.Longhand != "" && f.Shorthand != "" {
 		if f.Value {
-			if f.Slice {
+			if f.Repeatable {
 				if f.NameAsShorthand {
 					fs.StringSliceN(f.Longhand, f.Shorthand, []string{}, f.Description)
 				} else {
@@ -35,7 +35,7 @@ func addFlagTo(f command.Flag, fset *pflag.FlagSet) error {
 				}
 			}
 		} else {
-			if f.Slice {
+			if f.Repeatable {
 				if f.NameAsShorthand {
 					fs.CountN(f.Longhand, f.Shorthand, f.Description)
 				} else {
@@ -51,7 +51,7 @@ func addFlagTo(f command.Flag, fset *pflag.FlagSet) error {
 		}
 	} else if f.Longhand != "" {
 		if f.Value {
-			if f.Slice {
+			if f.Repeatable {
 				if f.NameAsShorthand {
 					fs.StringSliceS(f.Longhand, f.Longhand, []string{}, f.Description)
 				} else {
@@ -65,7 +65,7 @@ func addFlagTo(f command.Flag, fset *pflag.FlagSet) error {
 				}
 			}
 		} else {
-			if f.Slice {
+			if f.Repeatable {
 				if f.NameAsShorthand {
 					fs.CountS(f.Longhand, f.Longhand, f.Description)
 				} else {
@@ -81,13 +81,13 @@ func addFlagTo(f command.Flag, fset *pflag.FlagSet) error {
 		}
 	} else if f.Shorthand != "" {
 		if f.Value {
-			if f.Slice {
+			if f.Repeatable {
 				fs.StringSliceS(f.Shorthand, f.Shorthand, []string{}, f.Description)
 			} else {
 				fs.StringS(f.Shorthand, f.Shorthand, "", f.Description)
 			}
 		} else {
-			if f.Slice {
+			if f.Repeatable {
 				fs.CountS(f.Shorthand, f.Shorthand, f.Description)
 			} else {
 				fs.BoolS(f.Shorthand, f.Shorthand, false, f.Description)

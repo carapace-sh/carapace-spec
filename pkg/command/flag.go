@@ -12,7 +12,6 @@ type Flag struct {
 	Shorthand   string
 	Description string
 
-	Slice           bool
 	NameAsShorthand bool
 	Repeatable      bool
 	Optarg          bool
@@ -25,7 +24,7 @@ type Flag struct {
 }
 
 func (f Flag) Name() string {
-	return "TODO" // TODO strip prefix/modifiers
+	return strings.TrimLeft(f.Longhand, "-")
 }
 
 func (f Flag) format() string {
@@ -82,7 +81,7 @@ func parseFlag(s, description string) (*Flag, error) {
 	f.Shorthand = strings.TrimPrefix(matches["shorthand"], "-")
 	f.NameAsShorthand = (matches["longhand"] != "" && !strings.HasPrefix(matches["longhand"], "--"))
 	f.Description = description // TODO not relevant here
-	f.Slice = strings.Contains(matches["modifier"], "*")
+	f.Repeatable = strings.Contains(matches["modifier"], "*")
 	f.Optarg = strings.Contains(matches["modifier"], "?")
 	f.Value = f.Optarg || strings.Contains(matches["modifier"], "=")
 	f.Hidden = strings.Contains(matches["modifier"], "&")

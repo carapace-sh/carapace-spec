@@ -42,7 +42,7 @@ func (fs *FlagSet) UnmarshalYAML(value *yaml.Node) error {
 			if err != nil {
 				return err
 			}
-			flagSet[f.format()] = *f // TODO ref?
+			flagSet[f.Name()] = *f // TODO ref?
 
 		case map[string]any:
 			f, err := parseFlag(k, "")
@@ -52,7 +52,7 @@ func (fs *FlagSet) UnmarshalYAML(value *yaml.Node) error {
 			f.Description, _ = v["description"].(string)
 			f.Nargs, _ = v["nargs"].(int)
 
-			flagSet[f.format()] = *f // TODO ref?
+			flagSet[f.Name()] = *f // TODO ref?
 
 		default:
 			panic("TODO fail") // TODO:w

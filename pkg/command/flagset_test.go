@@ -1,9 +1,9 @@
 package command
 
 import (
-	"fmt"
 	"testing"
 
+	"github.com/carapace-sh/carapace/pkg/assert"
 	"gopkg.in/yaml.v3"
 )
 
@@ -24,17 +24,21 @@ func TestFlagSet(t *testing.T) {
 		},
 	}
 
+	expected := `--string*!: some string flag
+-c, --complex=:
+    description: some complex flag
+    nargs: 2
+`
 	m, err := yaml.Marshal(fs)
 	if err != nil {
 		t.Error(err)
 	}
-	fmt.Println(string(m))
+
+	assert.Equal(t, string(m), expected)
 
 	var actual FlagSet
 	if err := yaml.Unmarshal(m, &actual); err != nil {
 		t.Error(err)
 	}
-
-	fmt.Println("====")
-	fmt.Printf("%#v", actual)
+	assert.Equal(t, actual, fs)
 }

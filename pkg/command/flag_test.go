@@ -30,14 +30,14 @@ func TestParseFlag(t *testing.T) {
 	})
 
 	test("shorthand-only slice", "-s*", &Flag{
-		Shorthand: "s",
-		Slice:     true,
+		Shorthand:  "s",
+		Repeatable: true,
 	})
 
 	test("shorthand-only slice value", "-s*=", &Flag{
-		Shorthand: "s",
-		Slice:     true,
-		Value:     true,
+		Shorthand:  "s",
+		Repeatable: true,
+		Value:      true,
 	})
 
 	test("shorthand-only value", "-s=", &Flag{
@@ -61,10 +61,10 @@ func TestParseFlag(t *testing.T) {
 	})
 
 	test("longhand-only slice optarg", "--long*?", &Flag{
-		Longhand: "long",
-		Optarg:   true,
-		Slice:    true,
-		Value:    true,
+		Longhand:   "long",
+		Optarg:     true,
+		Repeatable: true,
+		Value:      true,
 	})
 
 	test("both", "-s, --long", &Flag{
@@ -86,11 +86,11 @@ func TestParseFlag(t *testing.T) {
 	})
 
 	test("both slice optarg", "-s, --long*?", &Flag{
-		Shorthand: "s",
-		Longhand:  "long",
-		Value:     true,
-		Slice:     true,
-		Optarg:    true,
+		Shorthand:  "s",
+		Longhand:   "long",
+		Value:      true,
+		Repeatable: true,
+		Optarg:     true,
 	})
 
 	test("nonposix shorthand", "-short", &Flag{
@@ -106,7 +106,7 @@ func TestParseFlag(t *testing.T) {
 	test("nonposix both", "-short, -long*", &Flag{
 		Shorthand:       "short",
 		Longhand:        "long",
-		Slice:           true,
+		Repeatable:      true,
 		NameAsShorthand: true,
 	})
 
