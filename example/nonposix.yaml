@@ -1,11 +1,15 @@
-# yaml-language-server: $schema=https://carapace.sh/schemas/command.json
 name: nonposix
 flags:
   -opt, -optarg?: both nonposix
   -styled=: nonposix shorthand
   -mx, --mixed*: mixed repeatable
-  --nargs-two={2}: consumes two arguments
-  --nargs-multiple={-1}: consumes multiple arguments
+  --nargs-two=: consumes two arguments
+  --nargs-multiple=: consumes multiple arguments
+  --Tnargs-two=: consumes two arguments
+  --Tnargs-multiple=: consumes multiple arguments
+  --Xnargs-two=: consumes two arguments
+  --Xnargs-multiple=: consumes multiple arguments
+  --another=: {description: sometext, nargs: 2}
 completion:
   flag:
     targs-two: [t1, t2, t3]

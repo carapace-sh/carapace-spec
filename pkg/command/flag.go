@@ -1,18 +1,27 @@
 package command
 
-import "fmt"
+import (
+	"fmt"
+	"regexp"
+	"strconv"
+	"strings"
+)
 
 type Flag struct {
-	Longhand   string
-	Shorthand  string
-	Usage      string
-	Repeatable bool
-	Optarg     bool
-	Value      bool
-	Hidden     bool
-	Required   bool
-	Persistent bool
-	Nargs      int
+	Longhand    string
+	Shorthand   string
+	Description string
+
+	Slice           bool
+	NameAsShorthand bool
+	Repeatable      bool
+	Optarg          bool
+	Value           bool
+	Hidden          bool
+	Required        bool
+	Persistent      bool
+
+	Nargs int
 }
 
 func (f Flag) format() string {
@@ -48,9 +57,46 @@ func (f Flag) format() string {
 		s += "&"
 	}
 
-	if f.Nargs != 0 {
-		s += fmt.Sprintf("{%v}", f.Nargs)
+	return s
+}
+
+func parseFlag(s, usage string) (*Flag, error) {
+	r := regexp.MustCompile(`^(?P<shorthand>-[^-][^ =*?&!]*)?(, )?(?P<longhand>-[-]?[^ =*?&!]*)?(?P<modifier>[=*?&!]*)$`)
+	if !r.MatchString(s) {
+		return nil, fmt.Errorf("flag syntax invalid: %v", s)
 	}
 
-	return s
+	matches := findNamedMatches(r, s)
+
+	f := &Flag{}
+	f.Longhand = strings.TrimLeft(matches["longhand"], "-")
+	f.Shorthand = strings.TrimPrefix(matches["shorthand"], "-")
+	f.NameAsShorthand = (matches["longhand"] != "" && !strings.HasPrefix(matches["longhand"], "--"))
+	// f.usage = usage // TODO not relevant here
+	f.Slice = strings.Contains(matches["modifier"], "*")
+	f.Optarg = strings.Contains(matches["modifier"], "?")
+	f.Value = f.Optarg || strings.Contains(matches["modifier"], "=")
+	f.Hidden = strings.Contains(matches["modifier"], "&")
+	f.Required = strings.Contains(matches["modifier"], "!")
+	if matches["nargs"] != "" {
+		var err error
+		if f.Nargs, err = strconv.Atoi(matches["nargs"]); err != nil {
+			return nil, err
+		}
+	}
+
+	if f.Longhand == "" && f.Shorthand == "" {
+		return nil, fmt.Errorf("malformed flag: '%v'", s)
+	}
+	return f, nil
+}
+
+func findNamedMatches(regex *regexp.Regexp, str string) map[string]string {
+	match := regex.FindStringSubmatch(str)
+
+	results := map[string]string{}
+	for i, name := range match {
+		results[regex.SubexpNames()[i]] = name
+	}
+	return results
 }

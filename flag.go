@@ -23,7 +23,7 @@ type flag struct {
 }
 
 func parseFlag(s, usage string) (*flag, error) {
-	r := regexp.MustCompile(`^(?P<shorthand>-[^-][^ =*?&!]*)?(, )?(?P<longhand>-[-]?[^ =*?&!]*)?(?P<modifier>[=*?&!]*)({(?P<nargs>-?\d+)})?$`)
+	r := regexp.MustCompile(`^(?P<shorthand>-[^-][^ =*?&!]*)?(, )?(?P<longhand>-[-]?[^ =*?&!]*)?(?P<modifier>[=*?&!]*)$`)
 	if !r.MatchString(s) {
 		return nil, fmt.Errorf("flag syntax invalid: %v", s)
 	}
