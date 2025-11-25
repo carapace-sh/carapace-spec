@@ -10,14 +10,14 @@ import (
 func TestFlagSet(t *testing.T) {
 	fs := FlagSet{
 		"string": Flag{
-			Longhand:    "--string",
+			Longhand:    "string",
 			Description: "some string flag",
 			Required:    true,
 			Repeatable:  true,
 		},
 		"complex": Flag{
-			Longhand:    "--complex",
-			Shorthand:   "-c",
+			Longhand:    "complex",
+			Shorthand:   "c",
 			Description: "some complex flag",
 			Value:       true,
 			Nargs:       2,
