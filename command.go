@@ -77,14 +77,10 @@ func (c Command) Codegen() error {
 }
 
 func (c Command) addPersistentFlags(cmd *cobra.Command) error {
-	for id, description := range c.PersistentFlags {
-		flag, err := parseFlag(id, description)
-		if err != nil {
-			return err
-		}
+	for id, flag := range c.PersistentFlags {
 		flag.addTo(cmd.PersistentFlags())
-		if flag.required {
-			cmd.MarkFlagRequired(flag.longhand)
+		if flag.Required {
+			cmd.MarkFlagRequired(flag.Name())
 		}
 	}
 	return nil

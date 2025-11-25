@@ -2,9 +2,6 @@ package spec
 
 import (
 	"fmt"
-	"regexp"
-	"strconv"
-	"strings"
 
 	"github.com/spf13/pflag"
 )
@@ -20,37 +17,6 @@ type flag struct {
 	hidden          bool
 	required        bool
 	nargs           int
-}
-
-func parseFlag(s, usage string) (*flag, error) {
-	r := regexp.MustCompile(`^(?P<shorthand>-[^-][^ =*?&!]*)?(, )?(?P<longhand>-[-]?[^ =*?&!]*)?(?P<modifier>[=*?&!]*)$`)
-	if !r.MatchString(s) {
-		return nil, fmt.Errorf("flag syntax invalid: %v", s)
-	}
-
-	matches := findNamedMatches(r, s)
-
-	f := &flag{}
-	f.longhand = strings.TrimLeft(matches["longhand"], "-")
-	f.shorthand = strings.TrimPrefix(matches["shorthand"], "-")
-	f.nameAsShorthand = (matches["longhand"] != "" && !strings.HasPrefix(matches["longhand"], "--"))
-	f.usage = usage
-	f.slice = strings.Contains(matches["modifier"], "*")
-	f.optarg = strings.Contains(matches["modifier"], "?")
-	f.value = f.optarg || strings.Contains(matches["modifier"], "=")
-	f.hidden = strings.Contains(matches["modifier"], "&")
-	f.required = strings.Contains(matches["modifier"], "!")
-	if matches["nargs"] != "" {
-		var err error
-		if f.nargs, err = strconv.Atoi(matches["nargs"]); err != nil {
-			return nil, err
-		}
-	}
-
-	if f.longhand == "" && f.shorthand == "" {
-		return nil, fmt.Errorf("malformed flag: '%v'", s)
-	}
-	return f, nil
 }
 
 func (f flag) addTo(fset *pflag.FlagSet) error {

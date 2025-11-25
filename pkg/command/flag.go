@@ -24,6 +24,10 @@ type Flag struct {
 	Nargs int
 }
 
+func (f Flag) Name() string {
+	return "TODO" // TODO strip prefix/modifiers
+}
+
 func (f Flag) format() string {
 	var s string
 
