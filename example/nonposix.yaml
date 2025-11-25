@@ -3,17 +3,12 @@ flags:
   -opt, -optarg?: both nonposix
   -styled=: nonposix shorthand
   -mx, --mixed*: mixed repeatable
-  --nargs-two=: consumes two arguments
-  --nargs-multiple=: consumes multiple arguments
-  --Tnargs-two=: consumes two arguments
-  --Tnargs-multiple=: consumes multiple arguments
-  --Xnargs-two=: consumes two arguments
-  --Xnargs-multiple=: consumes multiple arguments
-  --another=: {description: sometext, nargs: 2}
+  --complex-any=: {description: sometext, nargs: -1}
+  --complex-two=: {description: sometext, nargs: 2}
 completion:
   flag:
-    targs-two: [t1, t2, t3]
-    nargs-multiple: [m1, m2, m3]
+    complex-any: [c1, c2, c3]
+    complex-two: [c1, c2, c3]
     optarg: [o1, o2, o3]
     styled:
       - "green\t\tgreen"
