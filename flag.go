@@ -7,9 +7,7 @@ import (
 	"github.com/spf13/pflag"
 )
 
-type flag command.Flag
-
-func (f flag) addTo(fset *pflag.FlagSet) error {
+func addFlagTo(f command.Flag, fset *pflag.FlagSet) error {
 	fs := flagSet{fset}
 	if len(f.Shorthand) > 1 && !fs.IsFork() {
 		return fmt.Errorf("long shorthand only supported with carapace-sh/carapace-pflag: %v", f.Shorthand)

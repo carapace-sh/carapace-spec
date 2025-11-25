@@ -77,8 +77,8 @@ func (c Command) Codegen() error {
 }
 
 func (c Command) addPersistentFlags(cmd *cobra.Command) error {
-	for id, flag := range c.PersistentFlags {
-		flag.addTo(cmd.PersistentFlags())
+	for _, flag := range c.PersistentFlags {
+		addFlagTo(flag, cmd.PersistentFlags())
 		if flag.Required {
 			cmd.MarkFlagRequired(flag.Name())
 		}
@@ -87,14 +87,10 @@ func (c Command) addPersistentFlags(cmd *cobra.Command) error {
 }
 
 func (c Command) addFlags(cmd *cobra.Command) error {
-	for id, description := range c.Flags {
-		flag, err := parseFlag(id, description)
-		if err != nil {
-			return err
-		}
-		flag.addTo(cmd.Flags())
-		if flag.required {
-			cmd.MarkFlagRequired(flag.longhand)
+	for _, flag := range c.Flags {
+		addFlagTo(flag, cmd.Flags())
+		if flag.Required {
+			cmd.MarkFlagRequired(flag.Longhand)
 		}
 	}
 	return nil
