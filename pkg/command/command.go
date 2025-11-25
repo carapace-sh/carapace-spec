@@ -8,10 +8,10 @@ type Command struct {
 	Hidden      bool     `yaml:"hidden,omitempty" json:"hidden,omitempty" jsonschema_description:"Hidden state of the command"`
 	Parsing     Parsing  `yaml:"parsing,omitempty" json:"parsing,omitempty" jsonschema_description:"Flag parsing mode of the command" jsonschema:"enum=interspersed,enum=non-interspersed,enum=disabled"`
 
-	Flags           map[string]string `yaml:"flags,omitempty" json:"flags,omitempty" jsonschema_description:"Flags of the command with their description"`
-	PersistentFlags map[string]string `yaml:"persistentflags,omitempty" json:"persistentflags,omitempty" jsonschema_description:"Persistent flags of the command with their description"`
-	ExclusiveFlags  [][]string        `yaml:"exclusiveflags,omitempty" json:"exclusiveflags,omitempty" jsonschema_description:"Flags that are mutually exclusive"`
-	Run             Run               `yaml:"run,omitempty" json:"run,omitempty" jsonschema:"oneof_type=string;array" jsonschema_description:"Command or script to execute in runnable mode"`
+	Flags           FlagSet    `yaml:"flags,omitempty" json:"flags,omitempty" jsonschema_description:"Flags of the command with their description"`
+	PersistentFlags FlagSet    `yaml:"persistentflags,omitempty" json:"persistentflags,omitempty" jsonschema_description:"Persistent flags of the command with their description"`
+	ExclusiveFlags  [][]string `yaml:"exclusiveflags,omitempty" json:"exclusiveflags,omitempty" jsonschema_description:"Flags that are mutually exclusive"`
+	Run             Run        `yaml:"run,omitempty" json:"run,omitempty" jsonschema:"oneof_type=string;array" jsonschema_description:"Command or script to execute in runnable mode"`
 	Completion      struct {
 		Flag          map[string][]string `yaml:"flag,omitempty" json:"flag,omitempty" jsonschema_description:"Flag completion"`
 		Positional    [][]string          `yaml:"positional,omitempty" json:"positional,omitempty" jsonschema_description:"Positional completion"`
@@ -36,14 +36,14 @@ func (c *Command) AddFlag(f Flag) {
 	switch {
 	case f.Persistent:
 		if c.PersistentFlags == nil {
-			c.PersistentFlags = make(map[string]string)
+			c.PersistentFlags = make(FlagSet)
 		}
-		c.PersistentFlags[f.format()] = f.Usage
+		c.PersistentFlags[f.format()] = f
 
 	default:
 		if c.Flags == nil {
-			c.Flags = make(map[string]string)
+			c.Flags = make(FlagSet)
 		}
-		c.Flags[f.format()] = f.Usage
+		c.Flags[f.format()] = f
 	}
 }
