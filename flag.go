@@ -96,20 +96,16 @@ func addFlagTo(f command.Flag, fset *pflag.FlagSet) error {
 	}
 
 	if f.Optarg {
-		if f.Longhand != "" {
-			fs.Lookup(f.Longhand).NoOptDefVal = " "
-		} else {
-			fs.Lookup(f.Shorthand).NoOptDefVal = " "
-		}
+		fs.Lookup(f.Name()).NoOptDefVal = " "
 	}
 
 	if f.Hidden {
-		fs.Lookup(f.Longhand).Hidden = f.Hidden
+		fs.Lookup(f.Name()).Hidden = f.Hidden
 	}
 
 	if f.Nargs != 0 {
 		// TODO nargs only exists in fork
-		fs.Lookup(f.Longhand).Nargs = f.Nargs
+		fs.Lookup(f.Name()).Nargs = f.Nargs
 	}
 
 	return nil
