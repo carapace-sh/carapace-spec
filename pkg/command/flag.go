@@ -24,12 +24,10 @@ type Flag struct {
 }
 
 func (f Flag) Name() string {
-	switch f.Longhand {
-	case "":
-		return strings.TrimLeft(f.Shorthand, "-")
-	default:
-		return strings.TrimLeft(f.Longhand, "-")
+	if f.Longhand != "" {
+		return f.Longhand
 	}
+	return f.Shorthand
 }
 
 func (f Flag) format() string {
