@@ -2,6 +2,7 @@ package spec
 
 import (
 	"fmt"
+	"reflect"
 
 	"github.com/carapace-sh/carapace-spec/pkg/command"
 	"github.com/spf13/pflag"
@@ -104,8 +105,10 @@ func addFlagTo(f command.Flag, fset *pflag.FlagSet) error {
 	}
 
 	if f.Nargs != 0 {
-		// TODO nargs only exists in fork
-		fs.Lookup(f.Name()).Nargs = f.Nargs
+		// TODO move to carapace (pflagfork)
+		if field := reflect.ValueOf(fs.Lookup(f.Name())).Elem().FieldByName("Nargs"); field.IsValid() && field.Kind() == reflect.Int {
+			field.SetInt(int64(f.Nargs))
+		}
 	}
 
 	return nil
