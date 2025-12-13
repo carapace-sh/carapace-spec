@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"maps"
 	"slices"
+	"sort"
 	"strings"
 	"unicode"
 
@@ -35,7 +36,12 @@ func (m MacroMap) Format(pkg string) (string, error) {
 			macroType = "MacroI"
 		}
 
-		imports = append(imports, fmt.Sprintf("%s %q", varName(name), macroPkg))
+		// TODO yuck
+		importName := varName(name)
+		if splitted := strings.Split(name, "."); len(splitted) > 1 {
+			importName = varName(strings.Join(splitted[:len(splitted)-1], "."))
+		}
+		imports = append(imports, fmt.Sprintf("%s %q", importName, macroPkg))
 		macros = append(macros, fmt.Sprintf(`%q: {
 	Name: %q,
 	Description: %q,
@@ -48,9 +54,12 @@ func (m MacroMap) Format(pkg string) (string, error) {
 			macro.Description,
 			macro.Example,
 			macro.Function,
-			fmt.Sprintf("spec.%s(%s.%s).Macro", macroType, varName(name), macroFunction),
+			fmt.Sprintf("spec.%s(%s.%s).Macro", macroType, importName, macroFunction),
 		))
 	}
+
+	sort.Strings(imports)
+	imports = slices.Compact(imports)
 
 	return fmt.Sprintf(`package %s
 
