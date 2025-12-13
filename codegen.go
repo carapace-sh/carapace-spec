@@ -195,7 +195,7 @@ func normalizeVarName(s string) string {
 
 	for _, c := range s {
 		switch {
-		case c == '-' || c == ':':
+		case c == '-' || c == ':' || c == '.':
 			capitalize = true
 			continue
 		case capitalize:
