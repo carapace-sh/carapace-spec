@@ -66,8 +66,8 @@ func Register(cmd *cobra.Command) {
 		carapace.ActionCallback(func(c carapace.Context) carapace.Action {
 			vals := make([]string, 0, len(macros))
 			for key := range macros {
-				if strings.HasPrefix(key, "_.") {
-					vals = append(vals, strings.TrimPrefix(key, "_."))
+				if after, ok := strings.CutPrefix(key, "_."); ok {
+					vals = append(vals, after)
 				}
 			}
 			return carapace.ActionValues(vals...).MultiParts(".")

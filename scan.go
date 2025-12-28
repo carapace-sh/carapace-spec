@@ -20,7 +20,7 @@ func ScanMacros(pkgs ...string) (MacroMap, error) {
 			return nil, err
 		}
 
-		for _, subPkg := range strings.Split(string(output), "\n") {
+		for subPkg := range strings.SplitSeq(string(output), "\n") {
 			if pkg == subPkg {
 				println("skipping " + pkg)
 				continue // TODO re-enable
