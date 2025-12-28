@@ -94,7 +94,7 @@ func MacroV[A, T any](f func(args ...A) (*T, error)) Macro[T] {
 
 			var args []A
 			if err := yaml.Unmarshal([]byte(s), &args); err != nil {
-				return nil, fmt.Errorf("malformed macro arg: '%v', expected '%v'", s, reflect.TypeOf(args))
+				return nil, fmt.Errorf("malformed macro arg: '%v', expected '%v'", s, reflect.TypeFor[[]A]())
 			}
 			return f(args...)
 		},

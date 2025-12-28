@@ -18,7 +18,7 @@ type Command struct {
 		PositionalAny []string            `yaml:"positionalany,omitempty" json:"positionalany,omitempty" jsonschema_description:"Positional completion for every other position"`
 		Dash          [][]string          `yaml:"dash,omitempty" json:"dash,omitempty" jsonschema_description:"Dash completion"`
 		DashAny       []string            `yaml:"dashany,omitempty" json:"dashany,omitempty" jsonschema_description:"Dash completion of every other position"`
-	} `yaml:"completion,omitempty" json:"completion,omitempty" jsonschema_description:"Completion definition"`
+	} `yaml:"completion,omitempty" json:"completion,omitzero" jsonschema_description:"Completion definition"`
 	Commands []Command `yaml:"commands,omitempty" json:"commands,omitempty" jsonschema_description:"Subcommands of the command"`
 
 	Documentation struct {
@@ -28,7 +28,7 @@ type Command struct {
 		PositionalAny string            `yaml:"positionalany,omitempty" json:"positionalany,omitempty" jsonschema_description:"Documentation of other positional arguments"`
 		Dash          []string          `yaml:"dash,omitempty" json:"dash,omitempty" jsonschema_description:"Documentation of dash arguments"`
 		DashAny       string            `yaml:"dashany,omitempty" json:"dashany,omitempty" jsonschema_description:"Documentation of other dash arguments"`
-	} `yaml:"documentation,omitempty" json:"documentation,omitempty" jsonschema_description:"Documentation"`
+	} `yaml:"documentation,omitempty" json:"documentation,omitzero" jsonschema_description:"Documentation"`
 	Examples map[string]string `yaml:"examples,omitempty" json:"examples,omitempty" jsonschema_description:"Examples"`
 }
 
