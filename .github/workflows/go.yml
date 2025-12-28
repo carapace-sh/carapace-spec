@@ -16,13 +16,13 @@ jobs:
       run:  git config --global --add safe.directory '*'
 
     - name: Replace dependency
-      run: go work edit -replace github.com/spf13/pflag=github.com/carapace-sh/carapace-pflag@v1.0.0
+      run: go work edit -replace github.com/spf13/pflag=github.com/carapace-sh/carapace-pflag@v1.1.0
 
     - name: Build
       run: go build -v ./...
 
     - name: install carapace
-      run: curl -L https://github.com/carapace-sh/carapace-bin/releases/download/v1.4.1/carapace-bin_1.4.1_linux_amd64.tar.gz | tar -xzvf - -C /usr/local/bin/ carapace
+      run: curl -L https://github.com/carapace-sh/carapace-bin/releases/download/v1.5.7/carapace-bin_1.5.7_linux_amd64.tar.gz | tar -xzvf - -C /usr/local/bin/ carapace
 
     - name: Test
       run: go test -v -coverprofile=profile.cov ./...
@@ -48,7 +48,7 @@ jobs:
       run: go build -v ./...
 
     - name: install carapace
-      run: curl -L https://github.com/carapace-sh/carapace-bin/releases/download/v1.4.1/carapace-bin_1.4.1_linux_amd64.tar.gz | tar -xzvf - -C /usr/local/bin/ carapace
+      run: curl -L https://github.com/carapace-sh/carapace-bin/releases/download/v1.5.7/carapace-bin_1.5.7_linux_amd64.tar.gz | tar -xzvf - -C /usr/local/bin/ carapace
 
     - name: Test
       run: go test -v -coverprofile=profile.cov ./...
@@ -65,7 +65,7 @@ jobs:
 
   release:
     runs-on: ubuntu-latest
-    container: ghcr.io/carapace-sh/go:1.23.1
+    container: ghcr.io/carapace-sh/go:1.25.4
     if: startsWith(github.ref, 'refs/tags/')
     steps:
     - name: deep clone
