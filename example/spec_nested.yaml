@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=https://carapace.sh/schemas/command.json
+# Nested spec for testing $spec with offset
+name: nested
+description: nested spec for testing shift
+parsing: disabled
+
+completion:
+  positional:
+    - [first, second, third]
+  positionalany: [any1, any2, any3]

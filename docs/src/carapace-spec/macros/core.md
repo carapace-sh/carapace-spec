@@ -62,4 +62,12 @@ This implicitly [disables flag parsing](https://pkg.go.dev/github.com/spf13/cobr
 ["$spec(example.yaml)"]
 ```
 
+An optional offset can be provided to shift positional arguments, allowing nested specs to take over completion from an arbitrary position:
+
+```yaml
+["$spec(example.yaml, 1)"]
+```
+
+This is useful when the first argument(s) are handled by the parent spec and the nested spec should only complete subsequent arguments.
+
 [PATH]:https://en.wikipedia.org/wiki/PATH_(variable)

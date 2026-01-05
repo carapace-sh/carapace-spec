@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/carapace-sh/carapace"
@@ -77,9 +78,15 @@ func ActionMacro(s string, a ...any) carapace.Action {
 	})
 }
 
-// ActionSpec completes a spec
-func ActionSpec(path string) carapace.Action {
-	return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
+// ActionSpec completes a spec.
+// Input can be either "path" or "path, offset" where offset shifts positional arguments.
+func ActionSpec(input string) carapace.Action {
+	path, offset, err := parseSpecInput(input)
+	if err != nil {
+		return carapace.ActionMessage(err.Error())
+	}
+
+	a := carapace.ActionCallback(func(c carapace.Context) carapace.Action {
 		abs, err := c.Abs(path)
 		if err != nil {
 			return carapace.ActionMessage(err.Error())
@@ -101,6 +108,35 @@ func ActionSpec(path string) carapace.Action {
 		}
 		return carapace.ActionExecute(cmdCobra)
 	})
+
+	if offset > 0 {
+		return a.Shift(offset)
+	}
+	return a
+}
+
+// parseSpecInput parses the input string for ActionSpec.
+// It accepts either "path" or "path, N" format where N is a non-negative integer offset.
+func parseSpecInput(input string) (path string, offset int, err error) {
+	// Match optional ", <number>" at the end
+	re := regexp.MustCompile(`,[ ]*(\d+)$`)
+	match := re.FindStringSubmatch(input)
+
+	if match == nil {
+		// No offset specified
+		return input, 0, nil
+	}
+
+	// Extract and parse the offset
+	offset, err = strconv.Atoi(match[1])
+	if err != nil {
+		return "", 0, fmt.Errorf("invalid offset %q: %w", match[1], err)
+	}
+
+	// Strip the ", N" suffix from the path
+	path = re.ReplaceAllString(input, "")
+
+	return path, offset, nil
 }
 
 // TODO experimentally public
