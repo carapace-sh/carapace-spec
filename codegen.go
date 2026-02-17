@@ -154,6 +154,10 @@ func codegen(cmd *cobra.Command, tmpDir string) error {
 	fmt.Fprintln(out, "}")
 
 	filename := fmt.Sprintf(`%v/%v.go`, tmpDir, cmdVarName(cmd))
+	filename = strings.NewReplacer(
+		// TODO goos/goarch suffixes
+		"_test.go", "_test_.go",
+	).Replace(filename)
 
 	println(filename)
 	formatted, err := format.Source(out.Bytes())
