@@ -190,7 +190,11 @@ func cmdVarName(cmd *cobra.Command) string {
 	if !cmd.HasParent() {
 		return "root"
 	}
-	return strings.TrimPrefix(fmt.Sprintf(`%v_%v`, cmdVarName(cmd.Parent()), normalizeVarName(cmd.Name())), "root_")
+	name := strings.TrimPrefix(fmt.Sprintf(`%v_%v`, cmdVarName(cmd.Parent()), normalizeVarName(cmd.Name())), "root_")
+	if name == "root" {
+		return "root_root" // fix for jj `root` subcommand
+	}
+	return name
 }
 
 func normalizeVarName(s string) string {
