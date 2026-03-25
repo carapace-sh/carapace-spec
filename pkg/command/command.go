@@ -1,5 +1,10 @@
 package command
 
+import (
+	"errors"
+	"strings"
+)
+
 type Command struct {
 	Name        string   `yaml:"name" json:"name" jsonschema_description:"Name of the command"`
 	Aliases     []string `yaml:"aliases,omitempty" json:"aliases,omitempty" jsonschema_description:"Aliases of the command"`
@@ -46,4 +51,17 @@ func (c *Command) AddFlag(f Flag) {
 		}
 		c.Flags[f.format()] = f
 	}
+}
+
+func (c *Command) Find(args []string) (*Command, error) {
+	if len(args) == 0 {
+		return c, nil
+	}
+
+	for _, subcommand := range c.Commands {
+		if strings.Split(subcommand.Name, " ")[0] == args[0] {
+			return subcommand.Find(args[1:])
+		}
+	}
+	return nil, errors.New("not found")
 }
