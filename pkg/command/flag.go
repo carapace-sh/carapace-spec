@@ -11,6 +11,9 @@ type Flag struct {
 	Longhand    string
 	Shorthand   string
 	Description string
+	Default     string
+	OptDefault  string
+	Deprecated  string
 
 	NameAsShorthand bool
 	Repeatable      bool

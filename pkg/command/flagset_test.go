@@ -19,6 +19,9 @@ func TestFlagSet(t *testing.T) {
 			Longhand:    "complex",
 			Shorthand:   "c",
 			Description: "some complex flag",
+			Default:     "default value",
+			OptDefault:  "optional default value",
+			Deprecated:  "use --other instead",
 			Value:       true,
 			Nargs:       2,
 		},
@@ -27,6 +30,9 @@ func TestFlagSet(t *testing.T) {
 	expected := `--string*!: some string flag
 -c, --complex=:
     description: some complex flag
+    default: default value
+    optdefault: optional default value
+    deprecated: use --other instead
     nargs: 2
 `
 	m, err := yaml.Marshal(fs)
