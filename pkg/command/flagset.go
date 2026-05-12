@@ -9,8 +9,13 @@ import (
 type FlagSet map[string]Flag
 
 type Extended struct {
-	Description string `yaml:"description,omitempty" json:"description,omitempty" jsonschema_description:"Description of the flag"`
-	Nargs       int    `yaml:"nargs,omitempty" json:"nargs,omitempty" jsonschema_description:"Amount of arguments consumed"`
+	Description         string `yaml:"description,omitempty" json:"description,omitempty" jsonschema_description:"Description of the flag"`
+	Nargs               int    `yaml:"nargs,omitempty" json:"nargs,omitempty" jsonschema_description:"Amount of arguments consumed"`
+	Default             string `yaml:"default,omitempty" json:"default,omitempty" jsonschema_description:"Default value"`
+	OptDefault          string `yaml:"optdefault,omitempty" json:"optdefault,omitempty" jsonschema_description:"Default value when optional argument flag is used without a value"`
+	Deprecated          string `yaml:"deprecated,omitempty" json:"deprecated,omitempty" jsonschema_description:"Deprecation message for the flag"`
+	ShorthandDeprecated string `yaml:"shorthanddeprecated,omitempty" json:"shorthanddeprecated,omitempty" jsonschema_description:"Deprecation message for the shorthand"`
+	Delimiter           string `yaml:"delimiter,omitempty" json:"delimiter,omitempty" jsonschema_description:"Alternative delimiter for optional arguments"`
 }
 
 func (fs FlagSet) MarshalYAML() (any, error) {
@@ -18,10 +23,15 @@ func (fs FlagSet) MarshalYAML() (any, error) {
 
 	for _, f := range fs {
 		switch {
-		case f.Nargs != 0: // TODO other values causing extended version
+		case f.extended():
 			m[f.format()] = Extended{
-				Description: f.Description,
-				Nargs:       f.Nargs,
+				Description:         f.Description,
+				Nargs:               f.Nargs,
+				Default:             f.Default,
+				OptDefault:          f.OptDefault,
+				Deprecated:          f.Deprecated,
+				ShorthandDeprecated: f.ShorthandDeprecated,
+				Delimiter:           f.Delimiter,
 			}
 		default:
 			m[f.format()] = f.Description
@@ -51,8 +61,13 @@ func (fs *FlagSet) UnmarshalYAML(value *yaml.Node) error {
 			if err != nil {
 				return err
 			}
-			f.Description, _ = v["description"].(string)
-			f.Nargs, _ = v["nargs"].(int)
+			f.Description, _ = stringValue(v, "description")
+			f.Nargs, _ = intValue(v, "nargs")
+			f.Default, _ = stringValue(v, "default")
+			f.OptDefault, _ = stringValue(v, "optdefault")
+			f.Deprecated, _ = stringValue(v, "deprecated")
+			f.ShorthandDeprecated, _ = stringValue(v, "shorthanddeprecated")
+			f.Delimiter, _ = stringValue(v, "delimiter")
 
 			flagSet[f.Name()] = *f // TODO ref?
 
@@ -62,4 +77,23 @@ func (fs *FlagSet) UnmarshalYAML(value *yaml.Node) error {
 	}
 	*fs = flagSet
 	return nil
+}
+
+func (f Flag) extended() bool {
+	return f.Nargs != 0 ||
+		f.Default != "" ||
+		f.OptDefault != "" ||
+		f.Deprecated != "" ||
+		f.ShorthandDeprecated != "" ||
+		f.Delimiter != ""
+}
+
+func stringValue(m map[string]any, key string) (string, bool) {
+	v, ok := m[key].(string)
+	return v, ok
+}
+
+func intValue(m map[string]any, key string) (int, bool) {
+	v, ok := m[key].(int)
+	return v, ok
 }
