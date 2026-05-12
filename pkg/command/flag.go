@@ -8,9 +8,14 @@ import (
 )
 
 type Flag struct {
-	Longhand    string
-	Shorthand   string
-	Description string
+	Longhand            string
+	Shorthand           string
+	Description         string
+	Default             string
+	OptDefault          string
+	Deprecated          string
+	ShorthandDeprecated string
+	Delimiter           string
 
 	NameAsShorthand bool
 	Repeatable      bool
