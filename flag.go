@@ -19,6 +19,12 @@ func addFlagTo(f command.Flag, fset *pflag.FlagSet) error {
 	if f.Nargs != 0 && !fs.IsFork() {
 		return fmt.Errorf("nargs only supported with carapace-sh/carapace-pflag: %v", f.Shorthand)
 	}
+	if f.Delimiter != "" && !fs.IsFork() {
+		return fmt.Errorf("delimiter only supported with carapace-sh/carapace-pflag: %v", f.Shorthand)
+	}
+	if len([]rune(f.Delimiter)) > 1 {
+		return fmt.Errorf("delimiter must be a single character: %v", f.Delimiter)
+	}
 
 	if f.Longhand != "" && f.Shorthand != "" {
 		if f.Value {
@@ -97,17 +103,46 @@ func addFlagTo(f command.Flag, fset *pflag.FlagSet) error {
 	}
 
 	if f.Optarg {
-		fs.Lookup(f.Name()).NoOptDefVal = " "
+		if f.OptDefault != "" {
+			fs.Lookup(f.Name()).NoOptDefVal = f.OptDefault
+		} else {
+			fs.Lookup(f.Name()).NoOptDefVal = " "
+		}
+	} else if f.OptDefault != "" {
+		fs.Lookup(f.Name()).NoOptDefVal = f.OptDefault
+	}
+
+	if f.Default != "" {
+		flag := fs.Lookup(f.Name())
+		flag.DefValue = f.Default
+		if err := flag.Value.Set(f.Default); err != nil {
+			return err
+		}
 	}
 
 	if f.Hidden {
 		fs.Lookup(f.Name()).Hidden = f.Hidden
 	}
 
+	if f.Deprecated != "" {
+		fs.Lookup(f.Name()).Deprecated = f.Deprecated
+	}
+
+	if f.ShorthandDeprecated != "" {
+		fs.Lookup(f.Name()).ShorthandDeprecated = f.ShorthandDeprecated
+	}
+
 	if f.Nargs != 0 {
 		// TODO move to carapace (pflagfork)
 		if field := reflect.ValueOf(fs.Lookup(f.Name())).Elem().FieldByName("Nargs"); field.IsValid() && field.Kind() == reflect.Int {
 			field.SetInt(int64(f.Nargs))
+		}
+	}
+
+	if f.Delimiter != "" {
+		// TODO move to carapace (pflagfork)
+		if field := reflect.ValueOf(fs.Lookup(f.Name())).Elem().FieldByName("OptargDelimiter"); field.IsValid() && field.Kind() == reflect.Int32 {
+			field.SetInt(int64([]rune(f.Delimiter)[0]))
 		}
 	}
 

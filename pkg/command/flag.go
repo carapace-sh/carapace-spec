@@ -20,7 +20,12 @@ type Flag struct {
 	Required        bool
 	Persistent      bool
 
-	Nargs int
+	Nargs               int
+	Default             string
+	OptDefault          string
+	Deprecated          string
+	ShorthandDeprecated string
+	Delimiter           string
 }
 
 func (f Flag) Name() string {
