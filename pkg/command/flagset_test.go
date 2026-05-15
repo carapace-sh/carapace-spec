@@ -16,11 +16,16 @@ func TestFlagSet(t *testing.T) {
 			Repeatable:  true,
 		},
 		"complex": Flag{
-			Longhand:    "complex",
-			Shorthand:   "c",
-			Description: "some complex flag",
-			Value:       true,
-			Nargs:       2,
+			Longhand:            "complex",
+			Shorthand:           "c",
+			Description:         "some complex flag",
+			Value:               true,
+			Nargs:               2,
+			Default:             "default value",
+			OptDefault:          "optional default",
+			Deprecated:          "use --other instead",
+			ShorthandDeprecated: "use --complex instead",
+			Delimiter:           ":",
 		},
 	}
 
@@ -28,6 +33,11 @@ func TestFlagSet(t *testing.T) {
 -c, --complex=:
     description: some complex flag
     nargs: 2
+    default: default value
+    optdefault: optional default
+    deprecated: use --other instead
+    shorthanddeprecated: use --complex instead
+    delimiter: ':'
 `
 	m, err := yaml.Marshal(fs)
 	if err != nil {
