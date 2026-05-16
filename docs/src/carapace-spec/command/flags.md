@@ -35,6 +35,11 @@ Additional formats when built with [carapace-pflag](https://github.com/carapace-
 There's also an extended notations for less common use cases.
 
 - `nargs` amount of arguments consumed
+- `default` default value as text
+- `optdefault` default value as text when an optional argument flag is provided without a value
+- `deprecated` deprecation message for the flag
+- `shorthanddeprecated` deprecation message for the flag shorthand
+- `delimiter` alternative delimiter for optional arguments
 
 ```yaml
 {{#include ../../../../example/command.yaml:command}}

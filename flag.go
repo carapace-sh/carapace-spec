@@ -19,6 +19,9 @@ func addFlagTo(f command.Flag, fset *pflag.FlagSet) error {
 	if f.Nargs != 0 && !fs.IsFork() {
 		return fmt.Errorf("nargs only supported with carapace-sh/carapace-pflag: %v", f.Shorthand)
 	}
+	if f.Delimiter != "" && !fs.IsFork() {
+		return fmt.Errorf("delimiter only supported with carapace-sh/carapace-pflag: %v", f.Name())
+	}
 
 	if f.Longhand != "" && f.Shorthand != "" {
 		if f.Value {
@@ -30,9 +33,9 @@ func addFlagTo(f command.Flag, fset *pflag.FlagSet) error {
 				}
 			} else {
 				if f.NameAsShorthand {
-					fs.StringN(f.Longhand, f.Shorthand, "", f.Description)
+					fs.StringN(f.Longhand, f.Shorthand, f.Default, f.Description)
 				} else {
-					fs.StringP(f.Longhand, f.Shorthand, "", f.Description)
+					fs.StringP(f.Longhand, f.Shorthand, f.Default, f.Description)
 				}
 			}
 		} else {
@@ -60,9 +63,9 @@ func addFlagTo(f command.Flag, fset *pflag.FlagSet) error {
 				}
 			} else {
 				if f.NameAsShorthand {
-					fs.StringS(f.Longhand, f.Longhand, "", f.Description)
+					fs.StringS(f.Longhand, f.Longhand, f.Default, f.Description)
 				} else {
-					fs.String(f.Longhand, "", f.Description)
+					fs.String(f.Longhand, f.Default, f.Description)
 				}
 			}
 		} else {
@@ -85,7 +88,7 @@ func addFlagTo(f command.Flag, fset *pflag.FlagSet) error {
 			if f.Repeatable {
 				fs.StringSliceS(f.Shorthand, f.Shorthand, []string{}, f.Description)
 			} else {
-				fs.StringS(f.Shorthand, f.Shorthand, "", f.Description)
+				fs.StringS(f.Shorthand, f.Shorthand, f.Default, f.Description)
 			}
 		} else {
 			if f.Repeatable {
@@ -97,7 +100,23 @@ func addFlagTo(f command.Flag, fset *pflag.FlagSet) error {
 	}
 
 	if f.Optarg {
-		fs.Lookup(f.Name()).NoOptDefVal = " "
+		if f.OptDefault != "" {
+			fs.Lookup(f.Name()).NoOptDefVal = f.OptDefault
+		} else {
+			fs.Lookup(f.Name()).NoOptDefVal = " "
+		}
+	}
+
+	if f.Default != "" {
+		fs.Lookup(f.Name()).DefValue = f.Default
+	}
+
+	if f.Deprecated != "" {
+		fs.Lookup(f.Name()).Deprecated = f.Deprecated
+	}
+
+	if f.ShorthandDeprecated != "" {
+		fs.Lookup(f.Name()).ShorthandDeprecated = f.ShorthandDeprecated
 	}
 
 	if f.Hidden {
@@ -111,5 +130,25 @@ func addFlagTo(f command.Flag, fset *pflag.FlagSet) error {
 		}
 	}
 
+	if f.Delimiter != "" {
+		if err := setRuneField(fs.Lookup(f.Name()), "OptargDelimiter", f.Delimiter); err != nil {
+			return err
+		}
+	}
+
 	return nil
+}
+
+func setRuneField(flag *pflag.Flag, name string, value string) error {
+	runes := []rune(value)
+	if len(runes) != 1 {
+		return fmt.Errorf("%v must be exactly one character: %q", name, value)
+	}
+
+	if field := reflect.ValueOf(flag).Elem().FieldByName(name); field.IsValid() && field.Kind() == reflect.Int32 {
+		field.SetInt(int64(runes[0]))
+		return nil
+	}
+
+	return fmt.Errorf("%v only supported with carapace-sh/carapace-pflag: %v", name, flag.Name)
 }
