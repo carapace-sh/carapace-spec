@@ -12,7 +12,7 @@ commands:
   - name: script
     commands:
       - name: macro
-        run: "$(tail -n${C_FLAG_LINES:-1} $@) ||| $chdir($tempdir)"
+        run: "$(tail -n${C_FLAG_LINES:-1} ${C_ARG0}) ||| $chdir($tempdir)"
         flags:
           -n, --lines=: output the last NUM lines
         completion:
