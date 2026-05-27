@@ -77,6 +77,11 @@ func (r run) parseMacro() func(cmd *cobra.Command, args []string) error {
 		context := r.context(cmd, nil)
 		context.Args = args // force context.Args contain all args (ignore Value)
 
+		for index, arg := range args {
+			context.Setenv(fmt.Sprintf("C_ARG%v", index), arg)
+		}
+		context.Setenv("C_VALUE", context.Value)
+
 		splitted := strings.Split(string(r), " ||| ")
 
 		m, err := macro.MacroMap[Macro]{
