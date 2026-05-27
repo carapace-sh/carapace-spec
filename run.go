@@ -45,6 +45,11 @@ func (r run) parseAlias() func(cmd *cobra.Command, args []string) error {
 		}
 
 		context := r.context(cmd, args)
+		for index, arg := range args {
+			context.Setenv(fmt.Sprintf("C_ARG%v", index), arg)
+		}
+		context.Setenv("C_VALUE", context.Value)
+
 		var err error
 		for index, arg := range alias[1:] {
 			if alias[index+1], err = context.Envsubst(arg); err != nil {
@@ -127,6 +132,10 @@ func (r run) context(cmd *cobra.Command, args []string) carapace.Context {
 func (r run) parseScript() func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
 		context := r.context(cmd, args)
+		for index, arg := range args {
+			context.Setenv(fmt.Sprintf("C_ARG%v", index), arg)
+		}
+		context.Setenv("C_VALUE", context.Value)
 		substituted, err := context.Envsubst(string(r))
 		if err != nil {
 			return err
