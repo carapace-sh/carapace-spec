@@ -67,7 +67,7 @@ func Register(cmd *cobra.Command) {
 			vals := make([]string, 0, len(macros))
 			for key := range macros {
 				if after, ok := strings.CutPrefix(key, "_."); ok {
-					vals = append(vals, after)
+					vals = append(vals, "$"+executable()+"."+after)
 				}
 			}
 			return carapace.ActionValues(vals...).MultiParts(".")
@@ -76,7 +76,10 @@ func Register(cmd *cobra.Command) {
 
 	carapace.Gen(macroCmd).PositionalAnyCompletion(
 		carapace.ActionCallback(func(c carapace.Context) carapace.Action {
-			return ActionMacro("$_." + c.Args[0]).Shift(1)
+			if strings.HasPrefix(c.Args[0], "$") {
+				return ActionMacroM(c.Args[0]).Shift(1)
+			}
+			return ActionMacroM("$_." + c.Args[0]).Shift(1)
 		}),
 	)
 }
