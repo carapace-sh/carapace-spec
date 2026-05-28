@@ -77,6 +77,41 @@ func ActionMacro(s string, a ...any) carapace.Action {
 	})
 }
 
+// ActionMacroM completes given macro with modifiers
+func ActionMacroM(s string, a ...any) carapace.Action {
+	return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
+		if len(a) > 0 {
+			s = fmt.Sprintf(s, a...)
+		}
+
+		batch := carapace.Batch()
+		batchAction := carapace.ActionCallback(func(c carapace.Context) carapace.Action {
+			return batch.ToA()
+		})
+
+		for elem := range strings.SplitSeq(s, " ||| ") {
+			elemSubst, err := c.Envsubst(elem)
+			if err != nil {
+				batch = append(batch, carapace.ActionMessage("%v: %#v", err.Error(), elem))
+				continue
+			}
+
+			if strings.HasPrefix(elemSubst, "$") {
+				switch strings.SplitN(elemSubst, "(", 2)[0] {
+				case "$chdir", "$filter", "$filterargs", "$list", "$multiparts", "$nospace", "$prefix", "$retain", "$shift", "$split", "$splitp", "$suffix", "$suppress", "$style", "$tag", "$uniquelist", "$usage":
+					batchAction = modifier{batchAction}.Parse(elemSubst)
+				default:
+					batch = append(batch, ActionMacro(elemSubst))
+				}
+			} else {
+				batch = append(batch, parseValue(elemSubst))
+			}
+		}
+
+		return batchAction.Invoke(c).ToA()
+	})
+}
+
 // ActionSpec completes a spec
 func ActionSpec(path string) carapace.Action {
 	return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
