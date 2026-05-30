@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/carapace-sh/carapace"
+	"github.com/carapace-sh/carapace/pkg/uid"
 	"github.com/spf13/cobra"
 )
 
@@ -30,12 +31,10 @@ func Register(cmd *cobra.Command) {
 				sort.Strings(keys)
 
 				for _, key := range keys {
-					if strings.HasPrefix(key, "_") {
-						fmt.Fprintln(cmd.OutOrStdout(), strings.TrimPrefix(key, "_."))
-					}
+					fmt.Fprintln(cmd.OutOrStdout(), "$"+key)
 				}
 			case 1:
-				m, ok := macros["_."+args[0]]
+				m, ok := macros[args[0]]
 				if !ok {
 					return fmt.Errorf("unknown macro: %v", args[0])
 				}
@@ -46,7 +45,7 @@ func Register(cmd *cobra.Command) {
 				}
 				carapace.Gen(mCmd).Standalone()
 				carapace.Gen(mCmd).PositionalAnyCompletion(
-					ActionMacro("$_." + args[0]),
+					ActionMacro(args[0]),
 				)
 				carapace.LOG.Printf("%#v", args)
 				mCmd.SetArgs(append([]string{"_carapace", "export", ""}, args[1:]...))
