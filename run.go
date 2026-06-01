@@ -87,7 +87,7 @@ func (r run) parseMacro() func(cmd *cobra.Command, args []string) error {
 		m, err := macro.MacroMap[Macro]{
 			"": MacroI(func(s string) carapace.Action {
 				if runtime.GOOS == "windows" {
-					return runAction(cmd, "pwsh", s)
+					return runAction(cmd, "cmd", s)
 				}
 				return runAction(cmd, "sh", s)
 			}),
