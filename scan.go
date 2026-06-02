@@ -6,11 +6,17 @@ import (
 	"os/exec"
 	"regexp"
 	"strings"
+	"sync"
 )
 
 // TODO experimental - internal use
 func ScanMacros(pkgs ...string) (MacroMap, error) {
-	result := make(MacroMap)
+	type pkgEntry struct {
+		path   string
+		prefix string
+	}
+
+	var entries []pkgEntry
 	for _, pkg := range pkgs {
 		output, err := exec.Command("go", "list", pkg+"/...").Output()
 		if err != nil {
@@ -20,22 +26,33 @@ func ScanMacros(pkgs ...string) (MacroMap, error) {
 			return nil, err
 		}
 
-		for subPkg := range strings.SplitSeq(string(output), "\n") {
-			if pkg == subPkg {
+		for sp := range strings.SplitSeq(string(output), "\n") {
+			if pkg == sp {
 				println("skipping " + pkg)
 				continue // TODO re-enable
 			}
-			prefix := strings.TrimPrefix(subPkg, pkg)
+			prefix := strings.TrimPrefix(sp, pkg)
 			prefix = strings.TrimLeft(prefix, "/")
 			prefix = strings.ReplaceAll(prefix, "/", ".")
-			pkgMacros, err := scan(subPkg, prefix)
-			if err != nil {
-				println("scan failed")
-				return nil, err
-			}
-			maps.Copy(result, pkgMacros)
+			entries = append(entries, pkgEntry{path: sp, prefix: prefix})
 		}
 	}
+
+	result := make(MacroMap)
+	var mu sync.Mutex
+	var wg sync.WaitGroup
+
+	for _, e := range entries {
+		wg.Add(1)
+		go func(e pkgEntry) {
+			defer wg.Done()
+			pkgMacros, _ := scan(e.path, e.prefix)
+			mu.Lock()
+			maps.Copy(result, pkgMacros)
+			mu.Unlock()
+		}(e)
+	}
+	wg.Wait()
 	return result, nil
 }
 
