@@ -41,7 +41,7 @@ func (m MacroMap) Format(pkg string) (string, error) {
 		if splitted := strings.Split(name, "."); len(splitted) > 1 {
 			importName = varName(strings.Join(splitted[:len(splitted)-1], "."))
 		}
-		imports = append(imports, fmt.Sprintf("%s %q", importName, macroPkg))
+		imports = append(imports, fmt.Sprintf("\t%s %q", importName, macroPkg))
 		macros = append(macros, fmt.Sprintf(`%q: {
 	Name: %q,
 	Description: %q,
@@ -63,7 +63,8 @@ func (m MacroMap) Format(pkg string) (string, error) {
 
 	return fmt.Sprintf(`package %s
 
-import(%s
+import (
+%s
 	spec "github.com/carapace-sh/carapace-spec"
 )
 
