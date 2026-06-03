@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/carapace-sh/carapace"
+	"github.com/carapace-sh/carapace/pkg/uid"
 	"github.com/spf13/cobra"
 )
 
@@ -30,12 +31,10 @@ func Register(cmd *cobra.Command) {
 				sort.Strings(keys)
 
 				for _, key := range keys {
-					if strings.HasPrefix(key, "_") {
-						fmt.Fprintln(cmd.OutOrStdout(), strings.TrimPrefix(key, "_."))
-					}
+					fmt.Fprintln(cmd.OutOrStdout(), "$"+key)
 				}
 			case 1:
-				m, ok := macros["_."+args[0]]
+				m, ok := macros[args[0]]
 				if !ok {
 					return fmt.Errorf("unknown macro: %v", args[0])
 				}
@@ -46,7 +45,7 @@ func Register(cmd *cobra.Command) {
 				}
 				carapace.Gen(mCmd).Standalone()
 				carapace.Gen(mCmd).PositionalAnyCompletion(
-					ActionMacro("$_." + args[0]),
+					ActionMacro(args[0]),
 				)
 				carapace.LOG.Printf("%#v", args)
 				mCmd.SetArgs(append([]string{"_carapace", "export", ""}, args[1:]...))
@@ -67,7 +66,7 @@ func Register(cmd *cobra.Command) {
 			vals := make([]string, 0, len(macros))
 			for key := range macros {
 				if after, ok := strings.CutPrefix(key, "_."); ok {
-					vals = append(vals, after)
+					vals = append(vals, "$"+executable()+"."+after)
 				}
 			}
 			return carapace.ActionValues(vals...).MultiParts(".")
@@ -76,7 +75,10 @@ func Register(cmd *cobra.Command) {
 
 	carapace.Gen(macroCmd).PositionalAnyCompletion(
 		carapace.ActionCallback(func(c carapace.Context) carapace.Action {
-			return ActionMacro("$_." + c.Args[0]).Shift(1)
+			if strings.HasPrefix(c.Args[0], "$") {
+				return ActionMacroM(c.Args[0]).Shift(1)
+			}
+			return ActionMacroM("$_." + c.Args[0]).Shift(1)
 		}),
 	)
 }
