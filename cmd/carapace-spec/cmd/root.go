@@ -82,7 +82,7 @@ func init() {
 		}),
 	)
 
-	spec.AddMacro("Spec", spec.MacroI(spec.ActionSpec))
+	spec.AddMacroI(spec.ActionSpec, "completes a spec")
 	spec.Register(rootCmd)
 }
 
