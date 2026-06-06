@@ -8,7 +8,7 @@ import (
 // TODO lots of overlapping `macro` terms. Macro[I|V|N] don't match the embedded generic `macro.Macro` well.
 type Macro struct {
 	Name        string                       `json:"name"`
-	Description string                       `json:"descriptions,omitempty"`
+	Description string                       `json:"description,omitempty"`
 	Example     string                       `json:"example,omitempty"`
 	Function    string                       `json:"function,omitempty"`
 	Args        string                       `json:"args,omitempty"` // TODO shouldn't be necessary

@@ -1,7 +1,9 @@
 package spec
 
 import (
+	"encoding/json"
 	"fmt"
+	"runtime/debug"
 	"sort"
 	"strings"
 
@@ -23,17 +25,52 @@ func Register(cmd *cobra.Command) {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			switch len(args) {
 			case 0:
+				exe := executable()
 				keys := make([]string, 0, len(macros))
 				for k := range macros {
 					keys = append(keys, k)
 				}
 				sort.Strings(keys)
 
+				type macroEntry struct {
+					Name        string `json:"name"`
+					Signature   string `json:"signature"`
+					Description string `json:"description"`
+					Version     string `json:"version"`
+					Function    string `json:"function"`
+				}
+
+				type macroList struct {
+					Version string       `json:"version"`
+					Macros  []macroEntry `json:"macros"`
+				}
+
+				depVersions := resolveDepVersions()
+
+				entries := make([]macroEntry, 0, len(keys))
 				for _, key := range keys {
 					if strings.HasPrefix(key, "_") {
-						fmt.Fprintln(cmd.OutOrStdout(), strings.TrimPrefix(key, "_."))
+						m := macros[key]
+						sig := m.Signature()
+						if sig == "" {
+							sig = "—"
+						}
+						pkgPath, _, _ := strings.Cut(m.Function, "#")
+						entries = append(entries, macroEntry{
+							Name:        exe + strings.TrimPrefix(key, "_"),
+							Signature:   sig,
+							Description: m.Description,
+							Version:     depVersions[pkgPath],
+							Function:    m.Function,
+						})
 					}
 				}
+
+				output, _ := json.MarshalIndent(macroList{
+					Version: specVersion(),
+					Macros:  entries,
+				}, "", "  ")
+				fmt.Fprintln(cmd.OutOrStdout(), string(output))
 			case 1:
 				m, ok := macros["_."+args[0]]
 				if !ok {
@@ -79,4 +116,25 @@ func Register(cmd *cobra.Command) {
 			return ActionMacro("$_." + c.Args[0]).Shift(1)
 		}),
 	)
+}
+
+func specVersion() string {
+	if info, ok := debug.ReadBuildInfo(); ok {
+		for _, dep := range info.Deps {
+			if dep.Path == "github.com/carapace-sh/carapace-spec" {
+				return dep.Version
+			}
+		}
+	}
+	return "unknown"
+}
+
+func resolveDepVersions() map[string]string {
+	m := make(map[string]string)
+	if info, ok := debug.ReadBuildInfo(); ok {
+		for _, dep := range info.Deps {
+			m[dep.Path] = dep.Version
+		}
+	}
+	return m
 }
