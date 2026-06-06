@@ -45,7 +45,7 @@ func Register(cmd *cobra.Command) {
 					Macros  []macroEntry `json:"macros"`
 				}
 
-				depVersions := resolveDepVersions()
+				mainVersion := mainModuleVersion()
 
 				entries := make([]macroEntry, 0, len(keys))
 				for _, key := range keys {
@@ -60,14 +60,14 @@ func Register(cmd *cobra.Command) {
 							Name:        exe + strings.TrimPrefix(key, "_"),
 							Signature:   sig,
 							Description: m.Description,
-							Version:     depVersions[pkgPath],
+							Version:     resolveVersion(pkgPath, mainVersion),
 							Function:    m.Function,
 						})
 					}
 				}
 
 				output, _ := json.MarshalIndent(macroList{
-					Version: specVersion(),
+					Version: mainVersion,
 					Macros:  entries,
 				}, "", "  ")
 				fmt.Fprintln(cmd.OutOrStdout(), string(output))
@@ -118,23 +118,26 @@ func Register(cmd *cobra.Command) {
 	)
 }
 
-func specVersion() string {
+func mainModuleVersion() string {
 	if info, ok := debug.ReadBuildInfo(); ok {
-		for _, dep := range info.Deps {
-			if dep.Path == "github.com/carapace-sh/carapace-spec" {
-				return dep.Version
-			}
+		v := info.Main.Version
+		if v != "" {
+			return v
 		}
 	}
 	return "unknown"
 }
 
-func resolveDepVersions() map[string]string {
-	m := make(map[string]string)
+func resolveVersion(pkgPath, mainVersion string) string {
 	if info, ok := debug.ReadBuildInfo(); ok {
+		if strings.HasPrefix(pkgPath, info.Main.Path+"/") {
+			return mainVersion
+		}
 		for _, dep := range info.Deps {
-			m[dep.Path] = dep.Version
+			if pkgPath == dep.Path || strings.HasPrefix(pkgPath, dep.Path+"/") {
+				return dep.Version
+			}
 		}
 	}
-	return m
+	return ""
 }
