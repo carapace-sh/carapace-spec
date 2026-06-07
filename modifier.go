@@ -37,6 +37,12 @@ func (m modifier) Parse(s string) carapace.Action {
 			"$suppress":   MacroI(func(s string) carapace.Action { return m.Action.Suppress(s) }),
 			"$style":      MacroI(m.Action.Style),
 			"$tag":        MacroI(m.Action.Tag),
+			"$uid": MacroV(func(s ...string) carapace.Action {
+				if len(s) < 2 {
+					return carapace.ActionMessage("$uid needs at least 2 arguments")
+				}
+				return m.Action.Uid(s[0], s[1], s[2:]...)
+			}),
 			"$uniquelist": MacroI(m.Action.UniqueList),
 			"$usage":      MacroI(func(s string) carapace.Action { return m.Action.Usage(s) }),
 		}
