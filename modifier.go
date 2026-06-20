@@ -28,6 +28,7 @@ func (m modifier) Parse(s string) carapace.Action {
 			"$list":       MacroI(m.Action.List),
 			"$multiparts": MacroV(m.Action.MultiParts),
 			"$nospace":    MacroI(func(s string) carapace.Action { return m.Action.NoSpace([]rune(s)...) }),
+			"$noprefix":   MacroI(func(s string) carapace.Action { return m.Action.NoPrefix([]rune(s)...) }),
 			"$prefix":     MacroI(m.Action.Prefix),
 			"$retain":     MacroV(m.Action.Retain),
 			"$shift":      MacroI(m.Action.Shift),
