@@ -141,6 +141,7 @@ func (a action) Parse(cmd *cobra.Command) carapace.Action {
 					"$list",
 					"$multiparts",
 					"$nospace",
+					"$noprefix",
 					"$prefix",
 					"$retain",
 					"$shift",

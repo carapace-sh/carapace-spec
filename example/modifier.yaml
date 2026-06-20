@@ -9,6 +9,7 @@ commands:
       --list=: "$list"
       --multiparts=: "$multiparts"
       --nospace=: "$nospace"
+      --noprefix=: "$noprefix"
       --prefix=: "$prefix"
       --retain=: "$retain"
       --shift=: "$shift"
@@ -28,6 +29,7 @@ commands:
         list: ["one", "two", "three", "$list(,)"]
         multiparts: ["one/two/three", "$multiparts([/])"]
         nospace: ["one", "two/", "three,", "$nospace(/,)"]
+        noprefix: ["--", "---", "one--", "one---", "$noprefix(-)"]
         prefix: ["$files", "$prefix(file://)"]
         retain: ["one", "two", "three", "$retain([two])"]
         shift: ["one", "two", "three", "$filterargs", "$shift(1)"]
@@ -49,6 +51,7 @@ commands:
       --list=: "$list"
       --multiparts=: "$multiparts"
       --nospace=: "$nospace"
+      --noprefix=: "$noprefix"
       --prefix=: "$prefix"
       --retain=: "$retain"
       --shift=: "$shift"
@@ -68,6 +71,7 @@ commands:
         list: ["$(printf '%s\\n' one two three) ||| $list(,)"]
         multiparts: ["one/two/three ||| $multiparts([/])"]
         nospace: ["$(printf '%s\\n' one two/ three,) ||| $nospace(/,)"]
+        noprefix: ["$(printf '%s\\n' '--' '---' one-- one---) ||| $noprefix(-)"]
         prefix: ["$files ||| $prefix(file://)"]
         retain: ["$(printf '%s\\n' one two three) ||| $retain([two])"]
         shift: ["$(printf '%s\\n' one two three) ||| $filterargs ||| $shift(1)"]

@@ -60,6 +60,13 @@ func TestModifier(t *testing.T) {
 				).NoSpace('/', ',').
 					Usage("$nospace"))
 
+			s.Run(command, "--noprefix", "one").
+				Expect(carapace.ActionValues(
+					"one--",
+					"one---",
+				).NoPrefix('-').
+					Usage("$noprefix"))
+
 			s.Run(command, "--retain", "").
 				Expect(carapace.ActionValues(
 					"two",

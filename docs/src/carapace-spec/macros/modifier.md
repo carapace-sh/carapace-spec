@@ -72,6 +72,14 @@ The following macros can be passed as well instead of a static directory:
 ["one", "two/", "three,", "$nospace(/,)"]
 ```
 
+## noprefix
+
+[`$noprefix(<characters>)`](https://carapace-sh.github.io/carapace/carapace/action/noPrefix.html) disables common prefix for given character(s).
+
+```yaml
+["--", "---", "one--", "one---", "$noprefix(-)"]
+```
+
 ## prefix
 
 [`$pefix(<prefix>)`](https://carapace-sh.github.io/carapace/carapace/action/prefix.html) adds a prefix to the inserted values.
