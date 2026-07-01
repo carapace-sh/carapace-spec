@@ -5,7 +5,7 @@ go 1.24
 replace github.com/carapace-sh/carapace-spec => ../
 
 require (
-	github.com/carapace-sh/carapace v1.12.1
+	github.com/carapace-sh/carapace v1.13.0
 	github.com/carapace-sh/carapace-selfupdate v0.0.10
 	github.com/carapace-sh/carapace-spec v0.0.0-00010101000000-000000000000
 	github.com/invopop/jsonschema v0.14.0
