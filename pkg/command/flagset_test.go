@@ -21,13 +21,24 @@ func TestFlagSet(t *testing.T) {
 			Description: "some complex flag",
 			Value:       true,
 			Nargs:       2,
+			Default:     "default.txt",
+		},
+		"defaultonly": Flag{
+			Longhand:    "defaultonly",
+			Description: "flag with default only",
+			Value:       true,
+			Default:     "/tmp/out.txt",
 		},
 	}
 
-	expected := `--string*!: some string flag
+	expected := `--defaultonly=:
+    description: flag with default only
+    default: /tmp/out.txt
+--string*!: some string flag
 -c, --complex=:
     description: some complex flag
     nargs: 2
+    default: default.txt
 `
 	m, err := yaml.Marshal(fs)
 	if err != nil {

@@ -111,5 +111,11 @@ func addFlagTo(f command.Flag, fset *pflag.FlagSet) error {
 		}
 	}
 
+	if f.Default != "" {
+		flag := fs.Lookup(f.Name())
+		flag.Value.Set(f.Default)
+		flag.DefValue = flag.Value.String()
+	}
+
 	return nil
 }

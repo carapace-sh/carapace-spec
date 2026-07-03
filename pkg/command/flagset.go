@@ -2,6 +2,7 @@ package command
 
 import (
 	"errors"
+	"fmt"
 
 	"gopkg.in/yaml.v3"
 )
@@ -11,6 +12,7 @@ type FlagSet map[string]Flag
 type Extended struct {
 	Description string `yaml:"description,omitempty" json:"description,omitempty" jsonschema_description:"Description of the flag"`
 	Nargs       int    `yaml:"nargs,omitempty" json:"nargs,omitempty" jsonschema_description:"Amount of arguments consumed"`
+	Default     string `yaml:"default,omitempty" json:"default,omitempty" jsonschema_description:"Default value of the flag"`
 }
 
 func (fs FlagSet) MarshalYAML() (any, error) {
@@ -18,10 +20,11 @@ func (fs FlagSet) MarshalYAML() (any, error) {
 
 	for _, f := range fs {
 		switch {
-		case f.Nargs != 0: // TODO other values causing extended version
+		case f.Nargs != 0 || f.Default != "":
 			m[f.format()] = Extended{
 				Description: f.Description,
 				Nargs:       f.Nargs,
+				Default:     f.Default,
 			}
 		default:
 			m[f.format()] = f.Description
@@ -53,6 +56,17 @@ func (fs *FlagSet) UnmarshalYAML(value *yaml.Node) error {
 			}
 			f.Description, _ = v["description"].(string)
 			f.Nargs, _ = v["nargs"].(int)
+			switch d := v["default"].(type) {
+			case string:
+				f.Default = d
+			case int:
+				f.Default = fmt.Sprint(d)
+			case bool:
+				f.Default = fmt.Sprint(d)
+			case nil:
+			default:
+				f.Default = fmt.Sprint(d)
+			}
 
 			flagSet[f.Name()] = *f // TODO ref?
 
