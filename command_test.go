@@ -167,6 +167,7 @@ func TestCommand(t *testing.T) {
 
 		s.Run("extended", "--nargs-any", "one", "-").
 			Expect(carapace.ActionStyledValuesDescribed(
+				"--default-value", "flag with default value", style.Blue,
 				"--nargs-two", "consumes two arguments", style.Carapace.FlagMultiArg,
 			).NoSpace('.').
 				Tag("longhand flags"))
@@ -174,5 +175,9 @@ func TestCommand(t *testing.T) {
 		s.Run("extended", "--nargs-any", "one", "two", "three", "").
 			Expect(carapace.ActionValues("one", "two", "three").
 				Usage("consumes multiple arguments"))
+
+		s.Run("extended", "--default-value", "").
+			Expect(carapace.ActionValues("one", "two", "three").
+				Usage("flag with default value"))
 	})
 }

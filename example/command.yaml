@@ -80,11 +80,13 @@ commands:
     flags:
       --nargs-two=: {description: consumes two arguments, nargs: 2}
       --nargs-any=: {description: consumes multiple arguments, nargs: -1}
+      --default-value=: {description: flag with default value, default: /tmp/out.txt}
   # ANCHOR_END: extended
     completion:
       flag:        
         nargs-two: [one, two, three]
         nargs-any: [one, two, three]
+        default-value: [one, two, three]
       positionalany: [pAny, positionalAny]
 
   # ANCHOR: persistentflags

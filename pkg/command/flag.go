@@ -20,7 +20,8 @@ type Flag struct {
 	Required        bool
 	Persistent      bool
 
-	Nargs int
+	Nargs   int
+	Default string
 }
 
 func (f Flag) Name() string {

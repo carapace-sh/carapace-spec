@@ -29,8 +29,6 @@ mdbook build docs                              # build the documentation site
 go generate ./...          # runs: go run -C cmd/schema . ../../schema.json
 ```
 
-> **Gotcha**: The committed `schema.json` is stale relative to what `go generate` produces. Running `go generate` will produce a schema with a proper `$defs/FlagSet` (supporting both string and extended `{description, nargs}` flag values via `oneOf`), whereas the committed version only allows string flag values. Do not commit the regenerated `schema.json` unless explicitly asked — the diff will be large and unrelated to your change.
-
 ### Releasing
 
 Releases are handled by GoReleaser (`.goreleaser.yml`), triggered by git tags. Builds target linux/windows/darwin (CGO disabled) plus termux/android (CGO enabled). Packages are published to Homebrew, Scoop, AUR, and nFPM (apk/deb/rpm). Agents should not trigger releases.

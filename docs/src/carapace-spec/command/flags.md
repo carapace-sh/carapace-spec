@@ -35,6 +35,7 @@ Additional formats when built with [carapace-pflag](https://github.com/carapace-
 There's also an extended notations for less common use cases.
 
 - `nargs` amount of arguments consumed
+- `default` default value of the flag
 
 ```yaml
 {{#include ../../../../example/command.yaml:command}}
