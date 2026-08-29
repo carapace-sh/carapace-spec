@@ -158,6 +158,7 @@ func codegen(cmd *cobra.Command, tmpDir string) error {
 		// TODO goos/goarch suffixes
 		"_test.go", "_test_.go",
 	).Replace(filename)
+	filename = strings.Replace(filename, "/_", "/UNDERSCORE", 1) // Go ignores files starting with _
 
 	println(filename)
 	formatted, err := format.Source(out.Bytes())
