@@ -11,8 +11,8 @@ import (
 
 	"github.com/carapace-sh/carapace"
 	"github.com/carapace-sh/carapace-spec/internal/shebang"
-	"github.com/carapace-sh/carapace-spec/pkg/command"
 	"github.com/carapace-sh/carapace-spec/pkg/macro"
+	"github.com/carapace-sh/carapace/pkg/command"
 	"github.com/carapace-sh/carapace/pkg/execlog"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
