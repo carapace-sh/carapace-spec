@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 
 	spec "github.com/carapace-sh/carapace-spec"
-	"github.com/carapace-sh/carapace-spec/pkg/command"
+	"github.com/carapace-sh/carapace/pkg/command"
 	"github.com/invopop/jsonschema"
 )
 
