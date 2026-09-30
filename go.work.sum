@@ -3,6 +3,10 @@ github.com/carapace-sh/carapace v1.8.4/go.mod h1:C0PH0NpNW+Gb2nvnJ8nl2yRvvPxEHqV
 github.com/carapace-sh/carapace v1.11.0 h1:dTUFXvIrUTLd9BGLsfDt4wCgEyPl8bJeZOFDmN7fIfo=
 github.com/carapace-sh/carapace v1.11.0/go.mod h1:NVkuv1s8wyFvu7d98rdgYwqGKMB6GO1MEUZp5RcWri8=
 github.com/carapace-sh/carapace v1.16.0/go.mod h1:5MUSHyLN9GGb5/NY/j9VI68/TcZV4ApRCAHGg4WeU0s=
+github.com/carapace-sh/carapace-shlex/v2 v2.0.0-20260930130334-b41462f4bc19 h1:wsluA4M5M5Gck1YblfYW/4ayc5ZR1vtwH4CHiEkuuCE=
+github.com/carapace-sh/carapace-shlex/v2 v2.0.0-20260930130334-b41462f4bc19/go.mod h1:07CXBqTrzzdZRgkFRpnDQ9zvIcGbKppjmaxNLyP+zgY=
 github.com/cpuguy83/go-md2man/v2 v2.0.4 h1:wfIWP927BUkWJb2NmU/kNDYIBTh/ziUX91+lVfRxZq4=
 github.com/josharian/intern v1.0.0 h1:vlS4z54oSdjm0bgjRigI+G1HpF+tI+9rE5LLzOg8HmY=
 github.com/russross/blackfriday/v2 v2.1.0 h1:JIOH55/0cWyOuilr9/qlrm0BSXldqnqwMsf35Ld67mk=
+go.yaml.in/yaml/v3 v3.0.5 h1:N6y/pJk8buWs9NY5ERU2HSMfm+IuD/OtfdAnq6kESPw=
+go.yaml.in/yaml/v3 v3.0.5/go.mod h1:HVTZu1O7/Vkt2N+BFy8Zza+lnLsABggaTM2ZpNIGuKg=

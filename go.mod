@@ -3,19 +3,11 @@ module github.com/carapace-sh/carapace-spec
 go 1.24.0
 
 require (
-	github.com/carapace-sh/carapace v1.16.2
-	github.com/carapace-sh/carapace-shlex v1.1.2-0.20260701213017-3985f5788c03
+	github.com/carapace-sh/carapace v1.16.4-0.20260930130538-3d55c72c0829
+	github.com/carapace-sh/carapace-shlex/v2 v2.0.0-20260930130334-b41462f4bc19
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.0.10
-	gopkg.in/yaml.v3 v3.0.1
+	go.yaml.in/yaml/v3 v3.0.5
 )
 
-require (
-	github.com/carapace-sh/carapace-shlex/v2 v2.0.0-alpha // indirect
-	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	go.yaml.in/yaml/v3 v3.0.5 // indirect
-)
-
-replace github.com/carapace-sh/carapace => /home/steam/Documents/development/github/carapace-sh/carapace
-
-replace github.com/carapace-sh/carapace-shlex => /home/steam/Documents/development/github/carapace-sh/carapace-shlex
+require github.com/inconshreveable/mousetrap v1.1.0 // indirect

@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/carapace-sh/carapace-shlex"
+	"github.com/carapace-sh/carapace-shlex/v2"
 )
 
 type shebang struct {
@@ -32,7 +32,7 @@ func Parse(s string) (*shebang, error) {
 		Script:  script,
 	}
 	if matches[3] != "" {
-		tokens, err := shlex.Split(matches[3])
+		tokens, err := shlex.Split(matches[3], shlex.Default)
 		if err != nil {
 			return nil, err
 		}

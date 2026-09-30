@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/carapace-sh/carapace"
-	shlex "github.com/carapace-sh/carapace-shlex"
+	shlex "github.com/carapace-sh/carapace-shlex/v2"
 )
 
 func init() {
@@ -84,7 +84,7 @@ func shellArgs(shell, command string, arguments ...string) ([]string, error) {
 		args = append(args, command)
 		args = append(args, arguments...)
 	case "nu":
-		args = append(args, fmt.Sprintf("def --wrapped main [...args] { %v }; main %v", command, shlex.Join(arguments)))
+		args = append(args, fmt.Sprintf("def --wrapped main [...args] { %v }; main %v", command, shlex.Join(arguments, shlex.Nushell)))
 	case "pwsh":
 		args = append(args, command)
 		args = append(args, arguments...)
