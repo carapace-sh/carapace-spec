@@ -11,7 +11,7 @@ import (
 	"github.com/carapace-sh/carapace"
 	spec "github.com/carapace-sh/carapace-spec"
 	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v3"
+	"go.yaml.in/yaml/v3"
 )
 
 var rootCmd = &cobra.Command{

@@ -8,7 +8,7 @@ import (
 	"github.com/carapace-sh/carapace/pkg/assert"
 	"github.com/carapace-sh/carapace/pkg/sandbox"
 	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v3"
+	"go.yaml.in/yaml/v3"
 )
 
 func sandboxSpec(t *testing.T, spec string) (f func(func(s *sandbox.Sandbox))) {

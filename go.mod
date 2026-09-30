@@ -1,13 +1,13 @@
 module github.com/carapace-sh/carapace-spec
 
-go 1.24
+go 1.24.0
 
 require (
-	github.com/carapace-sh/carapace v1.16.2
-	github.com/carapace-sh/carapace-shlex v1.1.1
+	github.com/carapace-sh/carapace v1.17.0-alpha
+	github.com/carapace-sh/carapace-shlex/v2 v2.0.0-alpha
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.0.10
-	gopkg.in/yaml.v3 v3.0.1
+	go.yaml.in/yaml/v3 v3.0.5
 )
 
 require github.com/inconshreveable/mousetrap v1.1.0 // indirect
