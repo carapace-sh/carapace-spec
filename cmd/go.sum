@@ -2,12 +2,12 @@ github.com/bahlo/generic-list-go v0.2.0 h1:5sz/EEAK+ls5wF+NeqDpk5+iNdMDXrh3z3nPn
 github.com/bahlo/generic-list-go v0.2.0/go.mod h1:2KvAjgMlE5NNynlg/5iLrrCCZ2+5xWbdbCW3pNTGyYg=
 github.com/buger/jsonparser v1.1.2 h1:frqHqw7otoVbk5M8LlE/L7HTnIq2v9RX6EJ48i9AxJk=
 github.com/buger/jsonparser v1.1.2/go.mod h1:6RYKKt7H4d4+iWqouImQ9R2FZql3VbhNgx27UK13J/0=
-github.com/carapace-sh/carapace v1.17.0-alpha h1:NJWkVlchT62Vj4mZWvNfzLiIH85QB+gOxHm/QtkyYfU=
-github.com/carapace-sh/carapace v1.17.0-alpha/go.mod h1:AuGzJ4HN4HSkbM+Hn6DbsZuEysFHh3jmlKaUCLxHnRY=
+github.com/carapace-sh/carapace v1.17.0 h1:kv+zijpRfzoAEblkAnjiCWWqp0ApbY3yV9d1hJUeON0=
+github.com/carapace-sh/carapace v1.17.0/go.mod h1:1fec+SVvTzjbJkHP4vSmX5xUhxzsBzbBF+Eq4RUe0b4=
 github.com/carapace-sh/carapace-pflag v1.1.0 h1:uB33wch8ADjP878NadQnbZ5vyROcj/Ac+wUQKMcIrQM=
 github.com/carapace-sh/carapace-pflag v1.1.0/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
-github.com/carapace-sh/carapace-selfupdate v0.1.0-alpha h1:Nn+zaIrmrAI3vn9K7doXR7hIbG0f7xBR30WOpLrPlVY=
-github.com/carapace-sh/carapace-selfupdate v0.1.0-alpha/go.mod h1:NNRyNIWcEBSUjZ0E1AYAr+qfVzcf8LIw+18/eKpmzJs=
+github.com/carapace-sh/carapace-selfupdate v0.1.0 h1:ZU8usLo3moT+QzyrMp3HQp2HLQKR+UMc4/6jwkcQRpc=
+github.com/carapace-sh/carapace-selfupdate v0.1.0/go.mod h1:ONNyHxhjDo6A0yYO3rKlF5jO6Bs2JwZeQt4C52pfz3s=
 github.com/carapace-sh/carapace-shlex/v2 v2.0.0 h1:pVhuYf1n9VLDCLo5m9xzo1N1+NZENnArXSzCNUTtnY4=
 github.com/carapace-sh/carapace-shlex/v2 v2.0.0/go.mod h1:07CXBqTrzzdZRgkFRpnDQ9zvIcGbKppjmaxNLyP+zgY=
 github.com/cpuguy83/go-md2man/v2 v2.0.6/go.mod h1:oOW0eioCTA6cOiMLiUPZOpcVxMig6NIQQ7OS05n1F4g=
