@@ -19,6 +19,8 @@ type (
 	action []value
 )
 
+var staleContextEnv = regexp.MustCompile(`^C_(ARG\d+|PART\d+|VALUE|FLAG_.+)=`)
+
 func NewAction(s []string) action { // TODO rename
 	a := make(action, len(s))
 	for index, v := range s {
@@ -107,6 +109,14 @@ func ActionSpec(path string) carapace.Action {
 func (a action) Parse(cmd *cobra.Command) carapace.Action {
 	return carapace.ActionCallback(func(c carapace.Context) carapace.Action {
 		// TODO yuck - where to set thes best?
+		env := c.Env[:0]
+		for _, entry := range c.Env {
+			if staleContextEnv.MatchString(entry) {
+				continue
+			}
+			env = append(env, entry)
+		}
+		c.Env = env
 		for index, arg := range c.Args {
 			c.Setenv(fmt.Sprintf("C_ARG%v", index), arg)
 		}

@@ -2,6 +2,7 @@ package spec
 
 import (
 	_ "embed"
+	"runtime"
 	"testing"
 
 	"github.com/carapace-sh/carapace"
@@ -179,5 +180,29 @@ func TestCommand(t *testing.T) {
 		s.Run("extended", "--default-value", "").
 			Expect(carapace.ActionValues("one", "two", "three").
 				Usage("flag with default value"))
+	})
+}
+
+func TestCommandNestedSpec(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("Posix shell macro in nested spec")
+	}
+
+	sandboxSpec(t, `
+name: demo
+flags:
+  --verbose!: ""
+completion:
+  positionalany:
+    - "$spec(tool.yaml) ||| $shift(1)"
+`)(func(s *sandbox.Sandbox) {
+		s.Files("tool.yaml", `
+name: tool
+completion:
+  positionalany:
+    - '$(echo "${C_ARG0}|${C_ARG1}|${C_ARG2}|${C_FLAG_VERBOSE:-false}")'
+`)
+		s.Run("--verbose", "tool", "a", "b", "").
+			Expect(carapace.ActionValues("a|b||false"))
 	})
 }
