@@ -1,4 +1,6 @@
 cmd/carapace-spec/carapace-spec
 dist
 docs/book
+docs/src/asciinema
+docs/theme/catppuccin.css
 profile.cov
